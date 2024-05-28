@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+    before editing
+    npx tailwindcss -i ./src/styles/input.css -o ./src/styles/index.css --watch
+    
+    before building
+    npx tailwindcss -o build.css --minify
+*/
