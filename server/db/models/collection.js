@@ -1,0 +1,55 @@
+import { SchemaTypes, Schema, model } from 'mongoose';
+import Comment from './comment.js';
+import Tag from './tag.js';
+
+const collectionSchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    default: ''
+  },
+  image_url: {
+    type: String,
+    default: ''
+  },
+  user: {
+    type: SchemaTypes.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  category: {
+    type: String,
+    required: true
+  },
+  customFields: [
+    {
+      name: {
+        type: String,
+        required: true
+      },
+      value: {
+        type: String,
+        required: true
+      }
+    }
+  ],
+  tags: [
+    {
+      type: SchemaTypes.ObjectId,
+      ref: 'Tag'
+    }
+  ],
+  comments: [
+    {
+      type: SchemaTypes.ObjectId,
+      ref: 'Comment'
+    }
+  ]
+});
+
+const Collection = model('Collection', collectionSchema);
+
+export default Collection;
