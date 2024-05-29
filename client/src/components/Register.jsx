@@ -19,7 +19,7 @@ export default function Register() {
 
   const handleUsernameChange = (e) => {
     if (e.target.value.length === 0) {
-      setUsernameWarn('Name should not be empty.');
+      setUsernameWarn('Username should not be empty.');
     } else {
       setUsernameWarn('');
     }
@@ -63,9 +63,8 @@ export default function Register() {
   };
 
   const getHumanReadableError = (error) => {
-    console.log(error);
+    // console.log(error);
     switch (error) {
-      // TODO: handle Express returned errors instead
       case 'email_in_use':
         return `The email you provided is already in use. Consider joining us with another one.`;
       default:
@@ -73,7 +72,7 @@ export default function Register() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
     if (usernameWarn + emailWarn + passwordWarn + confirmPasswordWarn === '') {
       if (usernameRef.current && emailRef.current && passwordRef.current) {
         const username = usernameRef.current.value,
@@ -103,10 +102,26 @@ export default function Register() {
     }
   };
 
+  const handleDisabled = () => {
+    const hasWarnings =
+      usernameWarn + emailWarn + passwordWarn + confirmPasswordWarn !== '';
+
+    if (!hasWarnings) {
+      return (
+        !usernameRef.current?.value ||
+        !passwordRef.current?.value ||
+        !confirmPasswordRef.current?.value ||
+        !emailRef.current?.value
+      );
+    }
+
+    return true;
+  };
+
   return (
-    <div className='container'>
-      <h1 className='text-center register'>Register</h1>
-      <form className='register-form mx-auto'>
+    <div className='container mx-auto sm:px-4'>
+      <h1 className='text-center text-3xl mt-12'>Register</h1>
+      <form className=' w-1/3 text-xl mx-auto'>
         <FormField
           type='text'
           name='full_name'
@@ -143,20 +158,19 @@ export default function Register() {
           errorMsg={confirmPasswordWarn}
           onFocus={() => setShowError(false)}
         />
-        {showError && (
-          <h5 className='text-danger login-error'>{errorMessage}</h5>
-        )}
+        {showError && <h5 className='text-red-600 mt-2'>{errorMessage}</h5>}
         <br />
         <button
           type='button'
-          className='btn btn-primary form-control'
+          className='align-middle disabled:bg-gray-400 disabled:text-gray-200 disabled:cursor-not-allowed text-center select-none font-normal whitespace-no-wrap rounded-md px-3 leading-normal no-underline bg-blue-600 text-white hover:bg-blue-600 block appearance-none w-full py-2 mb-1 text-base border border-gray-200'
           onClick={handleSubmit}
+          disabled={handleDisabled()}
         >
           Register
         </button>
-        <h4 className='register-request'>
+        <h4 className=' mt-6'>
           Got an account?{' '}
-          <Link className='reg-link text-primary' to='/login'>
+          <Link className='no-underline text-blue-600' to='/login'>
             Log in!
           </Link>
         </h4>

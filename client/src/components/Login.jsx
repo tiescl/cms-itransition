@@ -38,7 +38,7 @@ export default function Login() {
   };
 
   const getHumanReadableError = (error) => {
-    console.log(error);
+    // console.log(error);
     switch (error) {
       case 'incorrect_email' || 'incorrect_password':
         return 'User with the given email does not exist.';
@@ -52,13 +52,13 @@ export default function Login() {
   };
 
   return (
-    <div className='container'>
-      <h1 className='log-in'>Log In</h1>
-      <form className='log-in-form align-items-center mx-auto'>
+    <div className='container mx-auto sm:px-4'>
+      <h1 className=' mt-12 text-4xl text-center'>Log In</h1>
+      <form className='w-1/3 text-xl items-center mx-auto'>
         <br />
         <label htmlFor='email'>E-mail: </label>
         <input
-          className='form-control'
+          className='block appearance-none w-full py-2 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded-md'
           type='login'
           name='email'
           placeholder='E-mail'
@@ -68,27 +68,25 @@ export default function Login() {
         <br />
         <label htmlFor='password'>Password: </label>
         <input
-          className='form-control'
+          className='block appearance-none w-full py-2 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded-md'
           type='password'
           name='password'
           placeholder='Password'
           ref={passwordRef}
           onFocus={() => setShowError(false)}
         />
-        {showError && (
-          <h5 className='text-danger login-error'>{errorMessage}</h5>
-        )}
+        {showError && <h5 className=' text-red-700 mt-3'>{errorMessage}</h5>}
         <br />
         <button
           type='button'
-          className='btn btn-primary form-control'
+          className='align-middle text-center rounded-md select-none font-normal whitespace-no-wrap py-2 px-3 no-underline bg-blue-600 text-white hover:bg-blue-600 block appearance-none w-full mb-1 text-base leading-normal border border-gray-200'
           onClick={login}
         >
           Log In
         </button>
-        <h4 className='register-request'>
+        <h4 className='mt-6'>
           Want an account?{' '}
-          <Link className='reg-link text-primary' to='/register'>
+          <Link className='no-underline text-blue-600' to='/register'>
             Register!
           </Link>
         </h4>
