@@ -9,7 +9,19 @@ import FormField from './components/FormField.jsx';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <div>Hello world!</div>,
+    element: (
+      <>
+        <div>Hello world!</div>
+        <button
+          onClick={async () => {
+            await fetch('/api/logout', { method: 'GET' });
+            // navigate where you need to
+          }}
+        >
+          Log Out
+        </button>
+      </>
+    ),
     errorElement: <div>Oops! Something got fudged up!</div>
   },
   {

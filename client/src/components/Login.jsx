@@ -8,16 +8,15 @@ export default function Login() {
     passwordRef = useRef(null);
 
   const [errorMessage, setErrorMessage] = useState('');
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const login = async () => {
     if (emailRef.current && passwordRef.current) {
       const email = emailRef.current.value,
         password = passwordRef.current.value;
-      // TODO: replace with Fetch API
 
       try {
-        const response = await fetch('/api/users/login', {
+        const response = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
@@ -29,34 +28,26 @@ export default function Login() {
           navigateTo('/');
         } else {
           const errorData = await response.json();
-          setErrorMessage(errorData.error);
+          throw new Error(errorData.error);
         }
       } catch (err) {
-        setErrorMessage(err.message);
-        setShowErrorMessage(true);
+        setErrorMessage(getHumanReadableError(err.message));
+        setShowError(true);
       }
-
-      //   signInWithEmailAndPassword(auth, email, password)
-      //     .then(() => {
-      //       navigateTo('/');
-      //     })
-      //     .catch((error) => {
-      //       setErrorMessage(getHumanReadableError(error.code));
-      //       setShowErrorMessage(true);
-      //     });
     }
   };
 
   const getHumanReadableError = (error) => {
     console.log(error);
     switch (error) {
-      // TODO: handle Express returned errors instead
-      case 'auth/user-not-found':
-        return `User not found. ${(<Link to='/register'>Register</Link>)}?`;
-      case 'auth/user-disabled':
+      case 'incorrect_email' || 'incorrect_password':
+        return 'User with the given email does not exist.';
+      case 'incorrect_password':
+        return 'Entered password is invalid.';
+      case 'user_blocked':
         return 'Your account has been blocked. Stay cool✌️';
       default:
-        return 'Invalid credentials. Please try again.';
+        return `Something went wrong. Please try again`;
     }
   };
 
@@ -72,7 +63,7 @@ export default function Login() {
           name='email'
           placeholder='E-mail'
           ref={emailRef}
-          onFocus={() => setShowErrorMessage(false)}
+          onFocus={() => setShowError(false)}
         />
         <br />
         <label htmlFor='password'>Password: </label>
@@ -82,9 +73,9 @@ export default function Login() {
           name='password'
           placeholder='Password'
           ref={passwordRef}
-          onFocus={() => setShowErrorMessage(false)}
+          onFocus={() => setShowError(false)}
         />
-        {showErrorMessage && (
+        {showError && (
           <h5 className='text-danger login-error'>{errorMessage}</h5>
         )}
         <br />

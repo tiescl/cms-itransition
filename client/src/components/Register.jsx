@@ -66,10 +66,10 @@ export default function Register() {
     console.log(error);
     switch (error) {
       // TODO: handle Express returned errors instead
-      case 'auth/email-already-in-use':
+      case 'email_in_use':
         return `The email you provided is already in use. Consider joining us with another one.`;
       default:
-        return 'Invalid credentials. Please try again.';
+        return 'Something went wrong. Please try again.';
     }
   };
 
@@ -81,7 +81,7 @@ export default function Register() {
           password = passwordRef.current.value;
 
         try {
-          const response = await fetch('/api/users/register', {
+          const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, email, password })
@@ -93,11 +93,10 @@ export default function Register() {
             navigate('/login');
           } else {
             const errorData = await response.json();
-            setErrorMessage(errorData.error);
-            setShowError(true);
+            throw new Error(errorData.error);
           }
         } catch (err) {
-          setErrorMessage(err.message);
+          setErrorMessage(getHumanReadableError(err.message));
           setShowError(true);
         }
       }

@@ -56,9 +56,9 @@ userSchema.statics.login = async function (email, password) {
       user.save();
       return user;
     }
-    throw Error('Incorrect Password');
+    throw new Error('incorrect_password');
   }
-  throw Error('Incorret Email');
+  throw new Error('incorrect_email');
 };
 
 const User = model('User', userSchema);
