@@ -1,6 +1,22 @@
 import { Schema, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+const stringifyDate = (today) => {
+  const dateSetOptions = {
+    day: 'numeric',
+    weekday: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+    timeZoneName: 'short'
+  };
+
+  return (
+    today.toLocaleTimeString() +
+    ' ' +
+    today.toLocaleDateString('en-US', dateSetOptions)
+  );
+};
+
 const userSchema = new Schema({
   username: {
     type: String,
@@ -29,13 +45,13 @@ const userSchema = new Schema({
     default: false
   },
   registerDate: {
-    type: Date,
-    default: () => Date.now(),
+    type: String,
+    default: () => stringifyDate(new Date()),
     immutable: true
   },
   lastLoginDate: {
-    type: Date,
-    default: () => Date.now()
+    type: String,
+    default: () => stringifyDate(new Date())
   },
   preferredLanguage: {
     type: String,
@@ -52,7 +68,7 @@ userSchema.statics.login = async function (email, password) {
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
     if (auth) {
-      user.lastLoginDate = Date.now();
+      user.lastLoginDate = stringifyDate(new Date());
       user.save();
       return user;
     }

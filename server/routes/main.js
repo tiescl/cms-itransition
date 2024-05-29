@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../db/models/user.js';
+import checkCurrentUser from './middleware/checkCurrentUser.js';
 const router = express.Router();
 
 const maxCookieAge = 1 * 24 * 60 * 60;
@@ -15,6 +16,16 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/current-user', checkCurrentUser, async (req, res) => {
+  try {
+    // fetch the current user for context
+    res.status(200).send(res.locals.user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('current_user_not_found');
+  }
+});
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -23,7 +34,7 @@ router.post('/login', async (req, res) => {
     const user = await User.login(email, password);
     const token = createToken(user._id);
     res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
-    res.status(200).send(user._id);
+    res.status(200).send(user);
   } catch (err) {
     console.error(err.message);
     res.status(400).send({ error: err.message });
@@ -32,7 +43,14 @@ router.post('/login', async (req, res) => {
 
 router.get('/logout', (req, res) => {
   // handle user logout
-  const token = res.cookie('auth', '', { httpOnly: true, maxAge: 1 });
+
+  // TODO: Check if he had res.status()
+  try {
+    res.cookie('auth', '', { httpOnly: true, maxAge: 1 });
+    res.status(200).send('logged_out');
+  } catch (err) {
+    console.log(err.message);
+  }
 });
 
 router.post('/register', async (req, res) => {

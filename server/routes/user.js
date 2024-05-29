@@ -3,6 +3,15 @@ import User from '../db/models/user.js';
 import requireAuth from './middleware/requireAuth.js';
 const router = express.Router();
 
+router.get('/', requireAuth, async (req, res) => {
+  // return a list of all users
+  try {
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Error Fetching Users');
+  }
+});
+
 router.get('/:id', async (req, res) => {
   // conditionally render additional functionality
   // if checkCurrentUser returns the same user

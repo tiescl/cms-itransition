@@ -38,8 +38,8 @@ export default function Register() {
   };
 
   const handlePasswordChange = (e) => {
-    if (e.target.value.length < 1) {
-      setPasswordWarn('Password must be non-empty.');
+    if (e.target.value.length < 8) {
+      setPasswordWarn('Password must be at least 8 characters long.');
     } else {
       setPasswordWarn('');
     }
@@ -75,6 +75,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     if (usernameWarn + emailWarn + passwordWarn + confirmPasswordWarn === '') {
       if (usernameRef.current && emailRef.current && passwordRef.current) {
+        e.target.disabled = true;
         const username = usernameRef.current.value,
           email = emailRef.current.value,
           password = passwordRef.current.value;
@@ -92,11 +93,13 @@ export default function Register() {
             navigate('/login');
           } else {
             const errorData = await response.json();
+            e.target.disabled = false;
             throw new Error(errorData.error);
           }
         } catch (err) {
           setErrorMessage(getHumanReadableError(err.message));
           setShowError(true);
+          e.target.disabled = false;
         }
       }
     }
@@ -162,7 +165,7 @@ export default function Register() {
         <br />
         <button
           type='button'
-          className='align-middle disabled:bg-gray-400 disabled:text-gray-200 disabled:cursor-not-allowed text-center select-none font-normal whitespace-no-wrap rounded-md px-3 leading-normal no-underline bg-blue-600 text-white hover:bg-blue-600 block appearance-none w-full py-2 mb-1 text-base border border-gray-200'
+          className='align-middle disabled:bg-gray-400 disabled:text-gray-200 disabled:cursor-not-allowed text-center select-none font-normal whitespace-no-wrap rounded-md px-3 leading-normal no-underline bg-blue-600 text-white hover:bg-blue-500 block appearance-none w-full py-2 mb-1 text-base border border-gray-200'
           onClick={handleSubmit}
           disabled={handleDisabled()}
         >

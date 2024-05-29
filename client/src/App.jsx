@@ -1,9 +1,25 @@
+import UserContext from './context/UserContext';
+import { useContext } from 'react';
+
 function App() {
+  const { user, setUser } = useContext(UserContext);
   return (
     <>
-      <div className='block text-center'>
-        <h1 className='text-3xl font-bold underline'>Hello world!</h1>
-      </div>
+      <div>Hello world!</div>
+      <div>Hello, {user ? user.username : 'Guest'}</div>
+      <button
+        onClick={() => {
+          setUser(null);
+          fetch('/api/logout')
+            .then(() => {
+              console.log('logged out');
+            })
+            .catch((err) => console.log(err.message));
+          // navigate where you need to
+        }}
+      >
+        Log Out
+      </button>
     </>
   );
 }

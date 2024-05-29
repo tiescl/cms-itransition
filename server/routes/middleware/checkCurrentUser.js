@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../../db/models/user.js';
 
 const checkCurrentUser = (req, res, next) => {
-  const token = req.cookies.jwt;
+  const token = req.cookies.auth;
   if (token) {
     jwt.verify(token, process.env.SECRET_JWT_KEY, async (err, decodedToken) => {
       if (err) {
@@ -10,7 +10,6 @@ const checkCurrentUser = (req, res, next) => {
         res.locals.user = null;
         next();
       } else {
-        console.log(decodedToken);
         let user = await User.findById(decodedToken.id).exec();
         res.locals.user = user;
         next();

@@ -6,7 +6,6 @@ import main from './routes/main.js';
 import users from './routes/user.js';
 import collections from './routes/collection.js';
 import connectMongoDB from './db/connection.js';
-import checkCurrentUser from './routes/middleware/checkCurrentUser.js';
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -18,7 +17,6 @@ app.use(cookieParser());
 app.use('/api', main);
 app.use('/api/users', users);
 app.use('/api/collections', collections);
-app.get('/api/*', checkCurrentUser);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

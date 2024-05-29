@@ -5,23 +5,12 @@ import App from './App.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import FormField from './components/FormField.jsx';
+import { UserProvider } from './context/UserContext.jsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: (
-      <>
-        <div>Hello world!</div>
-        <button
-          onClick={async () => {
-            await fetch('/api/logout', { method: 'GET' });
-            // navigate where you need to
-          }}
-        >
-          Log Out
-        </button>
-      </>
-    ),
+    element: <App />,
     errorElement: <div>Oops! Something got fudged up!</div>
   },
   {
@@ -42,6 +31,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
   </React.StrictMode>
 );

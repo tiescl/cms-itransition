@@ -1,7 +1,9 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import UserContext from '../context/UserContext';
 
 export default function Login() {
+  const { setUser } = useContext(UserContext);
   const navigateTo = useNavigate();
 
   const emailRef = useRef(null),
@@ -24,7 +26,7 @@ export default function Login() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log(`from Login.jsx: \n${data}`);
+          setUser(data);
           navigateTo('/');
         } else {
           const errorData = await response.json();
@@ -79,7 +81,7 @@ export default function Login() {
         <br />
         <button
           type='button'
-          className='align-middle text-center rounded-md select-none font-normal whitespace-no-wrap py-2 px-3 no-underline bg-blue-600 text-white hover:bg-blue-600 block appearance-none w-full mb-1 text-base leading-normal border border-gray-200'
+          className='align-middle text-center rounded-md select-none font-normal whitespace-no-wrap py-2 px-3 no-underline bg-blue-600 text-white hover:bg-blue-500 block appearance-none w-full mb-1 text-base leading-normal border border-gray-200'
           onClick={login}
         >
           Log In
