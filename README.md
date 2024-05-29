@@ -2,7 +2,7 @@
 
 ## Requirements:
 
-- You can use any database and any other libraries, components or even frameworks (but not replace specified above).
+- You can use any database and any other libraries, components or even frameworks.
 
 - There are no limitations in the architecture or used services (you don't even have to separate front and back; it's not a recommendation, but you may go this way). Also, you may replace Bootstrap with any CSS framework and/or UI library you like.
 

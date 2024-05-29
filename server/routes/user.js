@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../db/models/user.js';
+import requireAuth from './middleware/requireAuth.js';
 const router = express.Router();
 
 const maxCookieAge = 1 * 24 * 60 * 60;
@@ -11,12 +12,11 @@ router.post('/login', async (req, res) => {
   try {
     // handle user login
     const user = await User.login(email, password);
-    const token = createToken(newUser._id, maxCookieAge);
-    res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
+    setCookie(user._id);
     res.status(200).send(user._id);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error Authenticating the User');
+    res.status(400).send('Error Authenticating the User');
   }
 });
 
@@ -39,8 +39,7 @@ router.post('/register', async (req, res) => {
       password: password
     });
 
-    const token = createToken(newUser._id, maxCookieAge);
-    res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
+    setCookie(newUser._id);
     res.status(201).send(newUser._id);
   } catch (err) {
     console.error(err.message);
@@ -49,32 +48,74 @@ router.post('/register', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
+  // conditionally render additional functionality
+  // if checkCurrentUser returns the same user
+  const userId = req.params.id;
+
   try {
     // fetch user info for their profile page
+    const user = await User.findById(userId).exec();
+    if (!user) {
+      res.status(404).send('User Not Found');
+    }
+    res.status(200).send(user);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Error Fetching User Data');
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireAuth, async (req, res) => {
+  const userId = req.params.id;
+  const currentUser = res.locals.user;
+
   try {
-    // update user info; done by either the admin or the user
+    // update user info; admin-only;
+    const user = await User.findById(userId).exec();
+    if (!user) {
+      res.status(404).send('User Not Found');
+    }
+    if (!currentUser.isAdmin) {
+      res.status(403).send('User Info Modification is for Admins-Only');
+    }
+    const updatedUser = await user.updateOne(req.body, { new: true });
+    console.log(updatedUser);
+    res.status(200).send('User Update Successful');
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error Updating User Info');
+    res.status(400).send('Error Updating User Info');
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAuth, async (req, res) => {
+  const userId = req.params.id;
+  const currentUser = res.locals.user;
+
   try {
     // delete the user; admin-only;
+    const user = await User.findById(userId).exec();
+    if (!user) {
+      res.status(404).send('User Not Found');
+    }
+    if (!currentUser.isAdmin) {
+      res.status(403).send('User Deletion is for Admins-Only');
+    }
+    const deletedUser = await user.deleteOne();
+    res.status(200).send('User Deletion Successful');
+    console.log(deletedUser);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error Deleting User Info');
+    res.status(400).send('Error Deleting User Info');
   }
 });
 
-const createToken = (id, duration) => {
-  return jwt.sign({ id }, process.env.SECRET_JWT_KEY, { expiresIn: duration });
+const createToken = (id) => {
+  return jwt.sign({ id }, process.env.SECRET_JWT_KEY, {
+    expiresIn: maxCookieAge
+  });
+};
+
+const setCookie = (id) => {
+  const token = createToken(id);
+  res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
 };
