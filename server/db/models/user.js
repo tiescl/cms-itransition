@@ -6,7 +6,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => v.length() > 1,
+      validator: (v) => v.length > 1,
       message: (props) => `username ${props.value} is too short`
     }
   },
@@ -28,6 +28,15 @@ const userSchema = new Schema({
     type: Boolean,
     default: false
   },
+  registerDate: {
+    type: Date,
+    default: () => Date.now(),
+    immutable: true
+  },
+  lastLoginDate: {
+    type: Date,
+    default: () => Date.now()
+  },
   preferredLanguage: {
     type: String,
     default: 'en-US'
@@ -38,18 +47,13 @@ const userSchema = new Schema({
   }
 });
 
-userSchema.pre('save', async function (next) {
-  let salt = await bcrypt.genSalt(10);
-  let hashedPassword = await bcrypt.hash(password, salt);
-  this.password = hashedPassword;
-  next();
-});
-
 userSchema.statics.login = async function (email, password) {
-  const user = await this.findOne({ email });
+  const user = await this.findOne({ email }).exec();
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
     if (auth) {
+      user.lastLoginDate = Date.now();
+      user.save();
       return user;
     }
     throw Error('Incorrect Password');

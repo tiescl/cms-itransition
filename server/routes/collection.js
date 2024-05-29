@@ -36,3 +36,5 @@ router.post('/:collectionId/comments', async (req, res) => {
     res.status(500).send('Error Adding a Comment');
   }
 });
+
+export default router;

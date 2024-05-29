@@ -12,7 +12,8 @@ router.post('/login', async (req, res) => {
   try {
     // handle user login
     const user = await User.login(email, password);
-    setCookie(user._id);
+    const token = createToken(user._id);
+    res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
     res.status(200).send(user._id);
   } catch (err) {
     console.error(err.message);
@@ -31,15 +32,19 @@ router.post('/register', async (req, res) => {
 
   try {
     // handle user registration
-    // you need to handle existing user registration
     // consider implementing the handleErrors function
+    const userExists = await User.exists({ email: email });
+    if (userExists) {
+      return res.status(400).send('The email is already in use');
+    }
     const newUser = await User.create({
       username: username,
       email: email,
-      password: password
+      password: await hashPassword(password)
     });
 
-    setCookie(newUser._id);
+    const token = createToken(newUser._id);
+    res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
     res.status(201).send(newUser._id);
   } catch (err) {
     console.error(err.message);
@@ -115,7 +120,10 @@ const createToken = (id) => {
   });
 };
 
-const setCookie = (id) => {
-  const token = createToken(id);
-  res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
+const hashPassword = async (password) => {
+  let salt = await bcrypt.genSalt(10);
+  let hashedPassword = await bcrypt.hash(password, salt);
+  return hashedPassword;
 };
+
+export default router;

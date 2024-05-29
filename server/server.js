@@ -15,10 +15,10 @@ connectMongoDB();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
-app.use('/', main);
-app.use('/users', users);
-app.use('/collections', collections);
-app.get('*', checkCurrentUser);
+app.use('/api', main);
+app.use('/api/users', users);
+app.use('/api/collections', collections);
+app.get('/api/*', checkCurrentUser);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

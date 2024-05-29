@@ -9,3 +9,5 @@ router.get('/', async (req, res) => {
     res.status(500).send('Error fetching collections');
   }
 });
+
+export default router;
