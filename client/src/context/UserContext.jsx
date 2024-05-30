@@ -11,7 +11,8 @@ export const UserProvider = ({ children }) => {
       try {
         const response = await fetch('/api/current-user');
         if (!response.ok) {
-          throw new Error('connectivity_issues');
+          const errorData = await response.json();
+          throw new Error(errorData.error);
         }
         const data = await response.json();
         if (isMounted) {

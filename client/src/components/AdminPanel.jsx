@@ -1,35 +1,41 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import UserRow from './UserRow.js';
+import { UserRow } from './UsersPanelTiny.jsx';
+import UserContext from '../context/UserContext.jsx';
+import 'bootstrap/dist/css/bootstrap.css';
 
 function AdminPanel() {
   const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext);
 
   const [userList, setUserList] = useState([]),
-    [user, setUser] = useState(null),
     [selectedUsers, setSelectedUsers] = useState([]),
     [isCheckedAll, setIsCheckedAll] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      //   const q = await getDocs(collection(db, 'users'));
-      //   let usrs = [];
-      //   q.forEach((doc) => {
-      //     const d = doc.data();
-      //     usrs.push({
-      //       id: doc.id,
-      //       fullName: d.fullName,
-      //       email: d.email,
-      //       status: d.status,
-      //       last_login: d.last_login,
-      //       registerDate: d.registerDate
-      //     });
-      //   });
-      //   setUserList(usrs);
-    } catch (error) {
-      console.error('Error fetching users: ', error);
-    }
-  };
+  useEffect(() => {
+    let isMounted = true;
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/users');
+        if (response.ok) {
+          const users = await response.json();
+          if (isMounted) {
+            setUserList(users);
+          }
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.error);
+        }
+      } catch (error) {
+        console.error('Error fetching users: ', error);
+      }
+    };
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  });
 
   const handleBlock = async () => {
     try {
@@ -86,6 +92,7 @@ function AdminPanel() {
     }
   };
 
+  // DONE
   function handleSelectionChange(e, userEmail) {
     setSelectedUsers((prevSelected) => {
       if (e.target.checked) {
@@ -96,6 +103,7 @@ function AdminPanel() {
     });
   }
 
+  // DONE
   function handleSelectAllChange() {
     setIsCheckedAll(!isCheckedAll);
     setSelectedUsers((prevSelected) => {
@@ -107,56 +115,30 @@ function AdminPanel() {
     });
   }
 
-  async function isUserActive(user) {
-    try {
-      const docSnap = await getDoc(doc(db, 'users', user.email));
-      if (docSnap.exists()) {
-        return docSnap.data().status === 'active';
-      }
-    } catch (error) {
-      console.error('Error checking state: ', error);
-    }
-  }
-
-  useEffect(() => {
-    // think it's useless
-
-    onAuthStateChanged(auth, (usr) => {
-      if (usr) {
-        isUserActive(usr)
-          .then((isActive) => {
-            if (isActive) {
-              getDoc(doc(db, 'users', usr.email)).then((doc) => {
-                if (doc.exists()) {
-                  setUser(doc.data());
-                  updateLastLogin(usr.email);
-                }
-              });
-              fetchData();
-            } else {
-              navigate('/login');
-            }
-          })
-          .catch(() => {
-            console.log('Error checking user status.');
-          });
-      } else {
-        navigate('/login');
-      }
-    });
-  }, []);
+  // DONE
+  const handleLogout = () => {
+    setUser(null);
+    fetch('/api/logout')
+      .then(() => {
+        console.log('logged out');
+      })
+      .catch((err) => console.log(err.message));
+  };
 
   return (
     <>
-      <nav className='navbar navbar-light bg-light navbar-expand-sm fixed-top justify-content-end'>
+      <nav
+        style={{ height: '70px', paddingRight: '30px' }}
+        className='navbar navbar-light bg-light navbar-expand-sm fixed-top justify-content-end'
+      >
         <ul className='navbar-nav align-items-center gap-3'>
           <li className='nav-item'>
-            Hello, <strong>{user?.fullName}</strong>
+            Hello, <strong>{user?.username || 'Guest'}</strong>
           </li>
           <li className='nav-item'>
             <Link
               to='/login'
-              onClick={() => signOut(auth)}
+              onClick={handleLogout}
               className='btn btn-primary'
             >
               Log out
@@ -165,23 +147,28 @@ function AdminPanel() {
         </ul>
       </nav>
 
-      <h1 className='greeting'>Users</h1>
+      <h1
+        style={{ marginTop: '90px', marginBottom: '40px' }}
+        className='text-center'
+      >
+        Users
+      </h1>
 
       <div className='container'>
         <button
-          className='btn handler btn-outline-warning mb-2 mx-1'
+          className='btn text-black border-2 fw-bold btn-outline-warning mb-2 mx-1'
           onClick={handleBlock}
         >
           Block 🔒
         </button>
         <button
-          className='btn handler btn-outline-success mb-2 mx-1'
+          className='btn btn-outline-success text-black border-2 fw-bold mb-2 mx-1'
           onClick={handleUnblock}
         >
           Unblock 🔓
         </button>
         <button
-          className='btn handler btn-outline-danger mb-2 mx-1'
+          className='btn btn-outline-danger text-black border-2 fw-bold mb-2 mx-1'
           onClick={handleDelete}
         >
           Delete 🗑️
@@ -197,18 +184,20 @@ function AdminPanel() {
             {userList.length} {userList.length === 1 ? 'user' : 'users'}
           </caption>
           <thead className='table-light'>
-            <tr>
-              <th className='col-sm-1'>
-                Select all{' '}
+            <tr className='align-middle'>
+              <th>
+                Selection
                 <input
                   type='checkbox'
-                  className='form-check-input users-checkbox'
+                  style={{ width: '20px', height: '20px', display: 'block' }}
+                  className='form-check-input mx-auto'
                   checked={isCheckedAll}
                   onChange={handleSelectAllChange}
                 />
               </th>
-              <th>Full Name</th>
+              <th>Username</th>
               <th>E-mail</th>
+              <th>Collection Count</th>
               <th>Last login</th>
               <th>Register Date</th>
               <th>Status</th>
@@ -218,7 +207,7 @@ function AdminPanel() {
             {userList &&
               userList.map((u) => (
                 <UserRow
-                  key={u.id}
+                  key={u._id}
                   user={u}
                   selectedUsers={selectedUsers}
                   onChange={handleSelectionChange}

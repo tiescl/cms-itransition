@@ -3,12 +3,13 @@ import User from '../db/models/user.js';
 import requireAuth from './middleware/requireAuth.js';
 const router = express.Router();
 
-router.get('/', requireAuth, async (req, res) => {
+router.get('/', async (req, res) => {
   // return a list of all users
+  const users = await User.find({}).exec();
+  res.status(200).send(users);
   try {
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Error Fetching Users');
+    res.status(500).send({ error: err.message });
   }
 });
 

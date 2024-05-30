@@ -22,7 +22,7 @@ router.get('/current-user', checkCurrentUser, async (req, res) => {
     res.status(200).send(res.locals.user);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('current_user_not_found');
+    res.status(500).send({ error: 'current_user_not_found' });
   }
 });
 
@@ -36,7 +36,6 @@ router.post('/login', async (req, res) => {
     res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
     res.status(200).send(user);
   } catch (err) {
-    console.error(err.message);
     res.status(400).send({ error: err.message });
   }
 });

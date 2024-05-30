@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, SchemaTypes, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const stringifyDate = (today) => {
@@ -43,6 +43,10 @@ const userSchema = new Schema({
   isBlocked: {
     type: Boolean,
     default: false
+  },
+  collections: {
+    type: SchemaTypes.ObjectId,
+    ref: 'Collection'
   },
   registerDate: {
     type: String,
