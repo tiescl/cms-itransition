@@ -1,4 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.css';
 import { Link } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 import { useContext } from 'react';
@@ -6,7 +5,6 @@ import { useContext } from 'react';
 export default function Navbar() {
   const { user } = useContext(UserContext);
 
-  // DONE
   const handleLogout = () => {
     setUser(null);
     fetch('/api/logout')
@@ -18,7 +16,7 @@ export default function Navbar() {
 
   return (
     <nav
-      style={{ height: '70px', paddingRight: '30px' }}
+      style={{ height: '80px', paddingRight: '30px' }}
       className='navbar navbar-light navbar-expand flex-nowrap justify-content-end bg-light fixed-top'
     >
       <ul className='navbar-nav align-items-center'>

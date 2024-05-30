@@ -1,13 +1,12 @@
-import UserContext from './context/UserContext';
-import { useContext } from 'react';
-import Navbar from './components/Navbar';
+import Navbar from './components/Navbar.jsx';
 
 function App() {
-  const { user } = useContext(UserContext);
   return (
     <>
       <Navbar />
-      <div className=' mt-20 mx-auto'>Hello world!</div>
+      <div style={{ textAlign: 'center', marginTop: '300px' }}>
+        Hello world!
+      </div>
     </>
   );
 }

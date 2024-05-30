@@ -12,7 +12,14 @@ import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import { UserProvider } from './context/UserContext.jsx';
 import AdminPanel from './components/UsersPanel.jsx';
+import CreateCollection from './components/CreateCollection.jsx';
+import ErrorPage from './components/ErrorPage.jsx';
+import IncompleteRoute from './components/IncompleteRoute.jsx';
 import UserContext from './context/UserContext.jsx';
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.min.js';
+import './styles/build.css';
 
 const ProtectedRoute = () => {
   const { user, isLoading } = useContext(UserContext);
@@ -20,11 +27,7 @@ const ProtectedRoute = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  return user && !user.isBlocked ? (
-    <Outlet />
-  ) : (
-    <Navigate to='/login' replace />
-  );
+  return !user?.isBlocked ? <Outlet /> : <Navigate to='/login' replace />;
 };
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -33,35 +36,31 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <Routes>
           <Route element={<ProtectedRoute />}>
-            <Route
-              path='/'
-              element={<App />}
-              errorElement={<div>Oops! Something got fudged up!</div>}
-            />
+            <Route path='/' element={<App />} />
             <Route path='/users' element={<AdminPanel />} />
             <Route
               path='/users/:userId'
-              element={<div>user profile page</div>}
+              element={<IncompleteRoute text='Page of an individual user ' />}
             />
             <Route
               path='/collections'
-              element={<div>list of collections page</div>}
+              element={<IncompleteRoute text='List of collections' />}
             />
             <Route
               path='/collections/:collectionId'
-              element={<div>individual collection page</div>}
+              element={
+                <IncompleteRoute text='Page of an individual collection ' />
+              }
             />
             <Route
               path='/collections/:collectionId/edit'
-              element={<div>collection editing page</div>}
+              element={<IncompleteRoute text='Page for editing collections ' />}
             />
-            <Route
-              path='/collections/create'
-              element={<div>collection creation page</div>}
-            />
+            <Route path='/collections/create' element={<CreateCollection />} />
           </Route>
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          <Route path='/*' element={<ErrorPage />} />
         </Routes>
       </BrowserRouter>
     </UserProvider>

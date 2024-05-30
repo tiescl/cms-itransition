@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import FormField from './FormField.jsx';
+import FormField from './RegisterInputField.jsx';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -171,7 +171,7 @@ export default function Register() {
         >
           Register
         </button>
-        <h4 className=' mt-6'>
+        <h4 className='mt-6'>
           Got an account?{' '}
           <Link className='no-underline text-blue-600' to='/login'>
             Log in!

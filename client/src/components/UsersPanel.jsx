@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UserRow } from './UsersPanelTiny.jsx';
 import UserContext from '../context/UserContext.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -170,7 +170,12 @@ function AdminPanel() {
       <Navbar />
 
       <h1
-        style={{ marginTop: '90px', marginBottom: '40px' }}
+        style={{
+          marginTop: '120px',
+          marginBottom: '40px',
+          fontSize: '40px',
+          fontWeight: '500'
+        }}
         className='text-center'
       >
         Users

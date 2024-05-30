@@ -1,4 +1,6 @@
 import express from 'express';
+import Tag from '../db/models/tag.js';
+import Collection from '../db/models/collection.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -13,6 +15,21 @@ router.get('/', async (req, res) => {
 router.post('/create', async (req, res) => {
   try {
     // create a new collection; auth- and admin-only
+    // const tagIds = await Promise.all(
+    //   tags.map(async (tag) => {
+    //     let existingTag = await Tag.findOne({ name: tag });
+    //     if (!existingTag) {
+    //       existingTag = await Tag.create({
+    //         name: tag,
+    //         collections: [collection._id]
+    //       });
+    //     }
+    //     return existingTag._id;
+    //   })
+    // );
+    // const collection = new Collection({
+    //   tags: tagIds
+    // });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Error Creating a Collection');

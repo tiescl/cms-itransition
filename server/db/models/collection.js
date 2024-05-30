@@ -11,7 +11,7 @@ const collectionSchema = new Schema({
     type: String,
     default: ''
   },
-  image_url: {
+  imageUrl: {
     type: String,
     default: ''
   },
