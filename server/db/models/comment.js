@@ -1,6 +1,4 @@
-import { Schema, model } from 'mongoose';
-import Collection from './collection.js';
-import User from './user.js';
+import { Schema, model, SchemaTypes } from 'mongoose';
 
 const commentSchema = new Schema({
   author: {

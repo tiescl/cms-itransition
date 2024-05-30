@@ -1,8 +1,8 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../db/models/user.js';
 import checkCurrentUser from './middleware/checkCurrentUser.js';
+import User from '../db/models/user.js';
 const router = express.Router();
 
 const maxCookieAge = 1 * 24 * 60 * 60;

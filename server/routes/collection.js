@@ -1,6 +1,4 @@
 import express from 'express';
-import Tag from '../db/models/tag.js';
-import Collection from '../db/models/collection.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
