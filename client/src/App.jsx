@@ -1,4 +1,5 @@
 import Navbar from './components/Navbar.jsx';
+import IncompleteRoute from './components/IncompleteRoute.jsx';
 
 function App() {
   return (
@@ -6,6 +7,7 @@ function App() {
       <Navbar />
       <div style={{ textAlign: 'center', marginTop: '300px' }}>
         Hello world!
+        <IncompleteRoute text='Landing page' />
       </div>
     </>
   );

@@ -1,6 +1,6 @@
 import { Schema, SchemaTypes, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import stringifyDate from '../../utils/stringify';
+import stringifyDate from '../../utils/stringify.js';
 
 const userSchema = new Schema({
   username: {
