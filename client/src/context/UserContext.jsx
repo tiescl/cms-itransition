@@ -1,9 +1,13 @@
 import { createContext, useState, useEffect } from 'react';
 
-const UserContext = createContext(null);
+const UserContext = createContext({
+  user: null,
+  isLoading: true
+});
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -20,6 +24,8 @@ export const UserProvider = ({ children }) => {
         }
       } catch (err) {
         console.log('Fetching user data..');
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchUser();
@@ -30,7 +36,7 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, isLoading }}>
       {children}
     </UserContext.Provider>
   );

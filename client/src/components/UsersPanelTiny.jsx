@@ -11,7 +11,9 @@ export function UserRow({ user, selectedUsers, onChange }) {
         />
       </td>
       <td>
-        <Link to={`/users/${user._id}`}>{user.username}</Link>
+        <Link to={`/users/${user._id}`} className='no-underline'>
+          {user.username} {user.isAdmin ? '👑' : ''}
+        </Link>
       </td>
       <td>{user.email}</td>
       <td>{user.collections?.length || '0'}</td>
@@ -33,7 +35,7 @@ export function StatusWrapper({ status, accentColor }) {
     borderColor: accentColor,
     borderRadius: '7px',
     color: accentColor,
-    padding: '2px 5px'
+    padding: '2px 4px'
   };
   return <span style={styling}>{status}</span>;
 }

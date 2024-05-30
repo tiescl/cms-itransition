@@ -4,7 +4,8 @@ export default {
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
     '!./src/components/AdminPanel.jsx',
-    '!./src/components/UsersPanelTiny.jsx'
+    '!./src/components/UsersPanelTiny.jsx',
+    '!./src/components/Navbar.jsx'
   ],
   theme: {
     extend: {}
