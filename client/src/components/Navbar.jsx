@@ -5,7 +5,7 @@ import { useContext } from 'react';
 export default function Navbar() {
   const { user } = useContext(UserContext);
 
-  const prodUrl = process.env.PRODUCTION_URL;
+  const prodUrl = import.meta.env.PRODUCTION_URL;
 
   const handleLogout = () => {
     setUser(null);

@@ -12,7 +12,8 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
-  const prodUrl = process.env.PRODUCTION_URL;
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  console.log(prodUrl);
 
   const login = async () => {
     if (emailRef.current && passwordRef.current) {

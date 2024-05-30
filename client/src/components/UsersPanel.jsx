@@ -14,7 +14,7 @@ function AdminPanel() {
     [isCheckedAll, setIsCheckedAll] = useState(false),
     [refreshTrigger, setRefreshTrigger] = useState(false);
 
-  const prodUrl = process.env.PRODUCTION_URL;
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
   useEffect(() => {
     const fetchData = async () => {

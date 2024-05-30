@@ -17,7 +17,7 @@ export default function Register() {
     [errorMessage, setErrorMessage] = useState(''),
     [showError, setShowError] = useState(false);
 
-  const prodUrl = process.env.PRODUCTION_URL;
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
   const handleUsernameChange = (e) => {
     if (e.target.value.length === 0) {
