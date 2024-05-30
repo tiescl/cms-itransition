@@ -17,6 +17,8 @@ export default function Register() {
     [errorMessage, setErrorMessage] = useState(''),
     [showError, setShowError] = useState(false);
 
+  const prodUrl = process.env.PRODUCTION_URL;
+
   const handleUsernameChange = (e) => {
     if (e.target.value.length === 0) {
       setUsernameWarn('Username should not be empty.');
@@ -81,7 +83,7 @@ export default function Register() {
           password = passwordRef.current.value;
 
         try {
-          const response = await fetch('/api/register', {
+          const response = await fetch(`${prodUrl}/api/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, email, password })
@@ -89,7 +91,7 @@ export default function Register() {
 
           if (response.ok) {
             const data = await response.json();
-            console.log(`from Register.jsx: \n${data}`);
+            // console.log(`from Register.jsx: \n${data}`);
             navigate('/login');
           } else {
             const errorData = await response.json();

@@ -12,13 +12,15 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
+  const prodUrl = process.env.PRODUCTION_URL;
+
   const login = async () => {
     if (emailRef.current && passwordRef.current) {
       const email = emailRef.current.value,
         password = passwordRef.current.value;
 
       try {
-        const response = await fetch('/api/login', {
+        const response = await fetch(`${prodUrl}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })

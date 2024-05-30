@@ -19,6 +19,8 @@ export default function CreateCollection() {
 
   const categories = categoriesData.categories;
 
+  const prodUrl = process.env.PRODUCTION_URL;
+
   const handleCategoryChange = (e) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -63,7 +65,7 @@ export default function CreateCollection() {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/collections/create', {
+      const response = await fetch(`${prodUrl}/api/collections/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, user: user._id, tags })

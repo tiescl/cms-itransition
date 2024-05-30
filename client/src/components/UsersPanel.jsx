@@ -14,10 +14,12 @@ function AdminPanel() {
     [isCheckedAll, setIsCheckedAll] = useState(false),
     [refreshTrigger, setRefreshTrigger] = useState(false);
 
+  const prodUrl = process.env.PRODUCTION_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/users');
+        const response = await fetch(`${prodUrl}/api/users`);
         if (response.ok) {
           const users = await response.json();
           setUserList(users);
@@ -37,7 +39,7 @@ function AdminPanel() {
       const property = 'isBlocked';
       const value = true;
 
-      const response = await fetch('/api/users/', {
+      const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selectedUsers, property, value })
@@ -60,7 +62,7 @@ function AdminPanel() {
       const property = 'isBlocked';
       const value = false;
 
-      const response = await fetch('/api/users/', {
+      const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selectedUsers, property, value })
@@ -80,7 +82,7 @@ function AdminPanel() {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch('/api/users/', {
+      const response = await fetch(`${prodUrl}/api/users`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selectedUsers })
@@ -103,7 +105,7 @@ function AdminPanel() {
       const property = 'isAdmin';
       const value = true;
 
-      const response = await fetch('/api/users/', {
+      const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selectedUsers, property, value })
@@ -126,7 +128,7 @@ function AdminPanel() {
       const property = 'isAdmin';
       const value = false;
 
-      const response = await fetch('/api/users/', {
+      const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selectedUsers, property, value })

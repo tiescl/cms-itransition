@@ -5,9 +5,11 @@ import { useContext } from 'react';
 export default function Navbar() {
   const { user } = useContext(UserContext);
 
+  const prodUrl = process.env.PRODUCTION_URL;
+
   const handleLogout = () => {
     setUser(null);
-    fetch('/api/logout')
+    fetch(`${prodUrl}/api/users`)
       .then(() => {
         console.log('logged out');
       })
