@@ -6,6 +6,8 @@ import User from '../db/models/user.js';
 const router = express.Router();
 
 const maxCookieAge = 1 * 24 * 60 * 60;
+const cookieSecure = process.env.COOKIE_SECURE === 'false' ? false : true;
+const cookieSameDomain = process.env.COOKIE_SAME_SITE;
 
 router.get('/', async (req, res) => {
   try {
@@ -19,7 +21,11 @@ router.get('/', async (req, res) => {
 router.get('/current-user', checkCurrentUser, async (req, res) => {
   try {
     // fetch the current user for context
-    res.status(200).send(res.locals.user);
+    if (res.locals.user) {
+      res.json(res.locals.user);
+    } else {
+      res.status(200).json({});
+    }
   } catch (err) {
     console.error(err.message);
     res.status(500).send({ error: 'current_user_not_found' });
@@ -33,7 +39,12 @@ router.post('/login', async (req, res) => {
     // handle user login
     const user = await User.login(email, password);
     const token = createToken(user._id);
-    res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
+    res.cookie('auth', token, {
+      httpOnly: true,
+      secure: cookieSecure,
+      sameSite: cookieSameDomain,
+      maxAge: maxCookieAge * 1000
+    });
     res.status(200).send(user);
   } catch (err) {
     res.status(400).send({ error: err.message });
@@ -45,7 +56,12 @@ router.get('/logout', (req, res) => {
 
   // TODO: Check if he had res.status()
   try {
-    res.cookie('auth', '', { httpOnly: true, maxAge: 1 });
+    res.cookie('auth', '', {
+      httpOnly: true,
+      secure: cookieSecure,
+      sameSite: cookieSameDomain,
+      maxAge: 1
+    });
     res.status(200).send('logged_out');
   } catch (err) {
     console.log(err.message);
@@ -69,7 +85,12 @@ router.post('/register', async (req, res) => {
     });
 
     const token = createToken(newUser._id);
-    res.cookie('auth', token, { httpOnly: true, maxAge: maxCookieAge * 1000 });
+    res.cookie('auth', token, {
+      httpOnly: true,
+      secure: cookieSecure,
+      sameSite: cookieSameDomain,
+      maxAge: maxCookieAge * 1000
+    });
     res.status(201).send(newUser._id);
   } catch (err) {
     console.error(err.message);

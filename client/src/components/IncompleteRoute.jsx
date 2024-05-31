@@ -8,7 +8,7 @@ export default function IncompleteRoute(props) {
         {props.text}
       </h1>
       <div style={{ fontSize: '40px', textAlign: 'center' }}>
-        Will be fixed very very soon :){' '}
+        Will be fixed very very soon
       </div>
     </>
   );

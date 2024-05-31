@@ -8,7 +8,7 @@ export default function ErrorPage() {
         404 Page Not Found
       </h1>
       <div style={{ fontSize: '50px', textAlign: 'center' }}>
-        Oops! Something went wrong({' '}
+        Oops! Something went wrong
       </div>
     </>
   );

@@ -6,8 +6,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Navbar from './Navbar.jsx';
 
 function AdminPanel() {
-  const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   const [userList, setUserList] = useState([]),
     [selectedUsers, setSelectedUsers] = useState([]),
@@ -19,7 +18,9 @@ function AdminPanel() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${prodUrl}/api/users`);
+        const response = await fetch(`${prodUrl}/api/users`, {
+          credentials: 'include'
+        });
         if (response.ok) {
           const users = await response.json();
           setUserList(users);
@@ -42,6 +43,7 @@ function AdminPanel() {
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ selectedUsers, property, value })
       });
 
@@ -65,6 +67,7 @@ function AdminPanel() {
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ selectedUsers, property, value })
       });
 
@@ -85,6 +88,7 @@ function AdminPanel() {
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ selectedUsers })
       });
 
@@ -108,6 +112,7 @@ function AdminPanel() {
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ selectedUsers, property, value })
       });
 
@@ -131,6 +136,7 @@ function AdminPanel() {
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ selectedUsers, property, value })
       });
 

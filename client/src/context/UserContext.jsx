@@ -9,21 +9,30 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+
   useEffect(() => {
     let isMounted = true;
     const fetchUser = async () => {
       try {
-        const response = await fetch('/api/current-user');
-        if (!response.ok) {
+        const response = await fetch(`${prodUrl}/api/current-user`, {
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (JSON.stringify(data) !== '{}') {
+            if (isMounted) {
+              setUser(data);
+            }
+          } else {
+            setUser(null);
+          }
+        } else {
           const errorData = await response.json();
           throw new Error(errorData.error);
         }
-        const data = await response.json();
-        if (isMounted) {
-          setUser(data);
-        }
       } catch (err) {
-        console.log('Fetching user data..');
+        console.log(`Error fetching current user: ${err.message}`);
       } finally {
         setIsLoading(false);
       }

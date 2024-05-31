@@ -3,13 +3,15 @@ import UserContext from '../context/UserContext';
 import { useContext } from 'react';
 
 export default function Navbar() {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
-  const prodUrl = import.meta.env.PRODUCTION_URL;
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
   const handleLogout = () => {
     setUser(null);
-    fetch(`${prodUrl}/api/users`)
+    fetch(`${prodUrl}/api/logout`, {
+      credentials: 'include'
+    })
       .then(() => {
         console.log('logged out');
       })
@@ -19,10 +21,15 @@ export default function Navbar() {
   return (
     <nav
       style={{ height: '80px', paddingRight: '30px' }}
-      className='navbar navbar-light navbar-expand flex-nowrap justify-content-end bg-light fixed-top'
+      className='navbar navbar-light navbar-expand flex-nowrap justify-content-between bg-light fixed-top'
     >
+      <div className='d-flex'>
+        <Link to='/' className='fw-bold fs-1 mx-5'>
+          CMS
+        </Link>
+      </div>
       <ul className='navbar-nav align-items-center'>
-        <li className='nav-item'>
+        <li className='nav-item fs-5 me-3'>
           Hello, <strong>{user?.username || 'Guest'}</strong>
         </li>
         {user ? (

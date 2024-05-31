@@ -11,7 +11,7 @@ export function UserRow({ user, selectedUsers, onChange }) {
         />
       </td>
       <td>
-        <Link to={`/users/${user._id}`} className='no-underline'>
+        <Link to={`/users/${user._id}`} style={{ color: 'blue' }}>
           {user.username} {user.isAdmin ? '👑' : ''}
         </Link>
       </td>

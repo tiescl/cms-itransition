@@ -1,4 +1,4 @@
-import { useRef, useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 import categoriesData from '../data/categories.json';
@@ -68,6 +68,7 @@ export default function CreateCollection() {
       const response = await fetch(`${prodUrl}/api/collections/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ ...formData, user: user._id, tags })
       });
 

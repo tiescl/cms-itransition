@@ -13,7 +13,6 @@ export default function Login() {
   const [showError, setShowError] = useState(false);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
-  console.log(prodUrl);
 
   const login = async () => {
     if (emailRef.current && passwordRef.current) {
@@ -24,6 +23,7 @@ export default function Login() {
         const response = await fetch(`${prodUrl}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ email, password })
         });
 

@@ -86,6 +86,7 @@ export default function Register() {
           const response = await fetch(`${prodUrl}/api/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ username, email, password })
           });
 
