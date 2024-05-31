@@ -13,14 +13,15 @@ function AdminPanel() {
     [isCheckedAll, setIsCheckedAll] = useState(false),
     [refreshTrigger, setRefreshTrigger] = useState(false);
 
-  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  const prodUrl =
+    import.meta.env.VITE_PRODUCTION_URL ||
+    'https://cms-itransition.onrender.com';
+  const token = localStorage.getItem('auth');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${prodUrl}/api/users`, {
-          credentials: 'include'
-        });
+        const response = await fetch(`${prodUrl}/api/users`);
         if (response.ok) {
           const users = await response.json();
           setUserList(users);
@@ -42,8 +43,10 @@ function AdminPanel() {
 
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ selectedUsers, property, value })
       });
 
@@ -66,8 +69,10 @@ function AdminPanel() {
 
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ selectedUsers, property, value })
       });
 
@@ -87,8 +92,10 @@ function AdminPanel() {
     try {
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ selectedUsers })
       });
 
@@ -111,8 +118,10 @@ function AdminPanel() {
 
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ selectedUsers, property, value })
       });
 
@@ -135,8 +144,10 @@ function AdminPanel() {
 
       const response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ selectedUsers, property, value })
       });
 

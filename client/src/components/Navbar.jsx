@@ -3,19 +3,19 @@ import UserContext from '../context/UserContext';
 import { useContext } from 'react';
 
 export default function Navbar() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, setTrigger } = useContext(UserContext);
 
-  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  const prodUrl =
+    import.meta.env.VITE_PRODUCTION_URL ||
+    'https://cms-itransition.onrender.com';
+  const token = localStorage.getItem('auth');
 
   const handleLogout = () => {
     setUser(null);
-    fetch(`${prodUrl}/api/logout`, {
-      credentials: 'include'
-    })
-      .then(() => {
-        console.log('logged out');
-      })
-      .catch((err) => console.log(err.message));
+    setTrigger((prev) => !prev);
+    localStorage.removeItem('auth');
+    localStorage.removeItem('tokenExpiration');
+    console.log('logged out');
   };
 
   return (

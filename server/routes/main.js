@@ -6,10 +6,6 @@ import User from '../db/models/user.js';
 const router = express.Router();
 
 const maxCookieAge = 1 * 24 * 60 * 60;
-const cookieSecure = process.env.COOKIE_SECURE === 'false' ? false : true;
-const cookieSameDomain = process.env.COOKIE_SAME_SITE;
-const cookieDomain = process.env.COOKIE_DOMAIN;
-console.log(cookieDomain);
 
 router.get('/', async (req, res) => {
   try {
@@ -41,36 +37,9 @@ router.post('/login', async (req, res) => {
     // handle user login
     const user = await User.login(email, password);
     const token = createToken(user._id);
-    res.cookie('auth', token, {
-      httpOnly: true,
-      secure: cookieSecure,
-      sameSite: cookieSameDomain,
-      domain: cookieDomain,
-      path: '/',
-      maxAge: maxCookieAge * 1000
-    });
-    res.status(200).send(user);
+    res.status(200).json({ user: user, token: token });
   } catch (err) {
     res.status(400).send({ error: err.message });
-  }
-});
-
-router.get('/logout', (req, res) => {
-  // handle user logout
-
-  // TODO: Check if he had res.status()
-  try {
-    res.cookie('auth', '', {
-      httpOnly: true,
-      secure: cookieSecure,
-      sameSite: cookieSameDomain,
-      domain: cookieDomain,
-      path: '/',
-      maxAge: 1
-    });
-    res.status(200).send('logged_out');
-  } catch (err) {
-    console.log(err.message);
   }
 });
 
@@ -91,15 +60,7 @@ router.post('/register', async (req, res) => {
     });
 
     const token = createToken(newUser._id);
-    res.cookie('auth', token, {
-      httpOnly: true,
-      secure: cookieSecure,
-      sameSite: cookieSameDomain,
-      domain: cookieDomain,
-      path: '/',
-      maxAge: maxCookieAge * 1000
-    });
-    res.status(201).send(newUser._id);
+    res.status(201).json({ user: newUser, token: token });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('internal_server_error');

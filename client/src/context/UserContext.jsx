@@ -8,28 +8,41 @@ const UserContext = createContext({
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [trigger, setTrigger] = useState(false);
 
-  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  const prodUrl =
+    import.meta.env.VITE_PRODUCTION_URL ||
+    'https://cms-itransition.onrender.com';
 
   useEffect(() => {
     let isMounted = true;
     const fetchUser = async () => {
+      const token = localStorage.getItem('auth');
+      const tokenExpiration = localStorage.getItem('tokenExpiration');
       try {
-        const response = await fetch(`${prodUrl}/api/current-user`, {
-          credentials: 'include'
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (JSON.stringify(data) !== '{}') {
-            if (isMounted) {
-              setUser(data);
+        if (token && tokenExpiration && Date.now() < tokenExpiration) {
+          const response = await fetch(`${prodUrl}/api/current-user`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (JSON.stringify(data) !== '{}') {
+              if (isMounted) {
+                setUser(data);
+              }
+            } else {
+              setUser(null);
             }
           } else {
-            setUser(null);
+            const errorData = await response.json();
+            throw new Error(errorData.error);
           }
         } else {
-          const errorData = await response.json();
-          throw new Error(errorData.error);
+          localStorage.removeItem('auth');
+          localStorage.removeItem('tokenExpiration');
+          setUser(null);
         }
       } catch (err) {
         console.log(`Error fetching current user: ${err.message}`);
@@ -42,10 +55,10 @@ export const UserProvider = ({ children }) => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [trigger]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, isLoading }}>
+    <UserContext.Provider value={{ user, setUser, isLoading, setTrigger }}>
       {children}
     </UserContext.Provider>
   );

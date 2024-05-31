@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 
 export default function Login() {
-  const { setUser } = useContext(UserContext);
+  const { setUser, setTrigger } = useContext(UserContext);
   const navigateTo = useNavigate();
 
   const emailRef = useRef(null),
@@ -12,7 +12,11 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
-  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  const prodUrl =
+    import.meta.env.VITE_PRODUCTION_URL ||
+    'https://cms-itransition.onrender.com';
+  const token = localStorage.getItem('auth');
+  const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
 
   const login = async () => {
     if (emailRef.current && passwordRef.current) {
@@ -22,14 +26,19 @@ export default function Login() {
       try {
         const response = await fetch(`${prodUrl}/api/login`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({ email, password })
         });
 
         if (response.ok) {
           const data = await response.json();
+          localStorage.setItem('auth', data.token);
+          localStorage.setItem('tokenExpiration', tokenExpiration);
           setUser(data);
+          setTrigger((prev) => !prev);
           navigateTo('/');
         } else {
           const errorData = await response.json();

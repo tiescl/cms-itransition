@@ -19,7 +19,10 @@ export default function CreateCollection() {
 
   const categories = categoriesData.categories;
 
-  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  const prodUrl =
+    import.meta.env.VITE_PRODUCTION_URL ||
+    'https://cms-itransition.onrender.com';
+  const token = localStorage.getItem('auth');
 
   const handleCategoryChange = (e) => {
     setFormData((prevFormData) => ({
@@ -67,8 +70,10 @@ export default function CreateCollection() {
     try {
       const response = await fetch(`${prodUrl}/api/collections/create`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ ...formData, user: user._id, tags })
       });
 

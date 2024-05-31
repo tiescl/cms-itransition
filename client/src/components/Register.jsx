@@ -17,7 +17,10 @@ export default function Register() {
     [errorMessage, setErrorMessage] = useState(''),
     [showError, setShowError] = useState(false);
 
-  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  const prodUrl =
+    import.meta.env.VITE_PRODUCTION_URL ||
+    'https://cms-itransition.onrender.com';
+  const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
 
   const handleUsernameChange = (e) => {
     if (e.target.value.length === 0) {
@@ -86,12 +89,13 @@ export default function Register() {
           const response = await fetch(`${prodUrl}/api/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
             body: JSON.stringify({ username, email, password })
           });
 
           if (response.ok) {
             const data = await response.json();
+            localStorage.setItem('auth', data.token);
+            localStorage.setItem('tokenExpiration', tokenExpiration);
             // console.log(`from Register.jsx: \n${data}`);
             navigate('/login');
           } else {
