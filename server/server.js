@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 5050;
 const CLIENT_URL = process.env.VITE_CLIENT_URL || 'http://localhost:5173';
 const app = express();
 connectMongoDB();
+console.log(CLIENT_URL);
 
 app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(express.json());
