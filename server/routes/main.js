@@ -16,6 +16,21 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/warmup', async (req, res) => {
+  try {
+    // Database Connection Test
+    const userExists = await User.exists({ email: 'admin@google.com' });
+    console.log(userExists);
+    if (userExists) {
+      return res.status(200).send({ message: 'all_good' });
+    } else {
+      return res.status(500).json({ error: 'Warm-up failed: User not found' }); 
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Warm-up failed' });
+  }
+});
+
 router.get('/current-user', checkCurrentUser, async (req, res) => {
   try {
     // fetch the current user for context
