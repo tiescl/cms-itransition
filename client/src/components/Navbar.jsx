@@ -45,6 +45,7 @@ export default function Navbar() {
         ) : (
           <>
             <li className='nav-item'>
+              {/* consider not redirecting */}
               <Link to='/login' className='btn btn-primary m-2'>
                 Log in
               </Link>

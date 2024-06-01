@@ -16,6 +16,7 @@ import CreateCollection from './components/CreateCollection.jsx';
 import ErrorPage from './components/ErrorPage.jsx';
 import IncompleteRoute from './components/IncompleteRoute.jsx';
 import UserContext from './context/UserContext.jsx';
+import LoadingScreen from './components/LoadingScreen.jsx';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
@@ -25,7 +26,7 @@ const ProtectedRoute = () => {
   const { user, isLoading } = useContext(UserContext);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingScreen />;
   }
   return !user?.isBlocked ? <Outlet /> : <Navigate to='/login' replace />;
 };
