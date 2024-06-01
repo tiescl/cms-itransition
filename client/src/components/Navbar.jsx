@@ -21,16 +21,16 @@ export default function Navbar() {
   return (
     <nav
       style={{ height: '80px', paddingRight: '30px' }}
-      className='navbar navbar-light navbar-expand flex-nowrap justify-content-between bg-light fixed-top'
+      className='navbar navbar-light navbar-expand flex-nowrap justify-content-between align-items-center bg-light fixed-top'
     >
       <div className='d-flex'>
-        <Link to='/' className='fw-bold fs-1 mx-5'>
+        <Link to='/' className='fw-bold fs-1 ms-4 me-2'>
           CMS
         </Link>
       </div>
       <ul className='navbar-nav align-items-center'>
-        <li className='nav-item fs-5 me-3'>
-          Hello, <strong>{user?.username || 'Guest'}</strong>
+        <li className='nav-item fs-5 me-2'>
+          <strong>{user?.username || 'Guest'}</strong>
         </li>
         {user ? (
           <li className='nav-item m-2'>
@@ -47,7 +47,7 @@ export default function Navbar() {
             <li className='nav-item'>
               {/* consider not redirecting */}
               <Link to='/login' className='btn btn-primary m-2'>
-                Log in
+                Login
               </Link>
             </li>
             <li className='nav-item'>
