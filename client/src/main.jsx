@@ -1,11 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   BrowserRouter,
   Route,
-  Routes,
-  Navigate,
-  Outlet
+  Routes
 } from 'react-router-dom';
 import App from './App.jsx';
 import Login from './components/Login.jsx';
@@ -15,21 +13,11 @@ import AdminPanel from './components/UsersPanel.jsx';
 import CreateCollection from './components/CreateCollection.jsx';
 import ErrorPage from './components/ErrorPage.jsx';
 import IncompleteRoute from './components/IncompleteRoute.jsx';
-import UserContext from './context/UserContext.jsx';
-import LoadingScreen from './components/LoadingScreen.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import './styles/build.css';
-
-const ProtectedRoute = () => {
-  const { user, isLoading } = useContext(UserContext);
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-  return !user?.isBlocked ? <Outlet /> : <Navigate to='/login' replace />;
-};
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

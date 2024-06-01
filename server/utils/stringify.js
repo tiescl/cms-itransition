@@ -7,9 +7,8 @@ export default function stringifyDate(today) {
     timeZoneName: 'short'
   };
 
-  return (
-    today.toLocaleTimeString() +
-    ' ' +
-    today.toLocaleDateString('en-US', dateSetOptions)
-  );
+  const fullDate = today.toLocaleTimeString() + ' ' +
+  today.toLocaleDateString('en-US', dateSetOptions);
+
+  return fullDate.split(',')[0];
 }
