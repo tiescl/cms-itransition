@@ -23,7 +23,7 @@ router.get('/warmup', async (req, res) => {
     if (userExists) {
       return res.status(200).send({ message: 'all_good' });
     } else {
-      return res.status(500).json({ error: 'Warm-up failed: User not found' }); 
+      return res.status(500).json({ error: 'Warm-up failed: User not found' });
     }
   } catch (error) {
     res.status(500).json({ error: 'Warm-up failed' });

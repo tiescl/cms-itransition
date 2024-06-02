@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 import categoriesData from '../data/categories.json';
 import Navbar from './Navbar.jsx';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function CreateCollection() {
   const { user } = useContext(UserContext);
@@ -15,20 +16,13 @@ export default function CreateCollection() {
     items: []
   });
   const [tags, setTags] = useState([]);
+
   const [error, setError] = useState(null);
 
   const prodUrl =
     import.meta.env.VITE_PRODUCTION_URL ||
     'https://cms-itransition.onrender.com';
   const token = localStorage.getItem('auth');
-
-  const handleItemFieldChange = (index, field, value) => {
-    setFormData((prevFormData) => {
-      const updatedItems = [...prevFormData.items];
-      updatedItems[index][field] = value;
-      return { ...prevFormData, items: updatedItems };
-    });
-  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -58,6 +52,7 @@ export default function CreateCollection() {
     }
   };
 
+  console.log(formData);
   return (
     <>
       <Navbar />
@@ -67,22 +62,18 @@ export default function CreateCollection() {
         <form style={{ fontSize: '20px' }}>
           <div className='row'>
             <div className='col-md-8 mx-auto'>
-              <NameInput />
+              <NameInput formData={formData} setFormData={setFormData} />
 
-              <DescriptionInput />
+              <DescriptionInput formData={formData} setFormData={setFormData} />
 
-              <ImageInput />
+              <ImageInput formData={formData} setFormData={setFormData} />
 
               <CategorySelection
                 formData={formData}
                 setFormData={setFormData}
               />
 
-              <Items
-                formData={formData}
-                onItemFieldChange={handleItemFieldChange}
-                setFormData={setFormData}
-              />
+              <Items formData={formData} setFormData={setFormData} />
 
               <CreateItem setFormData={setFormData} />
 
@@ -108,7 +99,7 @@ function CollectionTitle() {
   );
 }
 
-function NameInput() {
+function NameInput({ formData, setFormData }) {
   return (
     <div className='mb-4'>
       <label htmlFor='collName' className='form-label'>
@@ -117,14 +108,20 @@ function NameInput() {
       <input
         type='text'
         id='collName'
-        placeholder='e.g. My Reading List'
         className='form-control'
+        placeholder='e.g. My Reading List'
+        value={formData.name}
+        onChange={(event) =>
+          setFormData((prevFormData) => {
+            return { ...prevFormData, name: event.target.value };
+          })
+        }
       />
     </div>
   );
 }
 
-function DescriptionInput() {
+function DescriptionInput({ formData, setFormData }) {
   return (
     <div className='mb-4'>
       <label htmlFor='collDescription' className='form-label'>
@@ -135,19 +132,86 @@ function DescriptionInput() {
         className='form-control'
         placeholder='Briefly describe what this collection is about'
         rows='5'
+        value={formData.description}
+        onChange={(event) =>
+          setFormData((prevFormData) => {
+            return { ...prevFormData, description: event.target.value };
+          })
+        }
       />
     </div>
   );
 }
 
-function ImageInput() {
+function ImageInput({ formData, setFormData }) {
+  const [imageWarn, setImageWarn] = useState('');
+
+  const api_key = import.meta.env.VITE_IMGBB_APIKEY;
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+
+    const acceptedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!acceptedTypes.includes(file.type) || file.size > 5000000) {
+      setImageWarn(
+        'Please select a valid image (JPG/PNG) with a size up to 5mb'
+      );
+      event.target.value = '';
+      return;
+    }
+
+    try {
+      const formImageData = new FormData();
+      formImageData.append('image', file);
+
+      const response = await fetch(
+        `https://api.imgbb.com/1/upload?key=${api_key}`,
+        {
+          method: 'POST',
+          body: formImageData
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setImageWarn('');
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          imageUrl: data.data.url
+        }));
+      } else {
+        const data = await response.json();
+        event.target.value = '';
+        throw new Error(data.error.message);
+      }
+    } catch (error) {
+      setImageWarn(`Upload failed: ${error.message}`);
+    }
+  };
+
   return (
     <div className='mb-4'>
       <label htmlFor='collImage' className='form-label'>
-        Choose an image that represents this collection (JPG, PNG, or GIF
-        format)
+        Choose an image that represents this collection (JPG or PNG format)
       </label>
-      <input type='file' id='collImage' className='form-control form-control' />
+      <input
+        type='file'
+        id='collImage'
+        className='form-control'
+        onChange={handleFileChange}
+      />
+      {!imageWarn && formData.imageUrl && (
+        <>
+          <h5 className='text-success mt-2'>
+            Success! View it{' '}
+            <a href={formData.imageUrl} className='text-primary'>
+              here
+            </a>
+            .
+          </h5>
+        </>
+      )}
+      {imageWarn && <h5 className='text-danger mt-2'>{imageWarn}</h5>}
     </div>
   );
 }
@@ -193,6 +257,7 @@ function CreateItem({ setFormData }) {
       items: [
         ...prevFormData.items,
         {
+          id: uuidv4(),
           type: selectedType,
           name: '',
           value: ''
@@ -269,26 +334,30 @@ function SubmitButton() {
   );
 }
 
-function Items({ formData, onItemFieldChange, setFormData }) {
+function Items({ formData, setFormData }) {
+  const handleItemFieldChange = (fieldId, field, value) => {
+    setFormData((prevFormData) => {
+      const updatedItems = prevFormData.items.map((item) =>
+        item.id === fieldId ? { ...item, [field]: value } : item
+      );
+      return { ...prevFormData, items: updatedItems };
+    });
+  };
+
   return (
     <div className='mb-4'>
-      {formData.items.map((item, index) => {
+      {formData.items.map((item) => {
         return (
-          <div key={index} className='mb-2'>
+          <div key={item.id} className='mb-2'>
             <div className='row d-flex justify-content-between align-items-end'>
-              <ItemName
-                item={item}
-                index={index}
-                onChange={onItemFieldChange}
-              />
+              <ItemName item={item} onItemFieldChange={handleItemFieldChange} />
 
               <ItemValue
                 item={item}
-                index={index}
-                onIndividualFieldTypeChange={onItemFieldChange}
+                onItemFieldChange={handleItemFieldChange}
               />
 
-              <ItemRemoveButton index={index} setFormData={setFormData} />
+              <ItemRemoveButton itemId={item.id} setFormData={setFormData} />
             </div>
           </div>
         );
@@ -297,20 +366,46 @@ function Items({ formData, onItemFieldChange, setFormData }) {
   );
 }
 
-function ItemName({ item, index, onChange }) {
+function ItemName({ item, onItemFieldChange }) {
   return (
     <div className='col-md-4'>
-      <label htmlFor={`itemName-${index}`} className='form-label'>
+      <label htmlFor={`itemName-${item.id}`} className='form-label'>
         Item Name:
       </label>
 
       <input
-        id={`itemName-${index}`}
+        id={`itemName-${item.id}`}
         type='text'
         className='form-control'
         placeholder='Name'
         value={item.name}
-        onChange={(event) => onChange(index, 'name', event.target.value)}
+        onChange={(event) =>
+          onItemFieldChange(item.id, 'name', event.target.value)
+        }
+      />
+    </div>
+  );
+}
+
+function ItemValue({ item, onItemFieldChange }) {
+  return (
+    <div className='col-md-6'>
+      <label htmlFor={`itemValue-${item.id}`} className='form-label'>
+        Item Value:
+      </label>
+
+      <ItemValueInput
+        type={item.type}
+        value={item.value}
+        id={`itemValue-${item.id}`}
+        onChange={(event) => {
+          if (item.type === 'checkbox') {
+            onItemFieldChange(item.id, 'value', event.target.checked);
+          } else {
+            onItemFieldChange(item.id, 'value', event.target.value);
+          }
+        }}
+        placeholder='Value'
       />
     </div>
   );
@@ -323,46 +418,38 @@ function ItemValueInput({ type, value, onChange, placeholder }) {
     className: 'form-control'
   };
 
+  if (type !== 'checkbox') {
+    inputProps.value = value;
+  }
   if (type !== 'date' && type !== 'checkbox') {
     inputProps.placeholder = placeholder;
-    inputProps.value = value;
   }
   if (type === 'multiline_string') {
     return <textarea {...inputProps} rows={1} />;
   }
   if (type === 'checkbox') {
-    inputProps.className = 'form-check';
+    inputProps.className = 'form-check-input';
+    return (
+      <input
+        {...inputProps}
+        style={{
+          height: '25px',
+          width: '25px',
+          marginBottom: '7px',
+          display: 'block'
+        }}
+      />
+    );
   }
 
   return <input {...inputProps} />;
 }
 
-function ItemValue({ item, index, onIndividualFieldTypeChange }) {
-  return (
-    <div className='col-md-6'>
-      <label htmlFor={`itemName-${index}`} className='form-label'>
-        Item Value:
-      </label>
-
-      <ItemValueInput
-        type={item.type}
-        value={item.value}
-        onChange={(event) =>
-          onIndividualFieldTypeChange(index, 'value', event.target.value)
-        }
-        placeholder='Value'
-      />
-    </div>
-  );
-}
-
-function ItemRemoveButton({ index, setFormData }) {
-  const handleRemoveItem = (itemIndex) => {
+function ItemRemoveButton({ itemId, setFormData }) {
+  const handleRemoveItem = (itemUniqueId) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      items: prevFormData.items.filter(
-        (_, indexOfItem) => indexOfItem !== itemIndex
-      )
+      items: prevFormData.items.filter((item) => item.id !== itemUniqueId)
     }));
   };
 
@@ -372,7 +459,7 @@ function ItemRemoveButton({ index, setFormData }) {
         <button
           className='btn btn-danger mt-2'
           type='button'
-          onClick={() => handleRemoveItem(index)}
+          onClick={() => handleRemoveItem(itemId)}
         >
           Remove
         </button>
