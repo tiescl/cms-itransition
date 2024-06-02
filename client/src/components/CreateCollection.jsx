@@ -1,9 +1,10 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 import categoriesData from '../data/categories.json';
 import Navbar from './Navbar.jsx';
 import { v4 as uuidv4 } from 'uuid';
+import CreatableSelect from 'react-select/creatable';
 
 export default function CreateCollection() {
   const { user } = useContext(UserContext);
@@ -16,57 +17,105 @@ export default function CreateCollection() {
     items: []
   });
   const [tags, setTags] = useState([]);
+  const [tagOptions, setTagOptions] = useState([]);
 
-  const [error, setError] = useState(null);
+  // MARK: Error States
+  const [error, setError] = useState('');
+  const [requestError, setRequestError] = useState('');
+  const [imageError, setImageError] = useState('');
+  const [tagError, setTagError] = useState('');
 
   const prodUrl =
     import.meta.env.VITE_PRODUCTION_URL ||
     'https://cms-itransition.onrender.com';
   const token = localStorage.getItem('auth');
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await fetch(`${prodUrl}/api/collections/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ ...formData, user: user._id, tags })
-      });
-
-      if (response.ok) {
-        navigate('/collections');
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'Failed to create a collection');
-      }
-    } catch (err) {
-      console.error(`Error creating a collection: ${err.message}`);
+  const handleDisabled = (formSubmitData) => {
+    setError('');
+    if (error !== '' || imageError + tagError !== '') {
+      return true;
     }
+
+    if (
+      !formSubmitData.name ||
+      !formSubmitData.category ||
+      formSubmitData.items.length === 0
+    ) {
+      setError('Name, category, and at least one item are required.');
+      return true;
+    } else {
+      setError('');
+    }
+
+    for (const item of formSubmitData.items) {
+      if (!item.client_id || !item.name || !item.type || !item.value) {
+        setError('Item fields (name and value) must not be empty.');
+        return true;
+      } else {
+        setError('');
+      }
+    }
+
+    return false;
   };
 
   console.log(formData);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const prodUrl =
+      import.meta.env.VITE_PRODUCTION_URL ||
+      'https://cms-itransition.onrender.com';
+    const token = localStorage.getItem('auth');
+
+    if (!handleDisabled(formData)) {
+      e.target.disabled = true;
+
+      try {
+        const response = await fetch(`${prodUrl}/api/collections/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ ...formData, user: user._id, tags: tags })
+        });
+
+        if (response.ok) {
+          const newCollection = await response.json();
+          console.log(newCollection);
+          //navigate('/collections');
+        } else {
+          const errorData = await response.json();
+          e.target.disabled = false;
+          throw new Error(errorData.error);
+        }
+      } catch (err) {
+        e.target.disabled = false;
+        setRequestError(`Error creating a collection: ${err.message}`);
+      }
+    }
+  };
+
   return (
     <>
       <Navbar />
       <div className='container-fluid'>
         <CollectionTitle />
 
-        <form style={{ fontSize: '20px' }}>
+        <form style={{ fontSize: '20px' }} onSubmit={handleSubmit}>
           <div className='row'>
             <div className='col-md-8 mx-auto'>
               <NameInput formData={formData} setFormData={setFormData} />
 
               <DescriptionInput formData={formData} setFormData={setFormData} />
 
-              <ImageInput formData={formData} setFormData={setFormData} />
+              <ImageInput
+                formData={formData}
+                setFormData={setFormData}
+                imageError={imageError}
+                setImageError={setImageError}
+              />
 
               <CategorySelection
                 formData={formData}
@@ -77,9 +126,25 @@ export default function CreateCollection() {
 
               <CreateItem setFormData={setFormData} />
 
-              <TagSelection />
+              <TagSelection
+                tags={tags}
+                setTags={setTags}
+                tagOptions={tagOptions}
+                setTagOptions={setTagOptions}
+                tagError={tagError}
+                setTagError={setTagError}
+              />
 
-              <SubmitButton />
+              {error && <h5 className='text-danger mt-2'>{error}</h5>}
+              {requestError && (
+                <h5 className='text-danger mt-2'>{requestError}</h5>
+              )}
+
+              <div className='my-5'>
+                <button type='submit' className='btn btn-primary form-control'>
+                  Create
+                </button>
+              </div>
             </div>
           </div>
         </form>
@@ -143,9 +208,7 @@ function DescriptionInput({ formData, setFormData }) {
   );
 }
 
-function ImageInput({ formData, setFormData }) {
-  const [imageWarn, setImageWarn] = useState('');
-
+function ImageInput({ formData, setFormData, imageError, setImageError }) {
   const api_key = import.meta.env.VITE_IMGBB_APIKEY;
 
   const handleFileChange = async (event) => {
@@ -153,7 +216,7 @@ function ImageInput({ formData, setFormData }) {
 
     const acceptedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (!acceptedTypes.includes(file.type) || file.size > 5000000) {
-      setImageWarn(
+      setImageError(
         'Please select a valid image (JPG/PNG) with a size up to 5mb'
       );
       event.target.value = '';
@@ -174,7 +237,7 @@ function ImageInput({ formData, setFormData }) {
 
       if (response.ok) {
         const data = await response.json();
-        setImageWarn('');
+        setImageError('');
         setFormData((prevFormData) => ({
           ...prevFormData,
           imageUrl: data.data.url
@@ -185,7 +248,7 @@ function ImageInput({ formData, setFormData }) {
         throw new Error(data.error.message);
       }
     } catch (error) {
-      setImageWarn(`Upload failed: ${error.message}`);
+      setImageError(`Upload failed: ${error.message}`);
     }
   };
 
@@ -200,7 +263,7 @@ function ImageInput({ formData, setFormData }) {
         className='form-control'
         onChange={handleFileChange}
       />
-      {!imageWarn && formData.imageUrl && (
+      {!imageError && formData.imageUrl && (
         <>
           <h5 className='text-success mt-2'>
             Success! View it{' '}
@@ -211,7 +274,7 @@ function ImageInput({ formData, setFormData }) {
           </h5>
         </>
       )}
-      {imageWarn && <h5 className='text-danger mt-2'>{imageWarn}</h5>}
+      {imageError && <h5 className='text-danger mt-2'>{imageError}</h5>}
     </div>
   );
 }
@@ -257,7 +320,7 @@ function CreateItem({ setFormData }) {
       items: [
         ...prevFormData.items,
         {
-          id: uuidv4(),
+          client_id: uuidv4(),
           type: selectedType,
           name: '',
           value: ''
@@ -301,35 +364,86 @@ function CreateItem({ setFormData }) {
   );
 }
 
-function TagSelection() {
+function TagSelection({
+  tags,
+  setTags,
+  tagOptions,
+  setTagOptions,
+  tagError,
+  setTagError
+}) {
+  const prodUrl =
+    import.meta.env.VITE_PRODUCTION_URL ||
+    'https://cms-itransition.onrender.com';
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${prodUrl}/api/collections/tags`);
+        if (!response.ok) {
+          const data = response.json();
+          throw new Error(data.error);
+        }
+        const data = await response.json();
+        setTagOptions(
+          data.map((tag) => ({ value: tag.value, label: tag.label }))
+        );
+      } catch (error) {
+        setTagError(`Error fetching tag options: ${error.message}`);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTags();
+  }, []);
+
+  const createOption = (label) => {
+    let baseLabel = label.replace(/\W/g, '');
+    let finalLabel = baseLabel.slice(0, Math.min(baseLabel.length, 50));
+    return {
+      label: `#${finalLabel}`,
+      value: finalLabel.toLowerCase()
+    };
+  };
+
+  const handleCreateOption = (inputValue) => {
+    const newOption = createOption(inputValue);
+    setTags((prev) => [...prev, newOption]);
+  };
+
   return (
     <div className='mb-4'>
-      <label htmlFor='collTagsDatalist' className='form-label'>
+      <label htmlFor='collTags' className='form-label'>
         Tags
       </label>
-      <input
-        id='collTagsDatalist'
-        className='form-control'
-        list='tagOptions'
-        placeholder='Type to search...'
-      />
-      <datalist id='tagOptions'>
-        <option value='San Francisco' />
-        <option value='New York' />
-        <option value='Seattle' />
-        <option value='Los Angeles' />
-        <option value='Chicago' />
-      </datalist>
-    </div>
-  );
-}
 
-function SubmitButton() {
-  return (
-    <div className='my-5'>
-      <button type='submit' className='btn btn-primary form-control'>
-        Create
-      </button>
+      <CreatableSelect
+        id='collTags'
+        isMulti
+        isClearable
+        isDisabled={isLoading}
+        isLoading={isLoading}
+        options={tagOptions}
+        value={tags}
+        onChange={(newValue) => {
+          setTags(newValue);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+          }
+        }}
+        onCreateOption={handleCreateOption}
+      />
+      <div className='form-text'>
+        Tags must not contain spaces, and must not exceed 50 characters
+      </div>
+
+      {tagError && <h5 className='text-danger mt-2'>{tagError}</h5>}
     </div>
   );
 }
@@ -338,7 +452,7 @@ function Items({ formData, setFormData }) {
   const handleItemFieldChange = (fieldId, field, value) => {
     setFormData((prevFormData) => {
       const updatedItems = prevFormData.items.map((item) =>
-        item.id === fieldId ? { ...item, [field]: value } : item
+        item.client_id === fieldId ? { ...item, [field]: value } : item
       );
       return { ...prevFormData, items: updatedItems };
     });
@@ -348,7 +462,7 @@ function Items({ formData, setFormData }) {
     <div className='mb-4'>
       {formData.items.map((item) => {
         return (
-          <div key={item.id} className='mb-2'>
+          <div key={item.client_id} className='mb-2'>
             <div className='row d-flex justify-content-between align-items-end'>
               <ItemName item={item} onItemFieldChange={handleItemFieldChange} />
 
@@ -357,7 +471,10 @@ function Items({ formData, setFormData }) {
                 onItemFieldChange={handleItemFieldChange}
               />
 
-              <ItemRemoveButton itemId={item.id} setFormData={setFormData} />
+              <ItemRemoveButton
+                itemId={item.client_id}
+                setFormData={setFormData}
+              />
             </div>
           </div>
         );
@@ -369,18 +486,18 @@ function Items({ formData, setFormData }) {
 function ItemName({ item, onItemFieldChange }) {
   return (
     <div className='col-md-4'>
-      <label htmlFor={`itemName-${item.id}`} className='form-label'>
+      <label htmlFor={`itemName-${item.client_id}`} className='form-label'>
         Item Name:
       </label>
 
       <input
-        id={`itemName-${item.id}`}
+        id={`itemName-${item.client_id}`}
         type='text'
         className='form-control'
         placeholder='Name'
         value={item.name}
         onChange={(event) =>
-          onItemFieldChange(item.id, 'name', event.target.value)
+          onItemFieldChange(item.client_id, 'name', event.target.value)
         }
       />
     </div>
@@ -390,19 +507,19 @@ function ItemName({ item, onItemFieldChange }) {
 function ItemValue({ item, onItemFieldChange }) {
   return (
     <div className='col-md-6'>
-      <label htmlFor={`itemValue-${item.id}`} className='form-label'>
+      <label htmlFor={`itemValue-${item.client_id}`} className='form-label'>
         Item Value:
       </label>
 
       <ItemValueInput
         type={item.type}
         value={item.value}
-        id={`itemValue-${item.id}`}
+        id={`itemValue-${item.client_id}`}
         onChange={(event) => {
           if (item.type === 'checkbox') {
-            onItemFieldChange(item.id, 'value', event.target.checked);
+            onItemFieldChange(item.client_id, 'value', event.target.checked);
           } else {
-            onItemFieldChange(item.id, 'value', event.target.value);
+            onItemFieldChange(item.client_id, 'value', event.target.value);
           }
         }}
         placeholder='Value'
@@ -449,7 +566,9 @@ function ItemRemoveButton({ itemId, setFormData }) {
   const handleRemoveItem = (itemUniqueId) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      items: prevFormData.items.filter((item) => item.id !== itemUniqueId)
+      items: prevFormData.items.filter(
+        (item) => item.client_id !== itemUniqueId
+      )
     }));
   };
 

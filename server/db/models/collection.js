@@ -22,13 +22,21 @@ const collectionSchema = new Schema({
     type: String,
     required: true
   },
-  customFields: [
+  items: [
     {
       name: {
         type: String,
         required: true
       },
       value: {
+        type: String,
+        required: true
+      },
+      type: {
+        type: String,
+        required: true
+      },
+      client_id: {
         type: String,
         required: true
       }

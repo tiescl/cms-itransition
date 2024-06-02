@@ -1,10 +1,13 @@
 import { Schema, SchemaTypes, model } from 'mongoose';
 
 const tagSchema = new Schema({
-  name: {
+  label: {
     type: String,
-    required: true,
-    unique: true
+    required: true
+  },
+  value: {
+    type: String,
+    required: true
   },
   collections: [
     {
