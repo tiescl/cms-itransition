@@ -7,18 +7,6 @@
   transition: transform ease-in-out 0.2s;
 }
 
-@media (min-width: 768px) {
-  .collection-box {
-    min-width: 350px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .collection-box {
-    min-width: 450px;
-  }
-}
-
 .hide-on-small-screen {
   display: block;
 }

@@ -5,8 +5,8 @@ export default function CollectionBox({ collection }) {
   const MAX_ITEMS = 3;
 
   return (
-    <div className='col-11 col-md-6 mb-5 mx-auto d-flex justify-content-center'>
-      <div className='card shadow collection-box'>
+    <div className='col-11 col-md-6 mb-5 mx-auto flex-fill d-flex justify-content-center'>
+      <div className='card shadow collection-box flex-fill'>
         <div className='card-img-top' style={{ position: 'relative' }}>
           {collection.imageUrl ? (
             <img
@@ -26,7 +26,10 @@ export default function CollectionBox({ collection }) {
               <em>
                 by{' '}
                 <strong>
-                  <Link to={`/users/${collection.user._id}`}>
+                  <Link
+                    to={`/users/${collection.user._id}`}
+                    className='text-decoration-none'
+                  >
                     {collection.user.username}
                   </Link>
                 </strong>
@@ -70,14 +73,13 @@ export default function CollectionBox({ collection }) {
             <div className='text-end'>
               <Link
                 to={`/collections/${collection._id}`}
-                className='text-primary fs-6 me-3'
+                className='text-primary fs-6 text-decoration-none me-3'
               >
                 See More...
               </Link>
             </div>
           )}
 
-          {/* Tag List (with line breaks and "See More" link) */}
           <div style={{ lineHeight: '1.2' }} className='mt-3'>
             {collection.tags.map((tag, index) => {
               if (index >= 6) {

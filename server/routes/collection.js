@@ -2,6 +2,7 @@ import express from 'express';
 import Tag from '../db/models/tag.js';
 import Collection from '../db/models/collection.js';
 import User from '../db/models/user.js';
+import Comment from '../db/models/comment.js';
 import checkCurrentUser from './middleware/checkCurrentUser.js';
 import { ObjectId } from 'mongodb';
 const router = express.Router();
@@ -96,16 +97,28 @@ router.post('/create', checkCurrentUser, async (req, res) => {
     res.status(201).json(newCollection);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: 'collection_init_failed' });
   }
 });
 
 router.get('/:collectionId', async (req, res) => {
   try {
-    // fetch a specific collection; auth not required;
+    const collectionId = req.params.collectionId;
+    console.log(collectionId);
+
+    const collection = await Collection.findById(collectionId)
+      .populate('user', 'username')
+      .populate('tags', 'label value')
+      .populate('comments');
+
+    if (!collection) {
+      return res.status(404).send({ error: 'collection_not_found' });
+    }
+
+    res.status(200).json(collection);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error Fetching a Collection');
+    res.status(500).send({ error: 'collection_fetch_failed' });
   }
 });
 

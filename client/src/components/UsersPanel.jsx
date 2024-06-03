@@ -190,8 +190,8 @@ function AdminPanel() {
 
       <h1
         style={{
-          marginTop: '120px',
-          marginBottom: '40px',
+          marginTop: '130px',
+          marginBottom: '30px',
           fontSize: '40px',
           fontWeight: '500'
         }}

@@ -14,6 +14,8 @@ export default function getHumanReadableError(error_message) {
       return 'Some required fields are invalid or missing.';
     case 'missing_item_fields':
       return 'Item fields (name and value) must not be empty.';
+    case 'collection_not_found':
+      return 'Collection not found. Does it exist?';
     default:
       return 'Something went wrong. Please try again';
   }

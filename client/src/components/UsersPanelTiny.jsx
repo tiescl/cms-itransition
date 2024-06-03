@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
+import stringifyDate from '../utils/stringifyDate.js';
 
 export function UserRow({ user, selectedUsers, onChange }) {
   return (
@@ -11,7 +12,10 @@ export function UserRow({ user, selectedUsers, onChange }) {
         />
       </td>
       <td>
-        <Link to={`/users/${user._id}`} style={{ color: 'blue' }}>
+        <Link
+          to={`/users/${user._id}`}
+          className='text-primary text-decoration-none'
+        >
           {user.username} {user.isAdmin ? '👑' : ''}
         </Link>
       </td>
@@ -23,8 +27,8 @@ export function UserRow({ user, selectedUsers, onChange }) {
           ? 1
           : 0}
       </td>
-      <td>{user.lastLoginDate}</td>
-      <td>{user.registerDate}</td>
+      <td>{stringifyDate(user.lastLoginDate)}</td>
+      <td>{stringifyDate(user.registerDate)}</td>
       <td>
         <StatusWrapper
           status={user.isBlocked ? 'blocked' : 'active'}

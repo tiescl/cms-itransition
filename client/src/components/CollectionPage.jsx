@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { UserContext } from './UserContext.jsx';
-import CommentForm from './CommentForm.jsx';
+import UserContext from '../context/UserContext.jsx';
 import getHumanReadableError from '../utils/getHumanReadableError.js';
+import LoadingScreen from './LoadingScreen.jsx';
 import '../styles/bootstrp.css';
 
 export default function CollectionPage() {
@@ -21,6 +21,7 @@ export default function CollectionPage() {
 
   useEffect(() => {
     const fetchCollection = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch(
           `${prodUrl}/api/collections/${collectionId}`
@@ -39,16 +40,22 @@ export default function CollectionPage() {
       }
     };
     fetchCollection();
-  }, [collectionId]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (requestError) {
+    const intervalId = setInterval(fetchCollection, 20000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  if (isLoading) return <LoadingScreen />;
+  if (requestError !== '') {
     return (
       <div className='alert alert-danger'>
         {requestError}. Try refreshing the page.
       </div>
     );
   }
+
+  console.log(collection);
 
   return (
     <div className='container mt-5'>
@@ -66,13 +73,15 @@ export default function CollectionPage() {
       <hr />
       <h3>Comments</h3>
       {/* ... display collection.comments ... */}
-      {user && ( // Show comment form only if user is logged in
-        <CommentForm collectionId={id} />
-      )}
+      {user && <CommentForm collectionId={id} />}
     </div>
   );
 }
 
 function ItemsTable() {
-  return <table></table>;
+  return <></>;
+}
+
+function CommentForm() {
+  return <></>;
 }

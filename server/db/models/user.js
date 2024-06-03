@@ -1,6 +1,5 @@
 import { Schema, SchemaTypes, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import stringifyDate from '../../utils/stringify.js';
 
 const userSchema = new Schema({
   username: {
@@ -35,12 +34,12 @@ const userSchema = new Schema({
   },
   registerDate: {
     type: String,
-    default: () => stringifyDate(new Date()),
+    default: () => new Date(),
     immutable: true
   },
   lastLoginDate: {
     type: String,
-    default: () => stringifyDate(new Date())
+    default: () => new Date()
   },
   preferredLanguage: {
     type: String,
@@ -57,7 +56,7 @@ userSchema.statics.login = async function (email, password) {
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
     if (auth) {
-      user.lastLoginDate = stringifyDate(new Date());
+      user.lastLoginDate = new Date();
       user.save();
       return user;
     }

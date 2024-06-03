@@ -15,7 +15,6 @@ export default function Collections() {
         const response = await fetch(`${prodUrl}/api/collections`);
         if (response.ok) {
           const collections = await response.json();
-          console.log('fetched');
           setCollectionsList(collections);
         } else {
           const errorData = await response.json();
@@ -38,7 +37,7 @@ export default function Collections() {
 
       <h1
         style={{
-          marginTop: '110px',
+          marginTop: '130px',
           marginBottom: '40px',
           fontSize: '40px',
           fontWeight: '500'
@@ -49,9 +48,8 @@ export default function Collections() {
       </h1>
 
       <div className='container'>
-        <div className='row'>
+        <div className='row d-flex'>
           {collectionsList.map((collection) => {
-            console.log(collection);
             return (
               <CollectionBox key={collection._id} collection={collection} />
             );

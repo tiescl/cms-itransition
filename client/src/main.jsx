@@ -7,14 +7,15 @@ import Register from './components/Register.jsx';
 import { UserProvider } from './context/UserContext.jsx';
 import AdminPanel from './components/UsersPanel.jsx';
 import CreateCollection from './components/CreateCollection.jsx';
+import Collections from './components/Collections.jsx';
+import CollectionPage from './components/CollectionPage.jsx';
+import UserPage from './components/UserPage.jsx';
 import ErrorPage from './components/ErrorPage.jsx';
 import IncompleteRoute from './components/IncompleteRoute.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
-import Collections from './components/Collections.jsx';
-import UserPage from './components/UserPage.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -28,9 +29,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path='/collections' element={<Collections />} />
             <Route
               path='/collections/:collectionId'
-              element={
-                <IncompleteRoute text='Page of an individual collection ' />
-              }
+              element={<CollectionPage />}
             />
             <Route
               path='/collections/:collectionId/edit'
