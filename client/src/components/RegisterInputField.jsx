@@ -8,16 +8,15 @@ export default function FormField({
 }) {
   return (
     <>
-      <br />
       <label htmlFor={name}>{label}</label>
       <input
         type={type}
         name={name}
-        className='block appearance-none w-full py-2 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded'
+        className='form-control mb-2'
         ref={value}
         onChange={onChange}
       />
-      <div className='block text-lg mt-1 text-red-600'>{errorMsg}</div>
+      <div className='form-text fs-5 mb-3 text-danger'>{errorMsg}</div>
     </>
   );
 }

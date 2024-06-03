@@ -53,45 +53,45 @@ export default function Login() {
   };
 
   return (
-    <div className='container mx-auto sm:px-4 row'>
-      <h1 className=' mt-12 text-4xl text-center'>Log In</h1>
-      <form className='col-md-6 text-xl items-center mx-auto'>
-        <br />
-        <label htmlFor='email'>E-mail: </label>
-        <input
-          className='block appearance-none w-full py-2 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded-md'
-          type='login'
-          name='email'
-          placeholder='E-mail'
-          ref={emailRef}
-          onFocus={() => setShowError(false)}
-        />
-        <br />
-        <label htmlFor='password'>Password: </label>
-        <input
-          className='block appearance-none w-full py-2 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded-md'
-          type='password'
-          name='password'
-          placeholder='Password'
-          ref={passwordRef}
-          onFocus={() => setShowError(false)}
-        />
-        {showError && <h5 className=' text-red-700 mt-3'>{errorMessage}</h5>}
-        <br />
-        <button
-          type='button'
-          className='align-middle text-center rounded-md select-none font-normal whitespace-no-wrap py-2 px-3 no-underline bg-blue-600 text-white hover:bg-blue-500 block appearance-none w-full mb-1 text-base leading-normal border border-gray-200'
-          onClick={login}
-        >
-          Log In
-        </button>
-        <h4 className='mt-6'>
-          Want an account?{' '}
-          <Link className='no-underline text-blue-600' to='/register'>
-            Register!
-          </Link>
-        </h4>
-      </form>
-    </div>
+    <>
+      <div className='container'>
+        <h1 className='text-center fs-1 mt-5 mb-2'>Log In</h1>
+        <form className='col-md-6 fs-5 items-center mx-auto'>
+          <label htmlFor='email'>E-mail: </label>
+          <input
+            className='form-control mb-4'
+            type='login'
+            name='email'
+            placeholder='E-mail'
+            ref={emailRef}
+            onFocus={() => setShowError(false)}
+          />
+          <label htmlFor='password'>Password: </label>
+          <input
+            className='form-control mb-3'
+            type='password'
+            name='password'
+            placeholder='Password'
+            ref={passwordRef}
+            onFocus={() => setShowError(false)}
+          />
+          {showError && <p className='text-danger mt-1'>{errorMessage}</p>}
+
+          <button
+            type='button'
+            className='btn btn-primary form-control mt-4'
+            onClick={login}
+          >
+            Log In
+          </button>
+          <p className='mt-3 fs-4'>
+            Want an account?{' '}
+            <Link className='text-primary text-decoration-none' to='/register'>
+              Register!
+            </Link>
+          </p>
+        </form>
+      </div>
+    </>
   );
 }

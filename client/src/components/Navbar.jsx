@@ -2,14 +2,10 @@ import { Link } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 import { useContext } from 'react';
 import '../styles/bootstrp.css';
+import searchImage from '../data/image-search.svg';
 
 export default function Navbar() {
   const { user, setUser, setTrigger } = useContext(UserContext);
-
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
-  const token = localStorage.getItem('auth');
 
   const handleLogout = () => {
     setUser(null);
@@ -56,11 +52,23 @@ export default function Navbar() {
                 aria-label='Close'
               ></button>
             </div>
-            <div className='offcanvas-body d-flex justify-content-center shift-on-large-screen'>
+            <div className='offcanvas-body shift-on-large-screen'>
               <ul className='navbar-nav align-items-center'>
                 <li className='nav-item fs-5 me-2 hide-on-small-screen'>
                   <strong>{user?.username || 'Guest'}</strong>
                 </li>
+                <form className='d-flex mb-4 mt-4 me-2 ' role='search'>
+                  <div className='input-group'>
+                    <input
+                      className='form-control'
+                      type='search'
+                      placeholder='Search'
+                    />
+                    <button className='btn btn-primary' type='submit'>
+                      <img src={searchImage} alt='search icon' />
+                    </button>
+                  </div>
+                </form>
                 {user ? (
                   <li className='nav-item m-2'>
                     <Link

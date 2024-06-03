@@ -120,9 +120,9 @@ export default function Register() {
   };
 
   return (
-    <div className='container mx-auto sm:px-4'>
-      <h1 className='text-center text-3xl mt-12'>Register</h1>
-      <form className='col-md-6 text-xl mx-auto'>
+    <div className='container'>
+      <h1 className='text-center fs-1 mt-5 mb-3'>Register</h1>
+      <form className='col-md-6 fs-5 mx-auto'>
         <FormField
           type='text'
           name='full_name'
@@ -159,22 +159,22 @@ export default function Register() {
           errorMsg={confirmPasswordWarn}
           onFocus={() => setShowError(false)}
         />
-        {showError && <h5 className='text-red-600 mt-2'>{errorMessage}</h5>}
+        {showError && <p className='text-danger mt-3'>{errorMessage}</p>}
         <br />
         <button
           type='button'
-          className='align-middle disabled:bg-gray-400 disabled:text-gray-200 disabled:cursor-not-allowed text-center select-none font-normal whitespace-no-wrap rounded-md px-3 leading-normal no-underline bg-blue-600 text-white hover:bg-blue-500 block appearance-none w-full py-2 mb-1 text-base border border-gray-200'
+          className='btn btn-primary form-control mt-2'
           onClick={handleSubmit}
           disabled={handleDisabled()}
         >
           Register
         </button>
-        <h4 className='mt-6'>
+        <p className='mt-3 fs-4'>
           Got an account?{' '}
-          <Link className='no-underline text-blue-600' to='/login'>
+          <Link className='text-primary text-decoration-none' to='/login'>
             Log in!
           </Link>
-        </h4>
+        </p>
       </form>
     </div>
   );

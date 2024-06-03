@@ -13,8 +13,8 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
-import './styles/build.css';
 import Collections from './components/Collections.jsx';
+import UserPage from './components/UserPage.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -24,10 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route element={<ProtectedRoute />}>
             <Route path='/' element={<App />} />
             <Route path='/users' element={<AdminPanel />} />
-            <Route
-              path='/users/:userId'
-              element={<IncompleteRoute text='Page of an individual user ' />}
-            />
+            <Route path='/users/:userId' element={<UserPage />} />
             <Route path='/collections' element={<Collections />} />
             <Route
               path='/collections/:collectionId'
