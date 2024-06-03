@@ -16,7 +16,13 @@ export function UserRow({ user, selectedUsers, onChange }) {
         </Link>
       </td>
       <td>{user.email}</td>
-      <td>{user.collections?.length || '0'}</td>
+      <td>
+        {Array.isArray(user.collections)
+          ? user.collections?.length
+          : user.collections !== undefined
+          ? 1
+          : 0}
+      </td>
       <td>{user.lastLoginDate}</td>
       <td>{user.registerDate}</td>
       <td>

@@ -9,6 +9,8 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     // get a table view of all collections
+    const collections = await Collection.find({}).exec();
+    res.status(200).send(collections);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Error Fetching Collections');
@@ -31,6 +33,9 @@ router.post('/create', checkCurrentUser, async (req, res) => {
   try {
     const { name, description, category, imageUrl, user, items, tags } =
       req.body;
+    if (user === null || user === '') {
+      return res.status(403).send('operation_forbidden');
+    }
     const passed_user_id = new ObjectId(String(user));
 
     if (!currentUser.isAdmin && !passed_user_id.equals(currentUser._id)) {

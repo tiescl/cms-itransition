@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 import categoriesData from '../data/categories.json';
 import Navbar from './Navbar.jsx';
@@ -24,11 +24,6 @@ export default function CreateCollection() {
   const [requestError, setRequestError] = useState('');
   const [imageError, setImageError] = useState('');
   const [tagError, setTagError] = useState('');
-
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
-  const token = localStorage.getItem('auth');
 
   const handleDisabled = (formSubmitData) => {
     setError('');
@@ -59,7 +54,19 @@ export default function CreateCollection() {
     return false;
   };
 
-  console.log(formData);
+  const getHumanReadableError = (error) => {
+    switch (error) {
+      case 'operation_forbidden':
+        return 'You need to be signed in to create collections.';
+      case 'missing_required_fields':
+        return 'Some required fields are invalid or missing.';
+      case 'missing_item_fields':
+        return 'Item fields (name and value) must not be empty.';
+      default:
+        return 'Something went wrong. Please try again.';
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -70,8 +77,12 @@ export default function CreateCollection() {
 
     if (!handleDisabled(formData)) {
       e.target.disabled = true;
+      setRequestError('');
 
       try {
+        if (user === null || user === '') {
+          throw new Error('operation_forbidden');
+        }
         const response = await fetch(`${prodUrl}/api/collections/create`, {
           method: 'POST',
           headers: {
@@ -92,7 +103,7 @@ export default function CreateCollection() {
         }
       } catch (err) {
         e.target.disabled = false;
-        setRequestError(`Error creating a collection: ${err.message}`);
+        setRequestError(`Error: ${getHumanReadableError(err.message)}`);
       }
     }
   };
@@ -136,7 +147,7 @@ export default function CreateCollection() {
               />
 
               {error && <h5 className='text-danger mt-2'>{error}</h5>}
-              {requestError && (
+              {error === '' && requestError && (
                 <h5 className='text-danger mt-2'>{requestError}</h5>
               )}
 
@@ -406,7 +417,7 @@ function TagSelection({
     let finalLabel = baseLabel.slice(0, Math.min(baseLabel.length, 50));
     return {
       label: `#${finalLabel}`,
-      value: finalLabel.toLowerCase()
+      value: finalLabel
     };
   };
 
