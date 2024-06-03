@@ -53,9 +53,9 @@ export default function Login() {
   };
 
   return (
-    <div className='container mx-auto sm:px-4'>
+    <div className='container mx-auto sm:px-4 row'>
       <h1 className=' mt-12 text-4xl text-center'>Log In</h1>
-      <form className='w-1/3 text-xl items-center mx-auto'>
+      <form className='col-md-6 text-xl items-center mx-auto'>
         <br />
         <label htmlFor='email'>E-mail: </label>
         <input

@@ -122,7 +122,7 @@ export default function Register() {
   return (
     <div className='container mx-auto sm:px-4'>
       <h1 className='text-center text-3xl mt-12'>Register</h1>
-      <form className=' w-1/3 text-xl mx-auto'>
+      <form className='col-md-6 text-xl mx-auto'>
         <FormField
           type='text'
           name='full_name'

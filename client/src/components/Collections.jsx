@@ -39,7 +39,7 @@ export default function Collections() {
       <h1
         style={{
           marginTop: '110px',
-          marginBottom: '30px',
+          marginBottom: '40px',
           fontSize: '40px',
           fontWeight: '500'
         }}

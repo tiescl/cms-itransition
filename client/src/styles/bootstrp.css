@@ -19,6 +19,22 @@
   }
 }
 
+.hide-on-small-screen {
+  display: block;
+}
+
+@media (max-width: 991px) {
+  .hide-on-small-screen {
+    display: none;
+  }
+}
+
+@media (min-width: 992px) {
+  .shift-on-large-screen {
+    justify-content: end !important;
+  }
+}
+
 .placeholder-image {
   background-color: #f0f0f0;
   background-image: url('../data/image-icon.svg');

@@ -23,12 +23,14 @@ export default function CollectionBox({ collection }) {
           <div className='card-header border mb-2 rounded'>
             <h5 className='card-title fs-4 fw-bold'>{collection.name}</h5>
             <p className='card-subtitle text-body-secondary'>
-              by{' '}
-              <strong>
-                <Link to={`/users/${collection.user._id}`}>
-                  {collection.user.username}
-                </Link>
-              </strong>
+              <em>
+                by{' '}
+                <strong>
+                  <Link to={`/users/${collection.user._id}`}>
+                    {collection.user.username}
+                  </Link>
+                </strong>
+              </em>
             </p>
 
             <p
