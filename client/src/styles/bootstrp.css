@@ -1,0 +1,36 @@
+.collection-box:hover {
+  transform: scale(1.03);
+}
+
+.collection-box {
+  max-width: 450px;
+  transition: transform ease-in-out 0.2s;
+}
+
+@media (min-width: 768px) {
+  .collection-box {
+    min-width: 350px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .collection-box {
+    min-width: 450px;
+  }
+}
+
+.placeholder-image {
+  background-color: #f0f0f0;
+  background-image: url('../data/image-icon.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #999;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  min-height: 150px;
+  max-height: 250px;
+}

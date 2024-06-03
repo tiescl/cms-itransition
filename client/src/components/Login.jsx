@@ -1,6 +1,7 @@
 import { useRef, useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import UserContext from '../context/UserContext';
+import getHumanReadableError from '../utils/getHumanReadableError';
 
 export default function Login() {
   const { setUser, setTrigger } = useContext(UserContext);
@@ -48,20 +49,6 @@ export default function Login() {
         setErrorMessage(getHumanReadableError(err.message));
         setShowError(true);
       }
-    }
-  };
-
-  const getHumanReadableError = (error) => {
-    // console.log(error);
-    switch (error) {
-      case 'incorrect_email' || 'incorrect_password':
-        return 'User with the given email does not exist.';
-      case 'incorrect_password':
-        return 'Entered password is invalid.';
-      case 'user_blocked':
-        return 'Your account has been blocked. Stay cool✌️';
-      default:
-        return `Something went wrong. Please try again`;
     }
   };
 

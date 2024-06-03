@@ -1,10 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 import categoriesData from '../data/categories.json';
 import Navbar from './Navbar.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import CreatableSelect from 'react-select/creatable';
+import getHumanReadableError from '../utils/getHumanReadableError.js';
 
 export default function CreateCollection() {
   const { user } = useContext(UserContext);
@@ -54,19 +55,6 @@ export default function CreateCollection() {
     return false;
   };
 
-  const getHumanReadableError = (error) => {
-    switch (error) {
-      case 'operation_forbidden':
-        return 'You need to be signed in to create collections.';
-      case 'missing_required_fields':
-        return 'Some required fields are invalid or missing.';
-      case 'missing_item_fields':
-        return 'Item fields (name and value) must not be empty.';
-      default:
-        return 'Something went wrong. Please try again.';
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -95,7 +83,7 @@ export default function CreateCollection() {
         if (response.ok) {
           const newCollection = await response.json();
           console.log(newCollection);
-          //navigate('/collections');
+          navigate('/collections');
         } else {
           const errorData = await response.json();
           e.target.disabled = false;

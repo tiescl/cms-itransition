@@ -8,12 +8,14 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    // get a table view of all collections
-    const collections = await Collection.find({}).exec();
+    const collections = await Collection.find({})
+      .populate('user', 'username')
+      .populate('tags', 'label value')
+      .exec();
     res.status(200).send(collections);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error Fetching Collections');
+    res.status(500).send({ error: 'collections_fetch_failed' });
   }
 });
 
@@ -113,6 +115,15 @@ router.post('/:collectionId/comments', async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Error Adding a Comment');
+  }
+});
+
+router.get('/:collectionId/comments', async (req, res) => {
+  try {
+    // fetch all collection comments;
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send({ error: err.message });
   }
 });
 

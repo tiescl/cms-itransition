@@ -1,10 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {
-  BrowserRouter,
-  Route,
-  Routes
-} from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './App.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
@@ -18,6 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import './styles/build.css';
+import Collections from './components/Collections.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -31,10 +28,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               path='/users/:userId'
               element={<IncompleteRoute text='Page of an individual user ' />}
             />
-            <Route
-              path='/collections'
-              element={<IncompleteRoute text='List of collections' />}
-            />
+            <Route path='/collections' element={<Collections />} />
             <Route
               path='/collections/:collectionId'
               element={

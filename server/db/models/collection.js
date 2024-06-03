@@ -13,6 +13,19 @@ const collectionSchema = new Schema({
     type: String,
     default: ''
   },
+  createdAt: {
+    type: Date,
+    default: () => Date.now(),
+    immutable: true
+  },
+  lastModified: {
+    type: Date,
+    default: () => Date.now()
+  },
+  likesCount: {
+    type: Number,
+    default: 0
+  },
   user: {
     type: SchemaTypes.ObjectId,
     ref: 'User',

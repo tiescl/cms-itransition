@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import FormField from './RegisterInputField.jsx';
+import getHumanReadableError from '../utils/getHumanReadableError.js';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -64,16 +65,6 @@ export default function Register() {
       } else {
         setConfirmPasswordWarn('');
       }
-    }
-  };
-
-  const getHumanReadableError = (error) => {
-    // console.log(error);
-    switch (error) {
-      case 'email_in_use':
-        return `The email you provided is already in use. Consider joining us with another one.`;
-      default:
-        return 'Something went wrong. Please try again.';
     }
   };
 
