@@ -10,6 +10,14 @@ export default function getHumanReadableError(error_message) {
       return `The email you provided is already in use. Consider joining us with another one.`;
     case 'operation_forbidden':
       return 'Sign in required to create, edit, and like collections, as well as add comments.';
+    case 'invalid_collection_fields':
+      return "Please ensure you are not putting Homer's Odyssey novel into description or name.";
+    case 'invalid_item_fields':
+      return 'Item fields cannot be so lengthy, you will bore your readers!';
+    case 'too_many_tags':
+      return "Too many tags. Spamming ain't so good";
+    case 'invalid_tag_fields':
+      return 'We kindly ask you to keep your tags short and neat)';
     case 'missing_required_fields':
       return 'Some required fields are invalid or missing.';
     case 'missing_item_fields':
@@ -20,6 +28,8 @@ export default function getHumanReadableError(error_message) {
       return 'Comments should not be empty.';
     case 'comment_collection_not_found' || 'comment_add_failed':
       return 'There was a problem adding your comment.';
+    case 'collection_fetch_failed':
+      return 'Failed to fetch collection data. Please try again.';
     case 'collection_delete_failed':
       return 'Failed to delete the collection. Please try again later.';
     case 'collection_like_failed':

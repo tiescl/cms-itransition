@@ -5,6 +5,7 @@ import getHumanReadableError from '../utils/getHumanReadableError.js';
 import stringifyDate from '../utils/stringifyDate.js';
 import '../styles/bootstrp.css';
 import LoadingScreen from './LoadingScreen.jsx';
+import Navbar from './Navbar.jsx';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
 
 export default function CollectionPage() {
@@ -58,6 +59,7 @@ export default function CollectionPage() {
     <>
       {collection && !isLoading ? (
         <>
+          <Navbar />
           <ErrorAlert
             requestError={requestError}
             setRequestError={setRequestError}
@@ -209,7 +211,10 @@ function CollectionDetails({
   };
 
   return (
-    <div className='container border border-2 rounded-4 p-3 mb-4 mt-4'>
+    <div
+      className='container border border-2 rounded-4 p-3 mb-4'
+      style={{ marginTop: '130px' }}
+    >
       <div className='row'>
         <div className='col-lg-8'>
           <div className='row'>
