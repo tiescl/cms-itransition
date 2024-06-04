@@ -1,7 +1,8 @@
 import { useRef, useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import UserContext from '../context/UserContext';
-import getHumanReadableError from '../utils/getHumanReadableError';
+import UserContext from '../context/UserContext.jsx';
+import getHumanReadableError from '../utils/getHumanReadableError.js';
+import Navbar from './Navbar.jsx';
 
 export default function Login() {
   const { setUser, setTrigger } = useContext(UserContext);
@@ -54,8 +55,11 @@ export default function Login() {
 
   return (
     <>
+      <Navbar />
       <div className='container'>
-        <h1 className='text-center fs-1 mt-5 mb-2'>Log In</h1>
+        <h1 className='text-center fs-1 mb-2' style={{ marginTop: '130px' }}>
+          Log In
+        </h1>
         <form className='col-md-6 fs-5 items-center mx-auto'>
           <label htmlFor='email'>E-mail: </label>
           <input

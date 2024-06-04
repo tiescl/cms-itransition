@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import FormField from './RegisterInputField.jsx';
 import getHumanReadableError from '../utils/getHumanReadableError.js';
+import Navbar from './Navbar.jsx';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -121,7 +122,10 @@ export default function Register() {
 
   return (
     <div className='container'>
-      <h1 className='text-center fs-1 mt-5 mb-3'>Register</h1>
+      <Navbar />
+      <h1 className='text-center fs-1 mb-3' style={{ marginTop: '130px' }}>
+        Register
+      </h1>
       <form className='col-md-6 fs-5 mx-auto'>
         <FormField
           type='text'
