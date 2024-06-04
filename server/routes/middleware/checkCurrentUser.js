@@ -6,7 +6,7 @@ const checkCurrentUser = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.SECRET_JWT_KEY, async (err, decodedToken) => {
       if (err) {
-        console.error(err.message);
+        console.error(err);
         res.locals.user = null;
         next();
       } else {

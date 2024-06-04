@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
 import stringifyDate from '../utils/stringifyDate.js';
 
+// TODO: pass the dates to stringify once the users are deleted
+
 export function UserRow({ user, selectedUsers, onChange }) {
   return (
     <tr style={{ verticalAlign: 'middle' }}>
@@ -27,8 +29,8 @@ export function UserRow({ user, selectedUsers, onChange }) {
           ? 1
           : 0}
       </td>
-      <td>{stringifyDate(user.lastLoginDate)}</td>
-      <td>{stringifyDate(user.registerDate)}</td>
+      <td>{user.lastLoginDate}</td>
+      <td>{user.registerDate}</td>
       <td>
         <StatusWrapper
           status={user.isBlocked ? 'blocked' : 'active'}

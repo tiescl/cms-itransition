@@ -15,12 +15,12 @@ const collectionSchema = new Schema({
   },
   createdAt: {
     type: Date,
-    default: () => Date.now(),
+    default: () => new Date(),
     immutable: true
   },
   lastModified: {
     type: Date,
-    default: () => Date.now()
+    default: () => new Date()
   },
   likesCount: {
     type: Number,

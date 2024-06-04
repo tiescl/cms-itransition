@@ -38,8 +38,6 @@ export default function UserPage() {
   //     return <div>Loading...</div>;
   //   }
 
-  console.log(userId);
-
   return (
     <div className='container'>
       <h2>Profile # {userId}</h2>

@@ -37,12 +37,12 @@ router.post('/create', checkCurrentUser, async (req, res) => {
     const { name, description, category, imageUrl, user, items, tags } =
       req.body;
     if (user === null || user === '') {
-      return res.status(403).send('operation_forbidden');
+      return res.status(403).send({ error: 'operation_forbidden' });
     }
     const passed_user_id = new ObjectId(String(user));
 
     if (!currentUser.isAdmin && !passed_user_id.equals(currentUser._id)) {
-      return res.status(403).send('operation_forbidden');
+      return res.status(403).send({ error: 'operation_forbidden' });
     }
 
     if (!name || !category || !items || items.length === 0) {
@@ -103,18 +103,22 @@ router.post('/create', checkCurrentUser, async (req, res) => {
 
 router.get('/:collectionId', async (req, res) => {
   try {
-    const collectionId = req.params.collectionId;
-    console.log(collectionId);
+    const collectionId = new ObjectId(String(req.params.collectionId));
 
     const collection = await Collection.findById(collectionId)
       .populate('user', 'username')
       .populate('tags', 'label value')
-      .populate('comments');
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'username'
+        }
+      });
 
     if (!collection) {
       return res.status(404).send({ error: 'collection_not_found' });
     }
-
     res.status(200).json(collection);
   } catch (err) {
     console.error(err.message);
@@ -122,21 +126,139 @@ router.get('/:collectionId', async (req, res) => {
   }
 });
 
-router.post('/:collectionId/comments', async (req, res) => {
+router.post('/:collectionId/comments', checkCurrentUser, async (req, res) => {
+  const currentUser = res.locals.user;
+
   try {
-    // add a comment to a collection; auth- and admin-only;
+    const { text } = req.body;
+    const collectionId = new ObjectId(String(req.params.collectionId));
+
+    if (!currentUser) {
+      return res.status(403).send({ error: 'operation_forbidden' });
+    }
+
+    if (!text) {
+      return res.status(400).send({ error: 'empty_comment' });
+    }
+
+    const collection = await Collection.findById(collectionId);
+
+    if (!collection) {
+      return res.status(404).send({ error: 'comment_collection_not_found' });
+    }
+
+    const newComment = await Comment.create({
+      text,
+      author: currentUser._id,
+      collection: collectionId
+    });
+
+    collection.comments.push(newComment._id);
+    await collection.save();
+
+    res.status(201).json(newComment);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error Adding a Comment');
+    res.status(500).send({ error: 'comment_add_failed' });
   }
 });
 
-router.get('/:collectionId/comments', async (req, res) => {
+router.delete('/:collectionId', checkCurrentUser, async (req, res) => {
+  const currentUser = res.locals.user;
+  const collectionId = new ObjectId(String(req.params.collectionId));
+
   try {
-    // fetch all collection comments;
+    const collection = await Collection.findById(collectionId);
+
+    if (!collection) {
+      return res.status(404).json({ error: 'collection_not_found' });
+    }
+
+    if (!currentUser) {
+      return res.status(403).json({ error: 'operation_forbidden' });
+    }
+
+    if (
+      !collection.user._id.equals(currentUser._id) &&
+      !res.locals.user.isAdmin
+    ) {
+      return res.status(403).json({ error: 'operation_forbidden' });
+    }
+
+    await Comment.deleteMany({ collection: collectionId });
+    await Tag.updateMany(
+      { collections: collectionId },
+      { $pull: { collections: collectionId } }
+    );
+
+    const deletedCollection = await collection.deleteOne();
+
+    res.status(200).json(deletedCollection);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: err.message });
+    res.status(500).send({ error: 'collection_delete_failed' });
+  }
+});
+
+router.post('/:collectionId/like', checkCurrentUser, async (req, res) => {
+  const currentUser = res.locals.user;
+
+  try {
+    if (!currentUser) {
+      return res.status(403).json({ error: 'operation_forbidden' });
+    }
+
+    const collectionId = new ObjectId(String(req.params.collectionId));
+
+    const collection = await Collection.findByIdAndUpdate(
+      collectionId,
+      { $inc: { likesCount: 1 } },
+      { new: true }
+    );
+
+    if (!collection) {
+      return res.status(404).json({ error: 'collection_not_found' });
+    }
+    res.status(200).json(collection);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'collection_like_failed' });
+  }
+});
+
+router.post('/:collectionId/unlike', checkCurrentUser, async (req, res) => {
+  const currentUser = res.locals.user;
+
+  try {
+    if (!currentUser) {
+      return res.status(403).json({ error: 'operation_forbidden' });
+    }
+
+    const collectionId = new ObjectId(String(req.params.collectionId));
+
+    const updatedCollection = await Collection.findByIdAndUpdate(
+      collectionId,
+      {
+        $inc: { likesCount: -1 }
+      },
+      { new: true }
+    );
+
+    if (!updatedCollection) {
+      return res.status(404).json({ error: 'collection_not_found' });
+    }
+
+    if (updatedCollection.likesCount < 0) {
+      await Collection.findByIdAndUpdate(collectionId, {
+        $set: { likesCount: 0 }
+      });
+      return res.status(500).json({ error: 'likes_below_zero' });
+    }
+
+    res.status(200).json(updatedCollection);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'collection_unlike_failed' });
   }
 });
 

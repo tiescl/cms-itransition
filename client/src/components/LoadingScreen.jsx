@@ -1,4 +1,6 @@
-export default function LoadingScreen() {
+export default function LoadingScreen({
+  message = 'Taking too long? Try reloading the page'
+}) {
   return (
     <div
       className='position-fixed w-100 h-100 d-flex flex-column text-black justify-content-center align-items-center'
@@ -7,9 +9,7 @@ export default function LoadingScreen() {
       <div className='spinner-border flex-row' role='status'>
         <span className='visually-hidden'>Loading...</span>
       </div>
-      <p className='flex-row mt-3 fs-4'>
-        Taking too long? Try reloading the page
-      </p>
+      <p className='flex-row mt-3 fs-4'>{message}</p>
     </div>
   );
 }
