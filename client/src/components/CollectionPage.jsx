@@ -73,7 +73,27 @@ export default function CollectionPage() {
 
           <ItemsDetails items={collection.items} />
 
-          <div className='container border border-2 rounded-4 p-3 mb-4 mt-2'>
+          <div className='container'>
+            {collection.tags.map((tag, index) => {
+              if (index >= 6) {
+                return null;
+              }
+              return (
+                <span
+                  key={tag._id}
+                  className='badge rounded-pill bg-primary me-2 mb-2'
+                  style={{ fontSize: '15px' }}
+                >
+                  {tag.label}
+                </span>
+              );
+            })}
+          </div>
+
+          <div
+            id='yet-another-enfore-width-95'
+            className='container border border-2 rounded-4 p-3 mb-4 mt-2'
+          >
             <h2 className='fw-bold fs-1'>Comments</h2>
 
             {collection.comments?.map((comment) => (
@@ -212,8 +232,9 @@ function CollectionDetails({
 
   return (
     <div
-      className='container border border-2 rounded-4 p-3 mb-4'
+      className='container border border-2 rounded-4 p-3 mb-4 enfore-width-95'
       style={{ marginTop: '130px' }}
+      id='enfore-width-95'
     >
       <div className='row'>
         <div className='col-lg-8'>
@@ -323,7 +344,10 @@ function ItemsDetails({ items }) {
   return (
     <>
       <div className='mt-4'>
-        <div className='container border border-2 rounded-4 p-3 mb-4 mt-2'>
+        <div
+          id='another-enfore-width-95'
+          className='container border border-2 rounded-4 p-3 mb-4 mt-2'
+        >
           <h2 className='fw-bold fs-1'>Items</h2>
           <table className='table table-bordered table-striped table-hover w-full mx-auto'>
             <thead>

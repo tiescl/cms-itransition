@@ -69,6 +69,7 @@ export default function Navbar() {
                     </button>
                   </div>
                 </form>
+                <DropdownActions user={user} />
                 {user ? (
                   <li className='nav-item m-2'>
                     <Link
@@ -101,5 +102,33 @@ export default function Navbar() {
         </div>
       </nav>
     </>
+  );
+}
+
+function DropdownActions({ user }) {
+  return (
+    <div className='dropdown'>
+      <button
+        className='btn btn-secondary dropdown-toggle m-2'
+        type='button'
+        data-bs-toggle='dropdown'
+        aria-expanded='false'
+      >
+        Actions
+      </button>
+      <ul className='dropdown-menu'>
+        {user?.isAdmin && (
+          <Link to='/users' className='dropdown-item'>
+            <i className='bi bi-award'></i> Users Panel
+          </Link>
+        )}
+        <Link to='/collections' className='dropdown-item'>
+          <i className='bi bi-list-ol'></i> Collections
+        </Link>
+        <Link to='/collections/create' className='dropdown-item'>
+          <i className='bi bi-plus-circle'></i> Create Collection
+        </Link>
+      </ul>
+    </div>
   );
 }

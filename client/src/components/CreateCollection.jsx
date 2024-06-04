@@ -74,7 +74,7 @@ function CollectionForm({ collectionData = null, editMode = false }) {
     imageUrl: collectionData?.imageUrl || '',
     items: collectionData?.items || []
   });
-  const [tags, setTags] = useState(collectionData.tags || []);
+  const [tags, setTags] = useState(collectionData?.tags || []);
   const [tagOptions, setTagOptions] = useState([]);
 
   // MARK: Error States

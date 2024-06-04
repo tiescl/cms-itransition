@@ -1,6 +1,8 @@
 import Navbar from './components/Navbar.jsx';
-import IncompleteRoute from './components/IncompleteRoute.jsx';
+import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import UserContext from './context/UserContext.jsx';
 
 function App() {
   return (
@@ -18,21 +20,13 @@ function App() {
 }
 
 function Navigation() {
+  const { user } = useContext(UserContext);
+
   return (
     <div
       className='d-flex justify-content-center'
       style={{ marginTop: '150px' }}
-    >
-      <Link to='/users' className='btn btn-primary mx-3'>
-        Users Panel
-      </Link>
-      <Link to='/collections/create' className='btn btn-primary mx-3'>
-        Create Collection
-      </Link>
-      <Link to='/collections' className='btn btn-primary mx-3'>
-        Collections
-      </Link>
-    </div>
+    ></div>
   );
 }
 
