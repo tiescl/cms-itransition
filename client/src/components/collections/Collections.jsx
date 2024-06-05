@@ -16,6 +16,7 @@ export default function Collections() {
 
   useEffect(() => {
     setIsLoading(true);
+    const controller = new AbortController();
 
     const fetchCollectionsData = async () => {
       try {
@@ -23,7 +24,8 @@ export default function Collections() {
           prodUrl,
           setCollectionsList,
           setError,
-          setIsLoading
+          setIsLoading,
+          controller.signal
         );
       } catch (err) {
         setError(getHumanReadableError(err.message));
@@ -36,6 +38,7 @@ export default function Collections() {
 
     return () => {
       clearInterval(intervalId);
+      controller.abort();
     };
   }, []);
 

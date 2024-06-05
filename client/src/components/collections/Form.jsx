@@ -397,10 +397,13 @@ function TagSelection({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchTags = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`${prodUrl}/api/collections/tags`);
+        const response = await fetch(`${prodUrl}/api/collections/tags`, {
+          signal: controller.signal
+        });
         if (!response.ok) {
           const data = response.json();
           throw new Error(data.error);
@@ -410,15 +413,21 @@ function TagSelection({
           data.map((tag) => ({ value: tag.value, label: tag.label }))
         );
       } catch (error) {
-        setTagError(
-          `Error fetching tag options: ${getHumanReadableError(error.message)}`
-        );
+        if (error.message !== 'request_canceled') {
+          setTagError(
+            `Error fetching tag options: ${getHumanReadableError(
+              error.message
+            )}`
+          );
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchTags();
+
+    return () => controller.abort();
   }, []);
 
   const createOption = (label) => {

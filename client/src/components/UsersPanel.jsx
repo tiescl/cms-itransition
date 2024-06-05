@@ -13,15 +13,16 @@ function AdminPanel() {
     [isCheckedAll, setIsCheckedAll] = useState(false),
     [refreshTrigger, setRefreshTrigger] = useState(false);
 
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchData = async () => {
       try {
-        const response = await fetch(`${prodUrl}/api/users`);
+        const response = await fetch(`${prodUrl}/api/users`, {
+          signal: controller.signal
+        });
         if (response.ok) {
           const users = await response.json();
           setUserList(users);
@@ -30,10 +31,14 @@ function AdminPanel() {
           throw new Error(errorData.error);
         }
       } catch (error) {
-        console.error('Error fetching users: ', error);
+        if (error.name !== 'AbortError') {
+          console.error('Error fetching users: ', error);
+        }
       }
     };
     fetchData();
+
+    return () => controller.abort();
   }, [refreshTrigger]);
 
   const handleBlock = async () => {

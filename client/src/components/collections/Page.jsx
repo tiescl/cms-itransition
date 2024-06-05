@@ -24,15 +24,17 @@ export default function CollectionPage() {
 
   useEffect(() => {
     setIsLoading(true);
+    const controller = new AbortController();
 
     const fetchCollectionData = async () => {
       try {
         await fetchCollection(
           prodUrl,
-          collectionId,
           setCollection,
           setError,
-          setIsLoading
+          setIsLoading,
+          controller.signal,
+          collectionId
         );
       } catch (err) {
         setError(getHumanReadableError(err.message));
@@ -45,6 +47,7 @@ export default function CollectionPage() {
 
     return () => {
       clearInterval(intervalId);
+      controller.abort();
     };
   }, [collectionId]);
 

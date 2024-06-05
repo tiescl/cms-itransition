@@ -5,10 +5,13 @@ async function fetchCollection(
   setCollectionData,
   setError,
   setIsLoading,
+  abortSignal,
   collectionId = ''
 ) {
   try {
-    const response = await fetch(`${prodUrl}/api/collections/${collectionId}`);
+    const response = await fetch(`${prodUrl}/api/collections/${collectionId}`, {
+      signal: abortSignal
+    });
     if (response.ok) {
       const data = await response.json();
       setCollectionData(data);
@@ -17,6 +20,9 @@ async function fetchCollection(
       throw new Error(errorData.error);
     }
   } catch (err) {
+    if ((err.name = 'AbortError')) {
+      throw new Error('request_canceled');
+    }
     setError(getHumanReadableError(err.message));
   } finally {
     setIsLoading(false);

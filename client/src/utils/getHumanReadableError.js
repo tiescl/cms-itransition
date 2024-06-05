@@ -2,6 +2,8 @@ export default function getHumanReadableError(error_message) {
   switch (error_message) {
     case 'Load failed':
       return 'Failed to load data.';
+    case 'request_canceled':
+      return '';
     case 'incorrect_email':
       return 'User with the given email does not exist.';
     case 'incorrect_password':
