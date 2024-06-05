@@ -2,17 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './App.jsx';
+
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
+
 import { UserProvider } from './context/UserContext.jsx';
-import {
-  CreateCollection,
-  EditCollection
-} from './components/CreateCollection.jsx';
+
+import EditCollection from './components/collections/Edit.jsx';
+import CreateCollection from './components/collections/Create.jsx';
+import Collections from './components/collections/Collections.jsx';
+import CollectionPage from './components/collections/Page.jsx';
+
 import AdminPanel from './components/UsersPanel.jsx';
-import Collections from './components/Collections.jsx';
-import CollectionPage from './components/CollectionPage.jsx';
 import UserPage from './components/UserPage.jsx';
+
 import ErrorPage from './components/ErrorPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 

@@ -1,69 +1,18 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import UserContext from '../context/UserContext';
-import categoriesData from '../data/categories.json';
-import Navbar from './Navbar.jsx';
-import { v4 as uuidv4 } from 'uuid';
+import UserContext from '../../context/UserContext.jsx';
+
+import Navbar from '../Navbar.jsx';
 import CreatableSelect from 'react-select/creatable';
-import getHumanReadableError from '../utils/getHumanReadableError.js';
-import LoadingScreen from './LoadingScreen.jsx';
-import ErrorPage from './ErrorPage.jsx';
 
-export function EditCollection() {
-  const { collectionId } = useParams();
-  const [collectionData, setCollectionData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+import { v4 as uuidv4 } from 'uuid';
+import getHumanReadableError from '../../utils/getHumanReadableError.js';
+import categoriesData from '../../data/categories.json';
 
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
-
-  useEffect(() => {
-    setIsLoading(true);
-    let isMounted = true;
-    const fetchCollection = async () => {
-      try {
-        const response = await fetch(
-          `${prodUrl}/api/collections/${collectionId}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setCollectionData(data);
-        } else {
-          const errorData = await response.json();
-          throw new Error(errorData.error);
-        }
-      } catch (err) {
-        <ErrorPage err={getHumanReadableError(err.message)} />;
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchCollection();
-
-    const intervalId = setInterval(fetchCollection, 30000);
-
-    return () => {
-      clearInterval(intervalId);
-      isMounted = false;
-    };
-  }, []);
-
-  return collectionData && !isLoading ? (
-    <CollectionForm collectionData={collectionData} editMode='true' />
-  ) : (
-    <LoadingScreen message='Fetching the collection. Takes too long? Try to refresh the page.' />
-  );
-}
-
-export function CreateCollection() {
-  return <CollectionForm />;
-}
-
-function CollectionForm({ collectionData = null, editMode = false }) {
+export default function CollectionForm({
+  collectionData = null,
+  editMode = false
+}) {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const { collectionId } = useParams();
@@ -77,7 +26,6 @@ function CollectionForm({ collectionData = null, editMode = false }) {
   const [tags, setTags] = useState(collectionData?.tags || []);
   const [tagOptions, setTagOptions] = useState([]);
 
-  // MARK: Error States
   const [error, setError] = useState('');
   const [requestError, setRequestError] = useState('');
   const [imageError, setImageError] = useState('');
@@ -115,9 +63,7 @@ function CollectionForm({ collectionData = null, editMode = false }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const prodUrl =
-      import.meta.env.VITE_PRODUCTION_URL ||
-      'https://cms-itransition.onrender.com';
+    const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
     const token = localStorage.getItem('auth');
 
     if (!handleDisabled(formData)) {
@@ -161,7 +107,7 @@ function CollectionForm({ collectionData = null, editMode = false }) {
   return (
     <>
       <Navbar />
-      <div className='container-fluid'>
+      <div className='container'>
         <CollectionTitle editMode={editMode} />
 
         <form style={{ fontSize: '20px' }}>
@@ -221,7 +167,7 @@ function CollectionForm({ collectionData = null, editMode = false }) {
 function CollectionTitle({ editMode }) {
   return (
     <h1
-      style={{ fontSize: '35px', margin: '130px auto 20px auto' }}
+      style={{ fontSize: '35px', margin: '110px auto 20px auto' }}
       className='text-center fw-semibold'
     >
       {editMode === 'true' ? 'Edit' : 'Create'} Collection
@@ -446,9 +392,7 @@ function TagSelection({
   tagError,
   setTagError
 }) {
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -466,7 +410,9 @@ function TagSelection({
           data.map((tag) => ({ value: tag.value, label: tag.label }))
         );
       } catch (error) {
-        setTagError(`Error fetching tag options: ${error.message}`);
+        setTagError(
+          `Error fetching tag options: ${getHumanReadableError(error.message)}`
+        );
       } finally {
         setIsLoading(false);
       }

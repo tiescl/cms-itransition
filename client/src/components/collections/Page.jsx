@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import UserContext from '../context/UserContext.jsx';
-import getHumanReadableError from '../utils/getHumanReadableError.js';
-import stringifyDate from '../utils/stringifyDate.js';
-import '../styles/bootstrp.css';
-import LoadingScreen from './LoadingScreen.jsx';
-import Navbar from './Navbar.jsx';
+import UserContext from '../../context/UserContext.jsx';
+
+import getHumanReadableError from '../../utils/getHumanReadableError.js';
+import fetchCollection from './fetchCollection.js';
+import stringifyDate from '../../utils/stringifyDate.js';
+
+import LoadingScreen from '../LoadingScreen.jsx';
+import Navbar from '../Navbar.jsx';
+
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
+import '../../styles/bootstrp.css';
 
 export default function CollectionPage() {
   const { collectionId } = useParams();
@@ -14,61 +18,49 @@ export default function CollectionPage() {
   const [collection, setCollection] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [requestError, setRequestError] = useState('');
+  const [error, setError] = useState('');
 
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
   useEffect(() => {
     setIsLoading(true);
-    let isMounted = true;
-    const fetchCollection = async () => {
+
+    const fetchCollectionData = async () => {
       try {
-        const response = await fetch(
-          `${prodUrl}/api/collections/${collectionId}`
+        await fetchCollection(
+          prodUrl,
+          collectionId,
+          setCollection,
+          setError,
+          setIsLoading
         );
-        if (response.ok && isMounted) {
-          const data = await response.json();
-          setCollection(data);
-        } else {
-          const errorData = await response.json();
-          throw new Error(errorData.error);
-        }
       } catch (err) {
-        if (isMounted) {
-          setRequestError(`Error: ${getHumanReadableError(err.message)}`);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        setError(getHumanReadableError(err.message));
       }
     };
-    fetchCollection();
 
-    const intervalId = setInterval(fetchCollection, 10000);
+    fetchCollectionData();
+
+    const intervalId = setInterval(fetchCollectionData, 10000);
 
     return () => {
       clearInterval(intervalId);
-      isMounted = false;
     };
   }, [collectionId]);
 
   return (
     <>
-      {collection && !isLoading ? (
+      {error ? (
+        <ErrorPage err={error} />
+      ) : collection && !isLoading ? (
         <>
           <Navbar />
-          <ErrorAlert
-            requestError={requestError}
-            setRequestError={setRequestError}
-          />
+          <ErrorAlert error={error} setError={setError} />
           <CollectionDetails
             collection={collection}
             setCollection={setCollection}
             user={user}
-            setRequestError={setRequestError}
+            setError={setError}
           />
 
           <ItemsDetails items={collection.items} />
@@ -97,14 +89,7 @@ export default function CollectionPage() {
             <h2 className='fw-bold fs-1'>Comments</h2>
 
             {collection.comments?.map((comment) => (
-              <CommentBox
-                key={comment._id}
-                comment={{
-                  ...comment,
-                  timestamp: comment.timestamp
-                  // timestamp: stringifyDate(comment.timestamp)
-                }}
-              />
+              <CommentBox key={comment._id} comment={comment} />
             ))}
             {collection.comments.length ? (
               ''
@@ -117,6 +102,7 @@ export default function CollectionPage() {
                 collectionId={collection._id}
                 user={user}
                 setCollection={setCollection}
+                prodUrl={prodUrl}
               />
             )}
           </div>
@@ -128,38 +114,11 @@ export default function CollectionPage() {
   );
 }
 
-function ErrorAlert({ requestError, setRequestError }) {
-  if (requestError) {
-    return (
-      <div
-        className='alert alert-warning alert-dismissible w-full fade show'
-        role='alert'
-      >
-        {requestError}. Try refreshing the page.
-        <button
-          type='button'
-          className='btn-close'
-          data-bs-dismiss='alert'
-          onClick={() => setRequestError('')}
-          aria-label='Close'
-        ></button>
-      </div>
-    );
-  }
-}
-
-function CollectionDetails({
-  collection,
-  setCollection,
-  user,
-  setRequestError
-}) {
+function CollectionDetails({ collection, setCollection, user, setError }) {
   const [beenLiked, setBeenLiked] = useState(false);
   const navigate = useNavigate();
 
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
 
   const handleLike = async (event) => {
@@ -198,7 +157,7 @@ function CollectionDetails({
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setRequestError(getHumanReadableError(err.message));
+      setError(getHumanReadableError(err.message));
     } finally {
       event.target.disabled = false;
     }
@@ -226,7 +185,7 @@ function CollectionDetails({
         throw new Error(errorData.error);
       }
     } catch (error) {
-      setRequestError(getHumanReadableError(err.message));
+      setError(getHumanReadableError(err.message));
     }
   };
 
@@ -312,14 +271,12 @@ function CollectionDetails({
           </button>
 
           <p className='text-body-secondary mt-2'>
-            {/* <small>Created: {stringifyDate(collection.createdAt)}</small> */}
-            {/* <small>Created: {collection.createdAt}</small> */}
+            <small>Created: {stringifyDate(collection.createdAt)}</small>
           </p>
           <p className='text-body-secondary'>
-            {/* <small>
+            <small>
               Last Modified: {stringifyDate(collection.lastModified)}
-              Last Modified: {collection.lastModified}
-            </small> */}
+            </small>
           </p>
         </div>
 
@@ -376,20 +333,18 @@ function CommentBox({ comment }) {
     <div className='border-top border-bottom p-2 w-100'>
       <div className='d-flex align-items-center'>
         <span className='fw-bold me-2'>{comment.author.username}</span>
-        <small className='text-body-secondary'>{comment.timestamp}</small>
+        <small className='text-body-secondary'>
+          {stringifyDate(comment.createdAt)}
+        </small>
       </div>
       <p className='mb-0'>{comment.text}</p>
     </div>
   );
 }
 
-function CommentForm({ collectionId, user, setCollection }) {
+function CommentForm({ collectionId, user, setCollection, prodUrl }) {
   const [commentText, setCommentText] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -405,8 +360,7 @@ function CommentForm({ collectionId, user, setCollection }) {
           {
             author: user,
             text: commentText,
-            collection: prevCollection._id,
-            timestamp: now
+            collection: prevCollection._id
           }
         ]
       }));

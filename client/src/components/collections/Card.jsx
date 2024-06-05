@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import '../styles/bootstrp.css';
+import '../../styles/bootstrp.css';
 
-export default function CollectionBox({ collection }) {
+export default function CollectionCard({ collection }) {
   const MAX_ITEMS = 3;
 
   return (
