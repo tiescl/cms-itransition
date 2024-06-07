@@ -2,8 +2,7 @@ export default function stringifyDate(today) {
   const convertedDate = new Date(today);
   let primaryLocale = navigator.language || 'en-US';
   const dateOptions = {
-    weekday: 'short',
-    month: 'short',
+    month: 'long',
     day: 'numeric',
     year: 'numeric'
   };

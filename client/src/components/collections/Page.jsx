@@ -91,7 +91,10 @@ export default function CollectionPage() {
             id='yet-another-enfore-width-95'
             className='container border border-2 rounded-4 p-3 mb-4 mt-2'
           >
-            <h2 className='fw-bold fs-1'>Comments</h2>
+            <h2 className='fw-semibold fs-2'>
+              <i className='bi bi-chat-text'></i> Comments (
+              {collection.comments?.length || 0})
+            </h2>
 
             {collection.comments?.map((comment) => (
               <CommentBox key={comment._id} comment={comment} />
@@ -308,7 +311,10 @@ function ItemsDetails({ items }) {
           id='another-enfore-width-95'
           className='container border border-2 rounded-4 p-3 mb-4 mt-2'
         >
-          <h2 className='fw-bold fs-1'>Items</h2>
+          <h2 className='fs-2 fw-semibold'>
+            <i className='bi bi-collection fs-3'></i> Items (
+            {items?.length || 0})
+          </h2>
           <table className='table table-bordered table-striped table-hover w-full mx-auto'>
             <thead>
               <tr>
@@ -335,9 +341,14 @@ function CommentBox({ comment }) {
   return (
     <div className='border-top border-bottom p-2 w-100'>
       <div className='d-flex align-items-center'>
-        <span className='fw-bold me-2'>{comment.author.username}</span>
+        <Link
+          to={`/users/${comment.author._id}`}
+          className='text-decoration-none'
+        >
+          <span className='fw-bold text-dark'>{comment.author.username}</span>
+        </Link>
         <small className='text-body-secondary'>
-          {stringifyDate(comment.createdAt || new Date())}
+          , added {stringifyDate(comment.createdAt || new Date())}
         </small>
       </div>
       <p className='mb-0'>{comment.text}</p>
