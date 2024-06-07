@@ -1,4 +1,5 @@
 import { SchemaTypes, Schema, model } from 'mongoose';
+import slugify from 'slugify';
 
 const collectionSchema = new Schema(
   {
@@ -9,6 +10,9 @@ const collectionSchema = new Schema(
     description: {
       type: String,
       default: ''
+    },
+    slug: {
+      type: String
     },
     imageUrl: {
       type: String,
@@ -60,8 +64,13 @@ const collectionSchema = new Schema(
       }
     ]
   },
-  { timestamps: true }
+  { suppressReservedKeysWarning: true, timestamps: true }
 );
+
+collectionSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true, trim: true });
+  next();
+});
 
 const Collection = model('Collection', collectionSchema);
 

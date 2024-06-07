@@ -14,9 +14,7 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
 
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
   const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
 

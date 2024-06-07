@@ -54,12 +54,17 @@ router.post('/create', checkCurrentUser, async (req, res) => {
       return res.status(403).send({ error: 'operation_forbidden' });
     }
 
-    if (!name || !category || !items || items.length === 0) {
+    if (!name.trim() || !category || !items || items.length === 0) {
       return res.status(400).send({ error: 'missing_required_fields' });
     }
 
     for (const item of items) {
-      if (!item.client_id || !item.name || !item.type || !item.value) {
+      if (
+        !item.client_id ||
+        !item.name.trim() ||
+        !item.type ||
+        !item.value.trim()
+      ) {
         return res.status(400).send({ error: 'missing_item_fields' });
       }
     }
@@ -160,10 +165,12 @@ router.post('/:collectionId', checkCurrentUser, async (req, res) => {
       return res.status(404).json({ error: 'collection_not_found' });
     }
 
-    if (!name || !category || !items || items.length === 0) {
+    if (!name.trim() || !category || !items || items.length === 0) {
       return res.status(400).json({ error: 'missing_required_fields' });
     }
     for (const item of items) {
+      item.name = item.name?.trim();
+      item.value = item.value?.trim();
       if (!item.client_id || !item.name || !item.type || !item.value) {
         return res.status(400).send({ error: 'missing_item_fields' });
       }
@@ -198,8 +205,8 @@ router.post('/:collectionId', checkCurrentUser, async (req, res) => {
       }
     }
 
-    collection.name = name;
-    collection.description = description;
+    collection.name = name.trim();
+    collection.description = description.trim();
     collection.imageUrl = imageUrl;
     collection.category = category;
     collection.items = items;
@@ -358,7 +365,7 @@ router.post('/:collectionId/like', checkCurrentUser, async (req, res) => {
     const collection = await Collection.findByIdAndUpdate(
       collectionId,
       { $inc: { likesCount: 1 } },
-      { new: true }
+      { new: true, timestamps: false }
     );
 
     if (!collection) {
@@ -386,7 +393,7 @@ router.post('/:collectionId/unlike', checkCurrentUser, async (req, res) => {
       {
         $inc: { likesCount: -1 }
       },
-      { new: true }
+      { new: true, timestamps: false }
     );
 
     if (!updatedCollection) {

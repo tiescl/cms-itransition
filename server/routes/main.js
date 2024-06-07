@@ -19,7 +19,8 @@ router.get('/', async (req, res) => {
 router.get('/warmup', async (req, res) => {
   try {
     // Database Connection Test
-    const userExists = await User.exists({ email: 'admin@google.com' });
+    const userExists = await User.exists({ email: 'admin@tiescl.uz' });
+    console.log(userExists);
     if (userExists) {
       return res.status(200).send({ message: 'all_good' });
     } else {

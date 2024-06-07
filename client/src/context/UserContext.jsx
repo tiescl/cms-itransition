@@ -53,7 +53,10 @@ export const UserProvider = ({ children }) => {
     };
     fetchUser();
 
+    const intervalId = setInterval(fetchUser, 5000);
+
     return () => {
+      clearInterval(intervalId);
       controller.abort();
     };
   }, [trigger]);

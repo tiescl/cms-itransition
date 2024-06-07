@@ -20,7 +20,7 @@ async function fetchCollection(
       throw new Error(errorData.error);
     }
   } catch (err) {
-    if ((err.name = 'AbortError')) {
+    if (err.name === 'AbortError') {
       throw new Error('request_canceled');
     }
     setError(getHumanReadableError(err.message));

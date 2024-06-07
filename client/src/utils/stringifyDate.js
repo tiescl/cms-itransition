@@ -1,4 +1,5 @@
 export default function stringifyDate(today) {
+  const convertedDate = new Date(today);
   let primaryLocale = navigator.language || 'en-US';
   const dateOptions = {
     weekday: 'short',
@@ -9,13 +10,17 @@ export default function stringifyDate(today) {
 
   const timeOptions = {
     hour: 'numeric',
-    minute: 'numeric',
-    timeZone: 'UTC',
-    timeZoneName: 'long'
+    minute: 'numeric'
   };
 
-  const formattedDate = today.toLocaleDateString(primaryLocale, dateOptions);
-  const formattedTime = today.toLocaleTimeString(primaryLocale, timeOptions);
+  const formattedDate = convertedDate.toLocaleDateString(
+    primaryLocale,
+    dateOptions
+  );
+  const formattedTime = convertedDate.toLocaleTimeString(
+    primaryLocale,
+    timeOptions
+  );
 
-  return `${formattedDate} ${formattedTime}`;
+  return `${formattedDate} at ${formattedTime}`;
 }

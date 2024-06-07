@@ -21,14 +21,19 @@ export default function CollectionCard({ collection }) {
         </div>
         <div className='card-body'>
           <div className='card-header border mb-2 rounded'>
-            <h5 className='card-title fs-4 fw-bold'>{collection.name}</h5>
-            <p className='card-subtitle text-body-secondary'>
+            <Link
+              to={`/collections/${collection._id}`}
+              className='text-primary text-decoration-none'
+            >
+              <h5 className='card-title fs-4 fw-bold'>{collection.name}</h5>
+            </Link>
+            <p className='card-subtitle'>
               <em>
                 by{' '}
                 <strong>
                   <Link
                     to={`/users/${collection.user._id}`}
-                    className='text-decoration-none'
+                    className='text-decoration-none text-body-secondary'
                   >
                     {collection.user.username}
                   </Link>

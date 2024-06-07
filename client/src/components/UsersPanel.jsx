@@ -1,5 +1,4 @@
 import { useEffect, useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { UserRow } from './UsersPanelTiny.jsx';
 import UserContext from '../context/UserContext.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -180,13 +179,7 @@ function AdminPanel() {
 
   function handleSelectAllChange() {
     setIsCheckedAll(!isCheckedAll);
-    setSelectedUsers((prevSelected) => {
-      if (!isCheckedAll) {
-        return userList?.map((user) => user.email);
-      } else {
-        return [];
-      }
-    });
+    setSelectedUsers(!isCheckedAll ? userList?.map((user) => user.email) : []);
   }
 
   return (
@@ -248,10 +241,13 @@ function AdminPanel() {
         </div>
       ) : null}
 
-      <div style={{ width: '100vw' }} className='container text-center'>
+      <div
+        style={{ width: '100vw' }}
+        className='container text-center table-responsive'
+      >
         <table
           style={{ borderRadius: '15px' }}
-          className='table table-responsive table-striped table-hover table-bordered table-sm'
+          className='table table-striped table-hover table-bordered table-sm'
         >
           <caption className='text-center'>
             {userList.length} {userList.length === 1 ? 'user' : 'users'}
@@ -271,7 +267,7 @@ function AdminPanel() {
               <th style={{ minWidth: '200px' }}>Username</th>
               <th>E-mail</th>
               <th>Collections</th>
-              <th style={{ minWidth: '235px' }}>Last login</th>
+              <th style={{ minWidth: '235px' }}>Last Visit</th>
               <th style={{ minWidth: '235px' }}>Register Date</th>
               <th style={{ minWidth: '70px' }}>Status</th>
             </tr>

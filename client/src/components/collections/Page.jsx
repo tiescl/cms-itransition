@@ -5,8 +5,10 @@ import UserContext from '../../context/UserContext.jsx';
 import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import fetchCollection from './fetchCollection.js';
 import stringifyDate from '../../utils/stringifyDate.js';
+import { v4 as uuid } from 'uuid';
 
 import LoadingScreen from '../LoadingScreen.jsx';
+import ErrorPage from '../ErrorPage.jsx';
 import Navbar from '../Navbar.jsx';
 
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
@@ -58,7 +60,7 @@ export default function CollectionPage() {
       ) : collection && !isLoading ? (
         <>
           <Navbar />
-          <ErrorAlert error={error} setError={setError} />
+
           <CollectionDetails
             collection={collection}
             setCollection={setCollection}
@@ -128,7 +130,6 @@ function CollectionDetails({ collection, setCollection, user, setError }) {
     try {
       event.target.disabled = true;
       const updatedCount = collection.likesCount + (beenLiked ? -1 : 1);
-      console.log(collection);
       setCollection({
         ...collection,
         likesCount: updatedCount
@@ -201,22 +202,22 @@ function CollectionDetails({ collection, setCollection, user, setError }) {
       <div className='row'>
         <div className='col-lg-8'>
           <div className='row'>
-            <div className='col-lg-9'>
+            <div className='col-9'>
               <h1 className='fs-1'>{collection.name}</h1>
             </div>
 
-            <div className='col-lg-3 d-flex align-items-top justify-content-end'>
+            <div className='col-3 d-flex align-items-start justify-content-end'>
               {user && (user._id === collection.user._id || user.isAdmin) && (
                 <>
                   <Link to={`/collections/${collection._id}/edit`}>
-                    <button className='btn btn-primary mt-3 me-2'>
+                    <button className='btn btn-primary mt-1 me-2'>
                       <i className='bi bi-pencil-square'></i>
                     </button>
                   </Link>
 
                   <Link to='/collections'>
                     <button
-                      className='btn btn-danger mt-3'
+                      className='btn btn-danger mt-1'
                       onClick={handleDeleteCollection}
                     >
                       <i className='bi bi-trash'></i>
@@ -258,7 +259,8 @@ function CollectionDetails({ collection, setCollection, user, setError }) {
               maxHeight: '3.6em'
             }}
           >
-            <span className='fw-bold'>TL;DR:</span> {collection.description}
+            <span className='fw-bold'>Description:</span>{' '}
+            {collection.description}
           </p>
 
           <button
@@ -273,13 +275,11 @@ function CollectionDetails({ collection, setCollection, user, setError }) {
             {collection.likesCount || 0} Likes
           </button>
 
-          <p className='text-body-secondary mt-2'>
+          <p className='text-body-secondary mt-3 mb-1'>
             <small>Created: {stringifyDate(collection.createdAt)}</small>
           </p>
-          <p className='text-body-secondary'>
-            <small>
-              Last Modified: {stringifyDate(collection.lastModified)}
-            </small>
+          <p className='text-body-secondary mb-2'>
+            <small>Last Modified: {stringifyDate(collection.updatedAt)}</small>
           </p>
         </div>
 
@@ -337,7 +337,7 @@ function CommentBox({ comment }) {
       <div className='d-flex align-items-center'>
         <span className='fw-bold me-2'>{comment.author.username}</span>
         <small className='text-body-secondary'>
-          {stringifyDate(comment.createdAt)}
+          {stringifyDate(comment.createdAt || new Date())}
         </small>
       </div>
       <p className='mb-0'>{comment.text}</p>
@@ -361,6 +361,7 @@ function CommentForm({ collectionId, user, setCollection, prodUrl }) {
         comments: [
           ...prevCollection.comments,
           {
+            _id: uuid(),
             author: user,
             text: commentText,
             collection: prevCollection._id

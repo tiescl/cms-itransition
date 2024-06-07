@@ -19,13 +19,11 @@ export default function Register() {
     [errorMessage, setErrorMessage] = useState(''),
     [showError, setShowError] = useState(false);
 
-  const prodUrl =
-    import.meta.env.VITE_PRODUCTION_URL ||
-    'https://cms-itransition.onrender.com';
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
 
   const handleUsernameChange = (e) => {
-    if (e.target.value.length === 0) {
+    if (e.target.value.trim().length === 0) {
       setUsernameWarn('Username should not be empty.');
     } else {
       setUsernameWarn('');
@@ -33,10 +31,13 @@ export default function Register() {
   };
 
   const handleEmailChange = (e) => {
-    if (e.target.value.length === 0) {
+    if (e.target.value.trim().length === 0) {
       setEmailWarn('Email should not be empty.');
     } else if (
-      !e.target.value.toLowerCase().match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)
+      !e.target.value
+        .toLowerCase()
+        .trim()
+        .match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)
     ) {
       setEmailWarn('Invalid email.');
     } else {
@@ -45,7 +46,7 @@ export default function Register() {
   };
 
   const handlePasswordChange = (e) => {
-    if (e.target.value.length < 8) {
+    if (e.target.value.trim().length < 8) {
       setPasswordWarn('Password must be at least 8 characters long.');
     } else {
       setPasswordWarn('');

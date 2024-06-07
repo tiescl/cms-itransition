@@ -2,7 +2,7 @@ import LoadingScreen from '../LoadingScreen.jsx';
 import ErrorPage from '../ErrorPage.jsx';
 import CollectionForm from './Form.jsx';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import fetchCollection from './fetchCollection.js';

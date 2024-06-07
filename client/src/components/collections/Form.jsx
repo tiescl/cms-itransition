@@ -39,6 +39,7 @@ export default function CollectionForm({
 
     if (
       !formSubmitData.name ||
+      !formSubmitData.name.trim().match(/^[A-Za-z][A-Za-z0-9\s]*$/) ||
       !formSubmitData.category ||
       formSubmitData.items.length === 0
     ) {
@@ -49,7 +50,12 @@ export default function CollectionForm({
     }
 
     for (const item of formSubmitData.items) {
-      if (!item.client_id || !item.name || !item.type || !item.value) {
+      if (
+        !item.client_id ||
+        !item.name.trim() ||
+        !item.type ||
+        !item.value.trim()
+      ) {
         setError('Item fields (name and value) must not be empty.');
         return true;
       } else {
@@ -413,12 +419,8 @@ function TagSelection({
           data.map((tag) => ({ value: tag.value, label: tag.label }))
         );
       } catch (error) {
-        if (error.message !== 'request_canceled') {
-          setTagError(
-            `Error fetching tag options: ${getHumanReadableError(
-              error.message
-            )}`
-          );
+        if (error.name !== 'AbortError') {
+          setTagError(getHumanReadableError(error.message));
         }
       } finally {
         setIsLoading(false);

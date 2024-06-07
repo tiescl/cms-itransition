@@ -28,7 +28,9 @@ export default function Collections() {
           controller.signal
         );
       } catch (err) {
-        setError(getHumanReadableError(err.message));
+        if (err.message !== 'request_canceled') {
+          setError(getHumanReadableError(err.message));
+        }
       }
     };
 
