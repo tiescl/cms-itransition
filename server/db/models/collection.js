@@ -18,10 +18,6 @@ const collectionSchema = new Schema(
       type: String,
       default: ''
     },
-    likesCount: {
-      type: Number,
-      default: 0
-    },
     user: {
       type: SchemaTypes.ObjectId,
       ref: 'User',
@@ -31,36 +27,19 @@ const collectionSchema = new Schema(
       type: String,
       required: true
     },
-    items: [
+    customFieldDefinitions: [
       {
-        name: {
-          type: String,
-          required: true
+        client_id: {
+          type: String
         },
-        value: {
+        name: {
           type: String,
           required: true
         },
         type: {
           type: String,
           required: true
-        },
-        client_id: {
-          type: String,
-          required: true
         }
-      }
-    ],
-    tags: [
-      {
-        type: SchemaTypes.ObjectId,
-        ref: 'Tag'
-      }
-    ],
-    comments: [
-      {
-        type: SchemaTypes.ObjectId,
-        ref: 'Comment'
       }
     ]
   },

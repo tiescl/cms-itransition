@@ -241,14 +241,8 @@ function AdminPanel() {
         </div>
       ) : null}
 
-      <div
-        style={{ width: '100vw' }}
-        className='container text-center table-responsive'
-      >
-        <table
-          style={{ borderRadius: '15px' }}
-          className='table table-striped table-hover table-bordered table-sm'
-        >
+      <div className='container text-center table-responsive'>
+        <table className='table table-striped table-bordered table-hover table-md'>
           <caption className='text-center'>
             {userList.length} {userList.length === 1 ? 'user' : 'users'}
           </caption>
@@ -267,8 +261,8 @@ function AdminPanel() {
               <th style={{ minWidth: '200px' }}>Username</th>
               <th>E-mail</th>
               <th>Collections</th>
-              <th style={{ minWidth: '235px' }}>Last Visit</th>
-              <th style={{ minWidth: '235px' }}>Register Date</th>
+              <th style={{ minWidth: '240px' }}>Last Visit</th>
+              <th style={{ minWidth: '240px' }}>Register Date</th>
               <th style={{ minWidth: '70px' }}>Status</th>
             </tr>
           </thead>
