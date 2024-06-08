@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import UserContext from '../../context/UserContext.jsx';
 
@@ -8,8 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import categoriesData from '../../data/categories.json';
 import getFieldType from '../../utils/getFieldType.js';
-
-// TODO: trim collection data when setting state
 
 export default function CollectionForm({
   collectionData = null,
@@ -38,7 +36,7 @@ export default function CollectionForm({
 
     if (
       !formSubmitData.name ||
-      !formSubmitData.name.trim().match(/^[A-Za-z][A-Za-z0-9\s]*$/) ||
+      !formSubmitData.name.match(/^[A-Za-z][A-Za-z0-9\s]*$/) ||
       !formSubmitData.category ||
       formSubmitData.customFieldDefinitions.length === 0
     ) {
@@ -49,7 +47,7 @@ export default function CollectionForm({
     }
 
     for (const field of formSubmitData.customFieldDefinitions) {
-      if (!field.client_id || !field.name.trim() || !field.type) {
+      if (!field.client_id || !field.name || !field.type) {
         setError('Custom field name must not be empty.');
         return true;
       } else {
@@ -108,7 +106,7 @@ export default function CollectionForm({
     <>
       <Navbar />
       <div className='container'>
-        <CollectionTitle editMode={editMode} />
+        <FormTitle editMode={editMode} />
 
         <form style={{ fontSize: '20px' }}>
           <div className='row'>
@@ -154,7 +152,7 @@ export default function CollectionForm({
   );
 }
 
-function CollectionTitle({ editMode }) {
+function FormTitle({ editMode }) {
   return (
     <h1
       style={{ fontSize: '35px', margin: '110px auto 20px auto' }}
@@ -179,7 +177,7 @@ function NameInput({ formData, setFormData }) {
         value={formData.name}
         onChange={(event) =>
           setFormData((prevFormData) => {
-            return { ...prevFormData, name: event.target.value };
+            return { ...prevFormData, name: event.target.value.trim() };
           })
         }
       />
@@ -332,7 +330,7 @@ function CreateField({ setFormData }) {
         ...prevFormData.customFieldDefinitions,
         {
           client_id: uuidv4(),
-          name: fieldName,
+          name: fieldName.trim(),
           type: fieldType
         }
       ]

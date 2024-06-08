@@ -42,10 +42,6 @@ const itemSchema = new Schema({
         type: String,
         required: true
       },
-      isCustom: {
-        type: Boolean,
-        default: false
-      },
       client_id: {
         type: String
       }

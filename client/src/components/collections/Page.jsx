@@ -14,6 +14,8 @@ import Navbar from '../Navbar.jsx';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import '../../styles/bootstrp.css';
 
+// TODO: try wrapping everything in col-md-8 ensure good width
+
 export default function CollectionPage() {
   const { collectionId } = useParams();
   const { user } = useContext(UserContext);

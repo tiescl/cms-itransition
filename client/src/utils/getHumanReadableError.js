@@ -16,7 +16,7 @@ export default function getHumanReadableError(error_message) {
       return 'Sign in required to create, edit, and like collections, as well as add comments.';
     case 'invalid_collection_fields':
       return "Please ensure you are not putting Homer's Odyssey novel into description or name.";
-    case 'invalid_item_fields':
+    case 'invalid_custom_fields':
       return 'Item fields cannot be so lengthy, you will bore your readers!';
     case 'too_many_tags':
       return "Too many tags. Spamming ain't so good";
@@ -24,7 +24,7 @@ export default function getHumanReadableError(error_message) {
       return 'We kindly ask you to keep your tags short and neat)';
     case 'missing_required_fields':
       return 'Some required fields are invalid or missing.';
-    case 'missing_item_fields':
+    case 'missing_custom_fields':
       return 'Item fields (name and value) must not be empty.';
     case 'collection_not_found':
       return 'Collection not found. Does it exist?';
