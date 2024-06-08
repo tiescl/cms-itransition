@@ -39,6 +39,7 @@ export default function Navbar() {
             className='offcanvas offcanvas-end'
             tabIndex='-1'
             id='navbarNav'
+            data-bs-scroll='true'
             aria-labelledby='navbarNavLabel'
           >
             <div className='offcanvas-header'>
