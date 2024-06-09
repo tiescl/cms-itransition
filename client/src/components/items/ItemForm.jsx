@@ -4,16 +4,20 @@ import Navbar from '../Navbar';
 
 export default function ItemForm({ collectionData, itemData, editMode }) {
   const [formData, setFormData] = useState(() => {
+    const initialFields = collectionData.customFieldDefinitions.map(
+      (fieldDef) => ({
+        client_id: fieldDef.client_id,
+        name: fieldDef.name,
+        value:
+          itemData?.fields?.find((f) => f.client_id === fieldDef.client_id)
+            ?.value || '',
+        type: fieldDef.type
+      })
+    );
+
     return {
       name: itemData?.name || '',
-      fields:
-        itemData?.fields ||
-        collectionData.customFieldDefinitions.map((fieldDef) => ({
-          client_id: fieldDef.client_id,
-          name: fieldDef.name,
-          type: fieldDef.type,
-          value: ''
-        }))
+      fields: initialFields
     };
   });
 
@@ -21,11 +25,62 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
   const [tagOptions, setTagOptions] = useState([]);
 
   const [error, setError] = useState('');
-  const [requestError, setRequestError] = useState('');
   const [tagError, setTagError] = useState('');
 
-  const handleSubmit = () => {
-    return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+    const token = localStorage.getItem('auth');
+
+    if (!tagError) {
+      e.target.disabled = true;
+      setError('');
+
+      try {
+        if (
+          !formData.name?.match(/^[A-Za-z][A-Za-z0-9\s]*$/) ||
+          formData.fields.some((field) => !field.value)
+        ) {
+          throw new Error('name_fields_required.');
+        }
+
+        if (!user) {
+          throw new Error('operation_forbidden');
+        }
+
+        const endpoint = itemData
+          ? `${prodUrl}/api/collections/${collectionData._id}/items/${itemData._id}`
+          : `${prodUrl}/api/collections/${collectionData._id}/items/create`;
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            ...formData,
+            user: user._id,
+            collectionId: collectionData._id,
+            tags: tags
+          })
+        });
+
+        if (response.ok) {
+          const newItem = await response.json();
+          console.log(newItem);
+          navigate(`/collections/${collectionData._id}`);
+        } else {
+          const errorData = await response.json();
+          e.target.disabled = false;
+          throw new Error(errorData.error);
+        }
+      } catch (err) {
+        e.target.disabled = false;
+        setError(`Error: ${getHumanReadableError(err.message)}`);
+      }
+    }
   };
 
   return (
@@ -52,9 +107,6 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
               />
 
               {error && <h5 className='text-danger mt-2'>{error}</h5>}
-              {!error && requestError && (
-                <h5 className='text-danger mt-2'>{requestError}</h5>
-              )}
 
               <div className='my-5'>
                 <button
@@ -79,10 +131,9 @@ function Items({ formData, setFormData }) {
       {formData.fields.map((field) => {
         return (
           <div key={field.client_id} className='mb-2'>
+            {/* this div might not be necessary */}
             <div className='row d-flex justify-content-between align-items-end input-group'>
-              <ItemName field={field} />
-
-              <ItemValue field={field} setFormData={setFormData} />
+              <Item field={field} setFormData={setFormData} />
             </div>
           </div>
         );
@@ -91,11 +142,11 @@ function Items({ formData, setFormData }) {
   );
 }
 
-function ItemValue({ field, setFormData }) {
+function Item({ field, setFormData }) {
   const handleFieldChange = (fieldId, value) => {
     setFormData((prevFormData) => {
       const updatedFields = prevFormData.fields.map((field) =>
-        field.client_id === fieldId ? { ...field, value: value } : field
+        field.client_id === fieldId ? { ...field, value: value.trim() } : field
       );
       return { ...prevFormData, fields: updatedFields };
     });
@@ -103,23 +154,32 @@ function ItemValue({ field, setFormData }) {
 
   return (
     <div className='col-md-6'>
-      <label htmlFor={`fieldValue-${field.client_id}`} className='form-label'>
-        Field Value:
-      </label>
+      <div className='row'>
+        <div className='col-md-3'>
+          <label
+            htmlFor={`fieldValue-${field.client_id}`}
+            className='form-label col-form-label'
+          >
+            {field.name}
+          </label>
+        </div>
 
-      <ValueInput
-        type={field.type}
-        value={field.value}
-        id={`fieldValue-${field.client_id}`}
-        onChange={(event) => {
-          if (field.type === 'checkbox') {
-            handleFieldChange(field.client_id, event.target.checked);
-          } else {
-            handleFieldChange(field.client_id, event.target.value);
-          }
-        }}
-        placeholder='Value'
-      />
+        <div className='col-md-9'>
+          <ValueInput
+            type={field.type}
+            value={field.value}
+            id={`fieldValue-${field.client_id}`}
+            onChange={(event) => {
+              if (field.type === 'checkbox') {
+                handleFieldChange(field.client_id, event.target.checked);
+              } else {
+                handleFieldChange(field.client_id, event.target.value);
+              }
+            }}
+            placeholder='Value'
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -157,24 +217,6 @@ function ValueInput({ type, value, onChange, placeholder }) {
   }
 
   return <input {...inputProps} />;
-}
-
-function ItemName({ field }) {
-  return (
-    <div className='col-md-4'>
-      <label htmlFor={`fieldName-${field.client_id}`} className='form-label'>
-        Field Name:
-      </label>
-
-      <input
-        id={`fieldName-${field.client_id}`}
-        type='text'
-        className='form-control'
-        value={field.name}
-        disabled
-      />
-    </div>
-  );
 }
 
 function TagSelection({

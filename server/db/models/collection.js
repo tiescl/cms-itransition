@@ -27,6 +27,10 @@ const collectionSchema = new Schema(
       type: String,
       required: true
     },
+    items: {
+      type: SchemaTypes.ObjectId,
+      ref: 'Item'
+    },
     customFieldDefinitions: [
       {
         client_id: {

@@ -2,13 +2,15 @@ import LoadingScreen from '../LoadingScreen.jsx';
 import ErrorPage from '../ErrorPage.jsx';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
 import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import ItemForm from './ItemForm.jsx';
 
 export default function EditItem() {
   const { collectionId, itemId } = useParams();
+  const location = useLocation();
+  const collectionData = location.state?.collectionData;
   const [itemData, setItemData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -22,7 +24,7 @@ export default function EditItem() {
     const fetchItemData = async () => {
       try {
         const response = await fetch(
-          `${prodUrl}/api/collections/${collectionId}/${itemId}`,
+          `${prodUrl}/api/collections/${collectionId}/items/${itemId}`,
           { signal: controller.signal }
         );
         if (response.ok) {
@@ -54,7 +56,11 @@ export default function EditItem() {
   return error ? (
     <ErrorPage err={error} />
   ) : itemData && !isLoading ? (
-    <ItemForm itemData={itemData} editMode='true' />
+    <ItemForm
+      collectionData={collectionData}
+      itemData={itemData}
+      editMode='true'
+    />
   ) : (
     <LoadingScreen message='Fetching item data. Taking too long? Try refreshing the page.' />
   );

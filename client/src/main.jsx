@@ -21,6 +21,7 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
+import ItemForm from './components/items/ItemForm.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -44,6 +45,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </Route>
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          <Route path='/items/create' element={<ItemForm />} />
           <Route path='/*' element={<ErrorPage />} />
         </Routes>
       </BrowserRouter>

@@ -1,2 +1,0 @@
-// handleSubmit
-tags: tags;

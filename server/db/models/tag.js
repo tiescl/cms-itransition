@@ -9,10 +9,10 @@ const tagSchema = new Schema({
     type: String,
     required: true
   },
-  collections: [
+  items: [
     {
       type: SchemaTypes.ObjectId,
-      ref: 'Collection'
+      ref: 'Item'
     }
   ]
 });

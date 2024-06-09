@@ -43,8 +43,13 @@ const itemSchema = new Schema({
         required: true
       },
       client_id: {
-        type: String
+        type: String,
+        required: true
       }
     }
   ]
 });
+
+const Item = model('Item', itemSchema);
+
+export default Item;

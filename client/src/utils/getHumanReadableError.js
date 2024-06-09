@@ -16,6 +16,10 @@ export default function getHumanReadableError(error_message) {
       return 'Sign in required to create, edit, and like collections, as well as add comments.';
     case 'invalid_collection_fields':
       return "Please ensure you are not putting Homer's Odyssey novel into description or name.";
+    case 'invalid_item_fields':
+      return 'Choose a shorter name for the item. Short names are great and memorable.';
+    case 'invalid_item_field_values':
+      return 'Some field values are too long. Have you tried shortening them with Quillbot?';
     case 'invalid_custom_fields':
       return 'Item fields cannot be so lengthy, you will bore your readers!';
     case 'too_many_tags':
@@ -28,20 +32,26 @@ export default function getHumanReadableError(error_message) {
       return 'Item fields (name and value) must not be empty.';
     case 'collection_not_found':
       return 'Collection not found. Does it exist?';
+    case 'item_not_found':
+      return 'Item not found. Does it exist?';
+    case 'item_collection_not_found':
+      return 'Wrong URL. Did you get lost?';
     case 'empty_comment':
       return 'Comments should not be empty.';
-    case 'comment_collection_not_found' || 'comment_add_failed':
+    case 'comment_item_not_found' || 'comment_add_failed':
       return 'There was a problem adding your comment.';
     case 'collection_fetch_failed':
       return 'Failed to fetch collection data. Please try again.';
+    case 'item_fetch_failed':
+      return 'Failed to fetch item data. Please try again.';
     case 'collection_delete_failed':
-      return 'Failed to delete the collection. Please try again later.';
-    case 'collection_like_failed':
-      return 'Failed to like the collection. Please try again later.';
-    case 'collection_unlike_failed':
-      return 'Failed to unlike the collection. Please try again later.';
-    case 'likes_count_error':
-      return "Can't go lower than that, can we?";
+      return 'Failed to delete collection. Please try again later.';
+    case 'item_delete_failed':
+      return 'Failed to delete item. Please try again later.';
+    case 'item_like_toggle_failed':
+      return 'Failed to like/unlike the item. Please try again later.';
+    case 'name_fields_required':
+      return 'Name and all custom fields are required.';
     default:
       return 'Something went wrong. Please try again';
   }

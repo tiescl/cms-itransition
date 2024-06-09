@@ -11,9 +11,9 @@ const commentSchema = new Schema(
       type: String,
       required: true
     },
-    collection: {
+    item: {
       type: SchemaTypes.ObjectId,
-      ref: 'Collection',
+      ref: 'Item',
       required: true
     }
   },
