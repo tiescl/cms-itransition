@@ -22,6 +22,9 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import ItemForm from './components/items/ItemForm.jsx';
+import CreateItem from './components/items/Create.jsx';
+import ItemPage from './components/items/ItemPage.jsx';
+import EditItem from './components/items/Edit.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -42,10 +45,21 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               element={<EditCollection />}
             />
             <Route path='/collections/create' element={<CreateCollection />} />
+            <Route
+              path='collections/:collectionId/items/create'
+              element={<CreateItem />}
+            />
+            <Route
+              path='collections/:collectionId/items/:itemId/edit'
+              element={<EditItem />}
+            />
+            <Route
+              path='collections/:collectionId/items/:itemId'
+              element={<ItemPage />}
+            />
           </Route>
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/items/create' element={<ItemForm />} />
           <Route path='/*' element={<ErrorPage />} />
         </Routes>
       </BrowserRouter>

@@ -51,7 +51,7 @@ export default function getHumanReadableError(error_message) {
     case 'item_like_toggle_failed':
       return 'Failed to like/unlike the item. Please try again later.';
     case 'name_fields_required':
-      return 'Name and all custom fields are required.';
+      return "Name and all custom fields are required. Make sure they don't contain extra spaces.";
     default:
       return 'Something went wrong. Please try again';
   }

@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
 import Navbar from '../Navbar';
 
+import getHumanReadableError from '../../utils/getHumanReadableError';
+import UserContext from '../../context/UserContext.jsx';
+
 export default function ItemForm({ collectionData, itemData, editMode }) {
+  const { user } = useContext(UserContext);
   const [formData, setFormData] = useState(() => {
     const initialFields = collectionData.customFieldDefinitions.map(
       (fieldDef) => ({
@@ -23,6 +28,7 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
 
   const [tags, setTags] = useState(itemData?.tags || []);
   const [tagOptions, setTagOptions] = useState([]);
+  const navigate = useNavigate();
 
   const [error, setError] = useState('');
   const [tagError, setTagError] = useState('');
@@ -40,7 +46,7 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
       try {
         if (
           !formData.name?.match(/^[A-Za-z][A-Za-z0-9\s]*$/) ||
-          formData.fields.some((field) => !field.value)
+          formData.fields.some((field) => !String(field.value))
         ) {
           throw new Error('name_fields_required.');
         }
@@ -61,6 +67,14 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
           },
           body: JSON.stringify({
             ...formData,
+            name: formData.name.trim(),
+            fields: formData.fields.map((field) => {
+              return {
+                ...field,
+                value:
+                  field.type !== 'checkbox' ? field.value.trim() : field.value
+              };
+            }),
             user: user._id,
             collectionId: collectionData._id,
             tags: tags
@@ -78,7 +92,8 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
         }
       } catch (err) {
         e.target.disabled = false;
-        setError(`Error: ${getHumanReadableError(err.message)}`);
+        console.log(err.message);
+        setError(getHumanReadableError(err.message));
       }
     }
   };
@@ -128,13 +143,11 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
 function Items({ formData, setFormData }) {
   return (
     <div className='mb-4'>
+      <h1 className='fs-3 fw-semibold'>Item Details</h1>
       {formData.fields.map((field) => {
         return (
           <div key={field.client_id} className='mb-2'>
-            {/* this div might not be necessary */}
-            <div className='row d-flex justify-content-between align-items-end input-group'>
-              <Item field={field} setFormData={setFormData} />
-            </div>
+            <Item field={field} setFormData={setFormData} />
           </div>
         );
       })}
@@ -146,25 +159,27 @@ function Item({ field, setFormData }) {
   const handleFieldChange = (fieldId, value) => {
     setFormData((prevFormData) => {
       const updatedFields = prevFormData.fields.map((field) =>
-        field.client_id === fieldId ? { ...field, value: value.trim() } : field
+        field.client_id === fieldId
+          ? {
+              ...field,
+              value: value
+            }
+          : field
       );
       return { ...prevFormData, fields: updatedFields };
     });
   };
 
   return (
-    <div className='col-md-6'>
+    <div className='col-md-9'>
       <div className='row'>
-        <div className='col-md-3'>
+        <div className='col-md-6'>
           <label
             htmlFor={`fieldValue-${field.client_id}`}
-            className='form-label col-form-label'
+            className='form-label'
           >
             {field.name}
           </label>
-        </div>
-
-        <div className='col-md-9'>
           <ValueInput
             type={field.type}
             value={field.value}
@@ -184,11 +199,12 @@ function Item({ field, setFormData }) {
   );
 }
 
-function ValueInput({ type, value, onChange, placeholder }) {
+function ValueInput({ id, type, value, onChange, placeholder }) {
   const inputProps = {
+    id: id,
     type: type,
     onChange: onChange,
-    className: 'form-control'
+    className: 'form-control mb-2'
   };
 
   if (type !== 'checkbox') {
@@ -201,7 +217,7 @@ function ValueInput({ type, value, onChange, placeholder }) {
     return <textarea {...inputProps} rows={1} />;
   }
   if (type === 'checkbox') {
-    inputProps.className = 'form-check-input';
+    inputProps.className = 'form-check-input mb-2';
     inputProps.checked = Boolean(value);
     return (
       <input
@@ -333,7 +349,7 @@ function NameInput({ formData, setFormData }) {
         value={formData.name}
         onChange={(event) =>
           setFormData((prevFormData) => {
-            return { ...prevFormData, name: event.target.value.trim() };
+            return { ...prevFormData, name: event.target.value };
           })
         }
       />

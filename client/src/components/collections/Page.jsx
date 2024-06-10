@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, Fragment } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import UserContext from '../../context/UserContext.jsx';
 
 import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import fetchCollection from './fetchCollection.js';
 import stringifyDate from '../../utils/stringifyDate.js';
-import { v4 as uuid } from 'uuid';
 
 import LoadingScreen from '../LoadingScreen.jsx';
 import ErrorPage from '../ErrorPage.jsx';
@@ -65,57 +64,16 @@ export default function CollectionPage() {
 
           <CollectionDetails
             collection={collection}
-            setCollection={setCollection}
             user={user}
             setError={setError}
           />
 
-          <ItemsDetails items={collection.items} />
-
-          <div className='container'>
-            {collection.tags.map((tag, index) => {
-              if (index >= 6) {
-                return null;
-              }
-              return (
-                <span
-                  key={tag._id}
-                  className='badge rounded-pill bg-primary me-2 mb-2'
-                  style={{ fontSize: '15px' }}
-                >
-                  {tag.label}
-                </span>
-              );
-            })}
-          </div>
-
-          <div
-            id='yet-another-enfore-width-95'
-            className='container border border-2 rounded-4 p-3 mb-4 mt-2'
-          >
-            <h2 className='fw-semibold fs-2'>
-              <i className='bi bi-chat-text'></i> Comments (
-              {collection.comments?.length || 0})
-            </h2>
-
-            {collection.comments?.map((comment) => (
-              <CommentBox key={comment._id} comment={comment} />
-            ))}
-            {collection.comments.length ? (
-              ''
-            ) : (
-              <h4 className='mt-3'>Be the first to comment!</h4>
-            )}
-
-            {user && (
-              <CommentForm
-                collectionId={collection._id}
-                user={user}
-                setCollection={setCollection}
-                prodUrl={prodUrl}
-              />
-            )}
-          </div>
+          <ItemsDetails
+            items={collection.items}
+            collection={collection}
+            collectionId={collection._id}
+            setError={setError}
+          />
         </>
       ) : (
         <LoadingScreen message='Fetching collection data..' />
@@ -124,53 +82,11 @@ export default function CollectionPage() {
   );
 }
 
-function CollectionDetails({ collection, setCollection, user, setError }) {
-  const [beenLiked, setBeenLiked] = useState(false);
+function CollectionDetails({ collection, user, setError }) {
   const navigate = useNavigate();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
-
-  const handleLike = async (event) => {
-    try {
-      event.target.disabled = true;
-      const updatedCount = collection.likesCount + (beenLiked ? -1 : 1);
-      setCollection({
-        ...collection,
-        likesCount: updatedCount
-      });
-      setBeenLiked(!beenLiked);
-
-      let action = beenLiked ? 'unlike' : 'like';
-
-      const response = await fetch(
-        `${prodUrl}/api/collections/${collection._id}/${action}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setCollection({
-          ...collection,
-          likesCount: data.likesCount
-        });
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error);
-      }
-    } catch (err) {
-      setError(getHumanReadableError(err.message));
-    } finally {
-      event.target.disabled = false;
-    }
-  };
 
   const handleDeleteCollection = async () => {
     try {
@@ -268,18 +184,6 @@ function CollectionDetails({ collection, setCollection, user, setError }) {
             {collection.description}
           </p>
 
-          <button
-            className='btn btn-outline-primary btn-sm'
-            onClick={handleLike}
-          >
-            <i
-              className={`bi ${
-                beenLiked ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'
-              }`}
-            ></i>{' '}
-            {collection.likesCount || 0} Likes
-          </button>
-
           <p className='text-body-secondary mt-3 mb-1'>
             <small>Created: {stringifyDate(collection.createdAt)}</small>
           </p>
@@ -305,7 +209,7 @@ function CollectionDetails({ collection, setCollection, user, setError }) {
   );
 }
 
-function ItemsDetails({ items }) {
+function ItemDetails({ items }) {
   return (
     <>
       <div className='mt-4'>
@@ -313,10 +217,6 @@ function ItemsDetails({ items }) {
           id='another-enfore-width-95'
           className='container border border-2 rounded-4 p-3 mb-4 mt-2'
         >
-          <h2 className='fs-2 fw-semibold'>
-            <i className='bi bi-collection fs-3'></i> Items (
-            {items?.length || 0})
-          </h2>
           <table className='table table-bordered table-striped table-hover w-full mx-auto'>
             <thead>
               <tr>
@@ -339,88 +239,108 @@ function ItemsDetails({ items }) {
   );
 }
 
-function CommentBox({ comment }) {
-  return (
-    <div className='border-top border-bottom p-2 w-100'>
-      <div className='d-flex align-items-center'>
-        <Link
-          to={`/users/${comment.author._id}`}
-          className='text-decoration-none'
-        >
-          <span className='fw-bold text-dark'>{comment.author.username}</span>
-        </Link>
-        <small className='text-body-secondary'>
-          , added {stringifyDate(comment.createdAt || new Date())}
-        </small>
-      </div>
-      <p className='mb-0'>{comment.text}</p>
-    </div>
-  );
-}
+function ItemsDetails({ items, collection, collectionId, setError }) {
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  const token = localStorage.getItem('auth');
 
-function CommentForm({ collectionId, user, setCollection, prodUrl }) {
-  const [commentText, setCommentText] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const token = localStorage.getItem('auth');
-
+  const handleDeleteItem = async (itemId) => {
     try {
-      const now = String(new Date());
-      setCollection((prevCollection) => ({
-        ...prevCollection,
-        comments: [
-          ...prevCollection.comments,
-          {
-            _id: uuid(),
-            author: user,
-            text: commentText,
-            collection: prevCollection._id
-          }
-        ]
-      }));
-      setCommentText('');
       const response = await fetch(
-        `${prodUrl}/api/collections/${collectionId}/comments`,
+        `${prodUrl}/api/collections/${collectionId}/items/${itemId}`,
         {
-          method: 'POST',
+          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ text: commentText, user: user._id })
+          }
         }
       );
+
       if (response.ok) {
         const data = await response.json();
         console.log(data);
+        navigate(`/collections/${collectionId}`);
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
-    } catch (err) {
-      setErrorMessage(getHumanReadableError(err.message));
+    } catch (error) {
+      setError(getHumanReadableError(err.message));
     }
   };
 
   return (
-    <>
-      {errorMessage && <p className='text-danger mt-1'>{errorMessage}</p>}
-
-      <form onSubmit={handleSubmit} className='mb-3 mt-5'>
-        <textarea
-          className='form-control'
-          placeholder='Add a comment...'
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-          onFocus={() => setErrorMessage('')}
-        ></textarea>
-        <button type='submit' className='btn btn-primary mt-2'>
-          Add Comment
-        </button>
-      </form>
-    </>
+    <div className='mt-4'>
+      <div
+        id='another-enfore-width-95'
+        className='container border border-2 rounded-4 p-3 mb-4 mt-2 align-middle'
+      >
+        <div className='row mb-2 mt-1'>
+          <div className='col-6'>
+            <h2 className='fs-2 fw-semibold'>
+              <i className='bi bi-collection fs-3'></i> Items (
+              {items?.length || 0})
+            </h2>
+          </div>
+          <div className='col-6 text-end'>
+            <Link
+              to={`/collections/${collectionId}/items/create`}
+              state={{ collectionData: collection }}
+            >
+              <button className='btn btn-primary btn-sm'>
+                <i className='bi bi-plus-circle'></i> New Item
+              </button>
+            </Link>
+          </div>
+        </div>
+        <table className='table table-fixed table-bordered table-hover'>
+          <tbody>
+            {items?.map((item) => (
+              <Fragment key={item._id}>
+                <tr className='align-middle'>
+                  <td>
+                    <Link to={`/collections/${collectionId}/items/${item._id}`}>
+                      <h6 className='m-0 fs-4 fw-bold my-2'>{item.name}</h6>
+                    </Link>
+                  </td>
+                  <td className='text-end' style={{ borderLeft: 'none' }}>
+                    <Link
+                      to={`/collections/${collectionId}/items/${item._id}/edit`}
+                      state={{ collectionData: collection }}
+                    >
+                      <button className='btn btn-primary btn-sm me-2'>
+                        <i className='bi bi-pencil-square'></i>
+                      </button>
+                    </Link>
+                    <button
+                      className='btn btn-danger btn-sm me-2'
+                      onClick={handleDeleteItem}
+                    >
+                      <i className='bi bi-trash'></i>
+                    </button>
+                  </td>
+                </tr>
+                {item.fields.map((field, index) =>
+                  index === item.fields.length - 1 ? (
+                    <tr
+                      key={field.client_id}
+                      style={{ borderBottom: '2px dashed black' }}
+                    >
+                      <td className='fw-bold'>{field.name}</td>
+                      <td>{field.value}</td>
+                    </tr>
+                  ) : (
+                    <tr key={field.client_id}>
+                      <td className='fw-bold'>{field.name}</td>
+                      <td>{field.value}</td>
+                    </tr>
+                  )
+                )}
+              </Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

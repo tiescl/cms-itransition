@@ -23,8 +23,7 @@ router.get('/', async (req, res) => {
   try {
     const collections = await Collection.find({})
       .populate('user', 'username')
-      .populate('tags', 'label value')
-      .exec();
+      .populate('items', 'fields');
     res.status(200).send(collections);
   } catch (err) {
     console.error(err.message);
@@ -186,11 +185,15 @@ router.get('/:collectionId', async (req, res) => {
 
     const collection = await Collection.findById(collectionId)
       .populate('user', 'username')
-      .populate('items', 'fields');
+      .populate({
+        path: 'items'
+      });
 
     if (!collection) {
       return res.status(404).send({ error: 'collection_not_found' });
     }
+
+    console.log(collection);
     res.status(200).json(collection);
   } catch (err) {
     console.error(err.message);
@@ -298,7 +301,6 @@ router.post(
       const itemData = {
         name: name,
         collectionId: passed_collection_id,
-        tags: tags,
         fields: fields
       };
 
@@ -370,7 +372,7 @@ router.post(
       if (!name || !fields || fields.length === 0) {
         return res.status(400).json({ error: 'missing_required_fields' });
       }
-      if (fields.some((field) => !field.value)) {
+      if (fields.some((field) => !String(field.value))) {
         return res.status(400).send({ error: 'missing_custom_fields' });
       }
 
@@ -404,6 +406,7 @@ router.post(
       item.fields = fields;
       item.collectionId = passed_collection_id;
       await item.save();
+      res.status(200).json(item);
 
       const existingTagValues = item.tags.map((tag) => tag.value);
       const newTagValues = tags.map((tag) => tag.value);
@@ -438,8 +441,6 @@ router.post(
 
       item.tags = updatedTagIds;
       await item.save();
-
-      res.status(200).json(item);
     } catch (err) {
       console.error(err.message);
       res.status(500).json({ error: 'item_update_failed' });
@@ -496,6 +497,7 @@ router.get('/:collectionId/items/:itemId', async (req, res) => {
 
     const passed_collection = Collection.findById(collectionId);
     const item = await Item.findById(itemId)
+      .populate('collectionId', 'name customFieldDefinitions')
       .populate('tags', 'label value')
       .populate({
         path: 'comments',
@@ -538,12 +540,12 @@ router.post(
         return res.status(400).send({ error: 'empty_comment' });
       }
 
-      const item = await Item.findById(itemId);
       const passed_collection = await Collection.findById(collectionId);
-
       if (!passed_collection) {
         return res.status(404).send({ error: 'item_collection_not_found' });
       }
+
+      const item = await Item.findById(itemId);
       if (!item) {
         return res.status(404).send({ error: 'comment_item_not_found' });
       }

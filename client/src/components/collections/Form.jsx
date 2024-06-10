@@ -30,7 +30,7 @@ export default function CollectionForm({
 
   const handleDisabled = (formSubmitData) => {
     setError('');
-    if (!error || !imageError) {
+    if (error || imageError) {
       return true;
     }
 
