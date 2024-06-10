@@ -83,7 +83,7 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
 
         if (response.ok) {
           const newItem = await response.json();
-          console.log(newItem);
+          // console.log(newItem);
           navigate(`/collections/${collectionData._id}`);
         } else {
           const errorData = await response.json();
@@ -92,7 +92,7 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
         }
       } catch (err) {
         e.target.disabled = false;
-        console.log(err.message);
+        // console.log(err.message);
         setError(getHumanReadableError(err.message));
       }
     }

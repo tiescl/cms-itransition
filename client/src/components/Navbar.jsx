@@ -56,7 +56,14 @@ export default function Navbar() {
             <div className='offcanvas-body shift-on-large-screen'>
               <ul className='navbar-nav align-items-center'>
                 <li className='nav-item fs-5 me-2 hide-on-small-screen'>
-                  <strong>{user?.username || 'Guest'}</strong>
+                  <strong>
+                    <Link
+                      to={`/users/${user?._id || ''}`}
+                      className='text-decoration-none text-black'
+                    >
+                      {user?.username || 'Guest'}
+                    </Link>
+                  </strong>
                 </li>
                 <form className='d-flex mb-4 mt-4 me-2 ' role='search'>
                   <div className='input-group'>
@@ -71,7 +78,7 @@ export default function Navbar() {
                   </div>
                 </form>
 
-                <DropdownActions user={user} />
+                <Actions user={user} />
 
                 {user ? (
                   <li className='nav-item m-2'>
@@ -108,30 +115,27 @@ export default function Navbar() {
   );
 }
 
-function DropdownActions({ user }) {
+function Actions({ user }) {
   return (
-    <div className='dropdown'>
-      <button
-        className='btn btn-secondary dropdown-toggle m-2'
-        type='button'
-        data-bs-toggle='dropdown'
-        aria-expanded='false'
-      >
-        Actions
-      </button>
-      <ul className='dropdown-menu'>
+    <>
+      <div className='btn-group mx-2'>
         {user?.isAdmin && (
-          <Link to='/users' className='dropdown-item'>
-            <i className='bi bi-award'></i> Users Panel
+          <Link
+            to='/users'
+            className='btn btn-outline-secondary'
+            data-bs-toggle='tooltip'
+            title='Users'
+          >
+            <i className='bi bi-award'></i>
           </Link>
         )}
-        <Link to='/collections' className='dropdown-item'>
+        <Link to='/collections' className='btn btn-outline-primary'>
           <i className='bi bi-list-ol'></i> Collections
         </Link>
-        <Link to='/collections/create' className='dropdown-item'>
-          <i className='bi bi-plus-circle'></i> Create Collection
+        <Link to='/collections/create' className='btn btn-outline-primary'>
+          <i className='bi bi-plus-circle'></i> Create
         </Link>
-      </ul>
-    </div>
+      </div>
+    </>
   );
 }

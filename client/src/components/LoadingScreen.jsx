@@ -1,7 +1,8 @@
 import Navbar from './Navbar';
 
 export default function LoadingScreen({
-  message = 'Taking too long? Try reloading the page'
+  message = 'Taking too long? Try reloading the page',
+  long = 'false'
 }) {
   return (
     <>
@@ -14,6 +15,11 @@ export default function LoadingScreen({
           <span className='visually-hidden'>Loading...</span>
         </div>
         <p className='flex-row mt-3 fs-4'>{message}</p>
+        {long === 'true' && (
+          <p className='flex-row fs-4'>
+            Taking too long? Try reloading the page
+          </p>
+        )}
       </div>
     </>
   );

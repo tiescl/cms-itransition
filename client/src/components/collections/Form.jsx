@@ -88,7 +88,7 @@ export default function CollectionForm({
 
         if (response.ok) {
           const newCollection = await response.json();
-          console.log(newCollection);
+          // console.log(newCollection);
           navigate('/collections');
         } else {
           const errorData = await response.json();

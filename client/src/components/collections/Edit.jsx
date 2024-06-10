@@ -50,6 +50,6 @@ export default function EditCollection() {
   ) : collectionData && !isLoading ? (
     <CollectionForm collectionData={collectionData} editMode='true' />
   ) : (
-    <LoadingScreen message='Fetching the collection. Takes too long? Try to refresh the page.' />
+    <LoadingScreen message='Fetching collection data..' long='true' />
   );
 }

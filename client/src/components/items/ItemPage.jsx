@@ -129,7 +129,7 @@ export default function ItemPage() {
 }
 
 function ItemDetails({ collectionId, item, setItem, user, setError }) {
-  const [liked, setLiked] = useState(item.likes?.includes(user._id) || false);
+  const [liked, setLiked] = useState(item.likes?.includes(user?._id) || false);
   const [likesCount, setLikesCount] = useState(item.likes?.length || 0);
   const navigate = useNavigate();
 

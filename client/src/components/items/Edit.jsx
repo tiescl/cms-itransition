@@ -62,6 +62,6 @@ export default function EditItem() {
       editMode='true'
     />
   ) : (
-    <LoadingScreen message='Fetching item data. Taking too long? Try refreshing the page.' />
+    <LoadingScreen message='Fetching item data..' long='true' />
   );
 }
