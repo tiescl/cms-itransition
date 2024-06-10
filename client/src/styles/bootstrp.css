@@ -57,7 +57,7 @@ table tr.align-middle > td:first-child {
   justify-content: center;
   height: 100%;
   width: 100%;
-  min-height: 150px;
+  min-height: 250px;
   max-height: 250px;
 }
 
@@ -73,7 +73,6 @@ table tr.align-middle > td:first-child {
   justify-content: center;
   height: 100%;
   width: 80%;
-  min-height: 300px;
+  min-height: 260px;
   max-width: 500px !important;
-  max-height: 400px;
 }

@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
   try {
     const collections = await Collection.find({})
       .populate('user', 'username')
-      .populate('items', 'fields');
+      .populate('items', 'name fields');
     res.status(200).send(collections);
   } catch (err) {
     console.error(err.message);
@@ -148,7 +148,7 @@ router.post('/:collectionId', checkCurrentUser, async (req, res) => {
       return res.status(400).json({ error: 'missing_required_fields' });
     }
     for (const field of customFieldDefinitions) {
-      if (!field.name || !item.type) {
+      if (!field.name || !field.type) {
         return res.status(400).send({ error: 'missing_custom_fields' });
       }
     }
@@ -185,9 +185,7 @@ router.get('/:collectionId', async (req, res) => {
 
     const collection = await Collection.findById(collectionId)
       .populate('user', 'username')
-      .populate({
-        path: 'items'
-      });
+      .populate('items');
 
     if (!collection) {
       return res.status(404).send({ error: 'collection_not_found' });
@@ -216,21 +214,11 @@ router.delete('/:collectionId', checkCurrentUser, async (req, res) => {
       return res.status(403).json({ error: 'operation_forbidden' });
     }
 
-    if (
-      !collection.user._id.equals(currentUser._id) &&
-      !res.locals.user.isAdmin
-    ) {
+    if (!collection.user._id.equals(currentUser._id) && !currentUser.isAdmin) {
       return res.status(403).json({ error: 'operation_forbidden' });
     }
 
-    await Comment.deleteMany({ collection: collectionId });
-    await Tag.updateMany(
-      { collections: collectionId },
-      { $pull: { collections: collectionId } }
-    );
-
     const deletedCollection = await collection.deleteOne();
-
     res.status(200).json(deletedCollection);
   } catch (err) {
     console.error(err.message);
@@ -267,7 +255,7 @@ router.post(
         return res.status(400).send({ error: 'missing_required_fields' });
       }
 
-      if (fields.some((field) => !field.value)) {
+      if (fields.some((field) => !String(field.value))) {
         return res.status(400).send({ error: 'missing_custom_fields' });
       }
 
@@ -406,7 +394,6 @@ router.post(
       item.fields = fields;
       item.collectionId = passed_collection_id;
       await item.save();
-      res.status(200).json(item);
 
       const existingTagValues = item.tags.map((tag) => tag.value);
       const newTagValues = tags.map((tag) => tag.value);
@@ -441,6 +428,8 @@ router.post(
 
       item.tags = updatedTagIds;
       await item.save();
+
+      res.status(200).json(item);
     } catch (err) {
       console.error(err.message);
       res.status(500).json({ error: 'item_update_failed' });
@@ -472,12 +461,19 @@ router.delete(
         return res.status(403).json({ error: 'operation_forbidden' });
       }
 
-      if (!passed_user_id.equals(currentUser._id) && !currentUser.isAdmin) {
+      if (
+        !passed_collection.user._id.equals(currentUser._id) &&
+        !currentUser.isAdmin
+      ) {
         return res.status(403).json({ error: 'operation_forbidden' });
       }
 
       await Comment.deleteMany({ item: itemId });
       await Tag.updateMany({ items: itemId }, { $pull: { items: itemId } });
+      await Collection.updateMany(
+        { items: itemId },
+        { $pull: { items: itemId } }
+      );
 
       const deletedItem = await item.deleteOne();
 
@@ -559,7 +555,7 @@ router.post(
       item.comments.push(newComment._id);
       await item.save();
 
-      res.status(201).json(newComment);
+      res.status(201).json(await newComment.populate('author', 'username'));
     } catch (err) {
       console.error(err.message);
       res.status(500).send({ error: 'comment_add_failed' });

@@ -70,7 +70,9 @@ export default function Navbar() {
                     </button>
                   </div>
                 </form>
+
                 <DropdownActions user={user} />
+
                 {user ? (
                   <li className='nav-item m-2'>
                     <Link

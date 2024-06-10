@@ -32,7 +32,7 @@ export default function ItemPage() {
         const response = await fetch(
           `${prodUrl}/api/collections/${collectionId}/items/${itemId}`,
           {
-            signal: abortSignal
+            signal: controller.signal
           }
         );
         if (response.ok) {
@@ -44,6 +44,7 @@ export default function ItemPage() {
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
+          // console.log(err.message);
           setError(getHumanReadableError(err.message));
         }
       } finally {
@@ -76,19 +77,21 @@ export default function ItemPage() {
             user={user}
             setError={setError}
           />
+
           <ItemFields fields={item.fields} />
 
           <div className='container'>
-            {item.tags.map((tag) => {
+            {item.tags.map((tag) => (
               <span
                 key={tag._id}
-                className='badge rounded-pill bg-primary me-2 mb-2'
+                className='badge rounded-pill bg-primary me-2 mb-3'
                 style={{ fontSize: '15px' }}
               >
                 {tag.label}
-              </span>;
-            })}
+              </span>
+            ))}
           </div>
+
           <div
             id='yet-another-enfore-width-95'
             className='container border border-2 rounded-4 p-3 mb-4 mt-2'
@@ -126,7 +129,7 @@ export default function ItemPage() {
 }
 
 function ItemDetails({ collectionId, item, setItem, user, setError }) {
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(item.likes?.includes(user._id) || false);
   const [likesCount, setLikesCount] = useState(item.likes?.length || 0);
   const navigate = useNavigate();
 
@@ -152,7 +155,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setItem({
           ...item,
           likes: data.likes
@@ -183,13 +186,13 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         navigate(`/collections/${collectionId}`);
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
-    } catch (error) {
+    } catch (err) {
       setError(getHumanReadableError(err.message));
     }
   };
@@ -229,15 +232,6 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
               </>
             )}
         </div>
-
-        <button className='btn btn-outline-primary btn-sm' onClick={handleLike}>
-          <i
-            className={`bi ${
-              beenLiked ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'
-            }`}
-          ></i>{' '}
-          {item.likes?.length || 0} Likes
-        </button>
       </div>
 
       <p className='fs-5 mb-1'>
@@ -252,13 +246,16 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
         </Link>
       </p>
 
-      <button className='btn btn-outline-primary btn-sm' onClick={handleLike}>
+      <button
+        className='btn btn-outline-primary btn-sm mt-2'
+        onClick={handleLike}
+      >
         <i
           className={`bi ${
             liked ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'
           }`}
         ></i>{' '}
-        {likesCount || 0} Likes
+        {item.likes?.length || likesCount} Likes
       </button>
 
       <p className='text-body-secondary mt-3 mb-1'>
@@ -306,7 +303,7 @@ function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
         comments: [
           ...prevItem.comments,
           {
-            _id: uuid(),
+            _id: `tmp-${uuid()}`,
             author: user,
             text: commentText,
             item: prevItem._id
@@ -327,7 +324,16 @@ function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
+        setItem((prevItem) => ({
+          ...prevItem,
+          comments: [
+            ...prevItem.comments.filter(
+              (comment) => !comment._id.startsWith('tmp-')
+            ),
+            data
+          ]
+        }));
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error);
@@ -365,7 +371,7 @@ function ItemFields({ fields }) {
           id='another-enfore-width-95'
           className='container border border-2 rounded-4 p-3 mb-4 mt-2'
         >
-          <h2 className='fs-2 fw-semibold'>
+          <h2 className='fs-2 fw-semibold mb-3'>
             <i className='bi bi-collection fs-3'></i> Fields (
             {fields?.length || 0})
           </h2>
@@ -380,7 +386,13 @@ function ItemFields({ fields }) {
               {fields.map((field) => (
                 <tr key={field.client_id}>
                   <td style={{ whiteSpace: 'normal' }}>{field.name}</td>
-                  <td style={{ whiteSpace: 'normal' }}>{field.value}</td>
+                  <td style={{ whiteSpace: 'normal' }}>
+                    {field.value === 'true'
+                      ? 'Yes ✅'
+                      : field.value === 'false'
+                      ? 'No ❌'
+                      : field.value}
+                  </td>
                 </tr>
               ))}
             </tbody>

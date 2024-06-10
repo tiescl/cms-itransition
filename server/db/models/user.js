@@ -28,10 +28,12 @@ const userSchema = new Schema({
     type: Boolean,
     default: false
   },
-  collections: {
-    type: SchemaTypes.ObjectId,
-    ref: 'Collection'
-  },
+  collections: [
+    {
+      type: SchemaTypes.ObjectId,
+      ref: 'Collection'
+    }
+  ],
   registerDate: {
     type: String,
     default: () => new Date(),

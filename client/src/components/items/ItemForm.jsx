@@ -48,7 +48,7 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
           !formData.name?.match(/^[A-Za-z][A-Za-z0-9\s]*$/) ||
           formData.fields.some((field) => !String(field.value))
         ) {
-          throw new Error('name_fields_required.');
+          throw new Error('name_fields_required');
         }
 
         if (!user) {
@@ -327,7 +327,7 @@ function TagSelection({
 function FormTitle({ editMode }) {
   return (
     <h1
-      style={{ fontSize: '35px', margin: '110px auto 20px auto' }}
+      style={{ fontSize: '35px', margin: '120px auto 20px auto' }}
       className='text-center fw-semibold'
     >
       {editMode === 'true' ? 'Edit' : 'Create'} Item

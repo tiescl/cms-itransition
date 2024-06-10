@@ -13,6 +13,10 @@ import CreateCollection from './components/collections/Create.jsx';
 import Collections from './components/collections/Collections.jsx';
 import CollectionPage from './components/collections/Page.jsx';
 
+import CreateItem from './components/items/Create.jsx';
+import ItemPage from './components/items/ItemPage.jsx';
+import EditItem from './components/items/Edit.jsx';
+
 import AdminPanel from './components/UsersPanel.jsx';
 import UserPage from './components/UserPage.jsx';
 
@@ -21,10 +25,6 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
-import ItemForm from './components/items/ItemForm.jsx';
-import CreateItem from './components/items/Create.jsx';
-import ItemPage from './components/items/ItemPage.jsx';
-import EditItem from './components/items/Edit.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

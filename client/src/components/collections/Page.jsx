@@ -13,8 +13,6 @@ import Navbar from '../Navbar.jsx';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import '../../styles/bootstrp.css';
 
-// TODO: try wrapping everything in col-md-8 ensure good width
-
 export default function CollectionPage() {
   const { collectionId } = useParams();
   const { user } = useContext(UserContext);
@@ -103,7 +101,7 @@ function CollectionDetails({ collection, user, setError }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         navigate('/collections');
       } else {
         const errorData = await response.json();
@@ -184,7 +182,7 @@ function CollectionDetails({ collection, user, setError }) {
             {collection.description}
           </p>
 
-          <p className='text-body-secondary mt-3 mb-1'>
+          <p className='text-body-secondary mt-4 mb-1'>
             <small>Created: {stringifyDate(collection.createdAt)}</small>
           </p>
           <p className='text-body-secondary mb-2'>
@@ -209,36 +207,6 @@ function CollectionDetails({ collection, user, setError }) {
   );
 }
 
-function ItemDetails({ items }) {
-  return (
-    <>
-      <div className='mt-4'>
-        <div
-          id='another-enfore-width-95'
-          className='container border border-2 rounded-4 p-3 mb-4 mt-2'
-        >
-          <table className='table table-bordered table-striped table-hover w-full mx-auto'>
-            <thead>
-              <tr>
-                <th className='col-6'>Name</th>
-                <th className='col-6'>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.client_id}>
-                  <td style={{ whiteSpace: 'normal' }}>{item.name}</td>
-                  <td style={{ whiteSpace: 'normal' }}>{item.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </>
-  );
-}
-
 function ItemsDetails({ items, collection, collectionId, setError }) {
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
@@ -258,7 +226,7 @@ function ItemsDetails({ items, collection, collectionId, setError }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         navigate(`/collections/${collectionId}`);
       } else {
         const errorData = await response.json();
@@ -299,7 +267,10 @@ function ItemsDetails({ items, collection, collectionId, setError }) {
               <Fragment key={item._id}>
                 <tr className='align-middle'>
                   <td>
-                    <Link to={`/collections/${collectionId}/items/${item._id}`}>
+                    <Link
+                      to={`/collections/${collectionId}/items/${item._id}`}
+                      className='text-decoration-none text-secondary'
+                    >
                       <h6 className='m-0 fs-4 fw-bold my-2'>{item.name}</h6>
                     </Link>
                   </td>
@@ -320,22 +291,27 @@ function ItemsDetails({ items, collection, collectionId, setError }) {
                     </button>
                   </td>
                 </tr>
-                {item.fields.map((field, index) =>
-                  index === item.fields.length - 1 ? (
-                    <tr
-                      key={field.client_id}
-                      style={{ borderBottom: '2px dashed black' }}
-                    >
-                      <td className='fw-bold'>{field.name}</td>
-                      <td>{field.value}</td>
-                    </tr>
-                  ) : (
-                    <tr key={field.client_id}>
-                      <td className='fw-bold'>{field.name}</td>
-                      <td>{field.value}</td>
-                    </tr>
-                  )
-                )}
+                {item.fields.map((field, index) => (
+                  <tr
+                    key={field.client_id}
+                    style={{
+                      borderBottom: `${
+                        index === item.fields.length - 1
+                          ? '2px dashed black'
+                          : ''
+                      }`
+                    }}
+                  >
+                    <td className='fw-bold'>{field.name}</td>
+                    <td>
+                      {field.value === 'true'
+                        ? 'Yes ✅'
+                        : field.value === 'false'
+                        ? 'No ❌'
+                        : field.value}
+                    </td>
+                  </tr>
+                ))}
               </Fragment>
             ))}
           </tbody>

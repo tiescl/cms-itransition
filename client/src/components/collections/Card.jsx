@@ -53,14 +53,14 @@ export default function CollectionCard({ collection }) {
             </p>
           </div>
 
-          {collection.items && (
-            <ul className='list-group border border-2 rounded list-group-flush'>
+          {collection.items?.length > 0 && (
+            <ul className='list-group list-group-numbered border border-2 rounded list-group-flush'>
               <div className='card-header text-secondary fw-bold fs-5'>
                 Items
               </div>
               {collection.items?.slice(0, MAX_ITEMS).map((item) => (
                 <li
-                  key={item.client_id}
+                  key={item._id}
                   className='list-group-item'
                   style={{
                     overflow: 'hidden',
@@ -68,12 +68,12 @@ export default function CollectionCard({ collection }) {
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  <strong>{item.name}</strong> :{' '}
-                  {item.value === 'true'
-                    ? 'Yes ✅'
-                    : item.value === 'false'
-                    ? 'No ❌'
-                    : item.value}
+                  <Link
+                    to={`/collections/${collection._id}/items/${item._id}`}
+                    className='text-decoration-none text-black'
+                  >
+                    <strong>{item.name}</strong>
+                  </Link>
                 </li>
               ))}
             </ul>

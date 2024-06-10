@@ -97,7 +97,7 @@ export default function CollectionForm({
         }
       } catch (err) {
         e.target.disabled = false;
-        setRequestError(`Error: ${getHumanReadableError(err.message)}`);
+        setRequestError(getHumanReadableError(err.message));
       }
     }
   };
