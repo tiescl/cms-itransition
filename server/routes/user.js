@@ -1,5 +1,6 @@
 import express from 'express';
 import User from '../db/models/user.js';
+import Collection from '../db/models/collection.js';
 import checkCurrentUser from './middleware/checkCurrentUser.js';
 import { ObjectId } from 'mongodb';
 
@@ -18,7 +19,10 @@ router.get('/:userId', async (req, res) => {
   const userId = new ObjectId(String(req.params.userId));
 
   try {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate({
+      path: 'collections',
+      select: 'items'
+    });
 
     if (!user) {
       res.status(404).send({ error: 'user_not_found' });
@@ -64,6 +68,8 @@ router.post('/', checkCurrentUser, async (req, res) => {
 router.delete('/', checkCurrentUser, async (req, res) => {
   const currentUser = res.locals.user;
 
+  const prodUrl = process.env.PROD_URL;
+
   try {
     // delete the user; admin-only;
     const { selectedUsers } = req.body;
@@ -76,6 +82,9 @@ router.delete('/', checkCurrentUser, async (req, res) => {
       return res.status(200).send('update_successful');
     }
 
+    const users = await User.find({ email: { $in: selectedUsers } });
+    const collectionIdsToDelete = users.flatMap((user) => user.collections);
+
     const deleteResult = await User.deleteMany({
       email: { $in: selectedUsers }
     });
@@ -85,7 +94,97 @@ router.delete('/', checkCurrentUser, async (req, res) => {
         message: `${deleteResult.deletedCount} users deleted successfully.`
       });
     } else {
-      res.status(404).send({ error: 'no_users_found' });
+      return res.status(404).send({ error: 'no_users_found' });
+    }
+
+    for (const collectionId of collectionIdsToDelete) {
+      try {
+        const response = await fetch(
+          `${prodUrl}/api/collections/${collectionId}`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${
+                req.headers.authorization?.split(' ')[1]
+              }`
+            }
+          }
+        );
+
+        if (!response.ok) {
+          console.error(
+            `Error deleting collection ${collectionId}:`,
+            response.statusText
+          );
+          const errorData = await response.json();
+          throw new Error(errorData.error);
+        }
+      } catch (error) {
+        console.error(`Error deleting collection ${collectionId}:`, error);
+        throw error;
+      }
+    }
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+router.delete('/:userId', checkCurrentUser, async (req, res) => {
+  const currentUser = res.locals.user;
+  const userId = new ObjectId(String(req.params.userId));
+  const prodUrl = process.env.PROD_URL;
+
+  try {
+    if (!currentUser.isAdmin && !userId.equals(currentUser._id)) {
+      return res.status(403).send('operation_forbidden');
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send('user_not_found');
+    }
+
+    const collectionIdsToDelete = user.collections?.map(
+      (collection) => collection._id
+    );
+
+    for (const collectionId of collectionIdsToDelete) {
+      try {
+        const response = await fetch(
+          `${prodUrl}/api/collections/${collectionId}`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${
+                req.headers.authorization?.split(' ')[1]
+              }`
+            }
+          }
+        );
+
+        if (!response.ok) {
+          console.error(
+            `Error deleting collection ${collectionId}:`,
+            response.statusText
+          );
+          const errorData = await response.json();
+          throw new Error(errorData.error);
+        }
+      } catch (error) {
+        console.error(`Error deleting collection ${collectionId}:`, error);
+        throw error;
+      }
+    }
+
+    const deleteResult = await User.deleteOne({ _id: userId });
+
+    if (deleteResult.deletedCount > 0) {
+      res.status(200).json({ deleteResult });
+    } else {
+      res.status(404).send({ error: 'user_not_found' });
     }
   } catch (err) {
     res.status(500).send({ error: err.message });

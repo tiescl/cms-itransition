@@ -201,6 +201,7 @@ router.get('/:collectionId', async (req, res) => {
 router.delete('/:collectionId', checkCurrentUser, async (req, res) => {
   const currentUser = res.locals.user;
   const collectionId = new ObjectId(String(req.params.collectionId));
+  const prodUrl = process.env.PROD_URL;
 
   try {
     const collection = await Collection.findById(collectionId);
@@ -216,6 +217,28 @@ router.delete('/:collectionId', checkCurrentUser, async (req, res) => {
     if (!collection.user._id.equals(currentUser._id) && !currentUser.isAdmin) {
       return res.status(403).json({ error: 'operation_forbidden' });
     }
+
+    const itemIdsToDelete = collection.items?.map((item) => item._id);
+
+    await Promise.all(
+      itemIdsToDelete.map((itemId) =>
+        fetch(`${prodUrl}/api/collections/${collectionId}/items/${itemId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${
+              req.headers.authorization?.split(' ')[1]
+            }`
+          }
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error(
+              `Failed to delete item ${itemId}: ${response.statusText}`
+            );
+          }
+        })
+      )
+    );
 
     const deletedCollection = await collection.deleteOne();
     res.status(200).json(deletedCollection);

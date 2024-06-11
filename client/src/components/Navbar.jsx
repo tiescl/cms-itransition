@@ -118,7 +118,7 @@ export default function Navbar() {
 function Actions({ user }) {
   return (
     <>
-      <div className='btn-group mx-2'>
+      <div className='btn-group m-2'>
         {user?.isAdmin && (
           <Link
             to='/users'

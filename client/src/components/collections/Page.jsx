@@ -108,7 +108,7 @@ function CollectionDetails({ collection, user, setError }) {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
-    } catch (error) {
+    } catch (err) {
       setError(getHumanReadableError(err.message));
     }
   };

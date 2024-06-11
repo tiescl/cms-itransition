@@ -5,6 +5,7 @@ import UserContext from '../context/UserContext.jsx';
 import Navbar from './Navbar.jsx';
 import ErrorPage from './ErrorPage.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
+import { StatusWrapper } from './UsersPanelTiny.jsx';
 
 import getHumanReadableError from '../utils/getHumanReadableError.js';
 import stringifyDate from '../utils/stringifyDate.js';
@@ -64,18 +65,7 @@ export default function UserPage() {
       <UserDetails pageUser={pageUser} contextUser={user} setError={setError} />
 
       <div className='container'>
-        <h2>Profile # {userId}</h2>
-
-        {/* <div className='mb-3'>
-        <strong>Email:</strong> {user.email}
-      </div> */}
-
-        {/* Display other relevant user information here (e.g., language, theme, number of collections) */}
-
-        <hr />
-
-        <h3>Collections</h3>
-        {/* ... (Optionally, display the user's collections here) ... */}
+        <h1>Collections</h1>
       </div>
     </>
   ) : (
@@ -86,7 +76,31 @@ export default function UserPage() {
 function UserDetails({ pageUser, contextUser, setError }) {
   const navigate = useNavigate();
 
-  const handleDeleteUser = () => {};
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  const token = localStorage.getItem('auth');
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      const response = await fetch(`${prodUrl}/api/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        navigate('/');
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
+      }
+    } catch (err) {
+      setError(getHumanReadableError(err.message));
+    }
+  };
 
   return (
     <div
@@ -96,7 +110,7 @@ function UserDetails({ pageUser, contextUser, setError }) {
     >
       <div className='row'>
         <div className='col-10'>
-          <h1 className='fs-1'>
+          <h1 className='fs-1 mb-0'>
             {pageUser.username} {pageUser.isAdmin && '👑'}
           </h1>
         </div>
@@ -109,7 +123,7 @@ function UserDetails({ pageUser, contextUser, setError }) {
                 <Link to='/'>
                   <button
                     className='btn btn-danger mt-1'
-                    onClick={handleDeleteUser}
+                    onClick={() => handleDeleteUser(pageUser._id)}
                     data-bs-toggle='tooltip'
                     title='Delete user'
                   >
@@ -121,9 +135,35 @@ function UserDetails({ pageUser, contextUser, setError }) {
         </div>
       </div>
 
-      <p className='mb-1'>
+      <p className='mb-2'>
+        <span className='fw-bold'>ID</span>{' '}
+        <code className='text-body-secondary'>#{pageUser._id}</code>
+      </p>
+
+      <p className='mb-2'>
         <span className='fw-bold'>Email: </span>
         <code>{pageUser.email}</code>
+      </p>
+
+      <p className='mb-2'>
+        <span className='fw-bold'>Status:</span>{' '}
+        <StatusWrapper
+          status={pageUser.isBlocked ? 'blocked' : 'active'}
+          accentColor={pageUser.isBlocked ? 'red' : 'darkorange'}
+        />
+      </p>
+
+      <p className='mb-2'>
+        <span className='fw-bold'>Collections:</span>{' '}
+        {pageUser.collections?.length || 0}
+      </p>
+
+      <p className='mb-2'>
+        <span className='fw-bold'>Total items created:</span>{' '}
+        {pageUser.collections?.reduce(
+          (total, collection) => total + collection.items?.length,
+          0
+        ) || 0}
       </p>
 
       <p className='text-body-secondary mt-3 mb-1'>

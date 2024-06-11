@@ -45,7 +45,7 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
 
       try {
         if (
-          !formData.name?.match(/^[A-Za-z][A-Za-z0-9\s]*$/) ||
+          !formData.name ||
           formData.fields.some((field) => !String(field.value))
         ) {
           throw new Error('name_fields_required');
