@@ -1,33 +1,33 @@
 import express from 'express';
 import User from '../db/models/user.js';
 import checkCurrentUser from './middleware/checkCurrentUser.js';
+import { ObjectId } from 'mongodb';
+
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  // return a list of all users
   try {
-    const users = await User.find({}).exec();
+    const users = await User.find({});
     res.status(200).send(users);
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
 });
 
-router.get('/:id', async (req, res) => {
-  // conditionally render additional functionality
-  // if checkCurrentUser returns the same user
-  const userId = req.params.id;
+router.get('/:userId', async (req, res) => {
+  const userId = new ObjectId(String(req.params.userId));
 
   try {
-    // fetch user info for their profile page
-    const user = await User.findById(userId).exec();
+    const user = await User.findById(userId);
+
     if (!user) {
-      res.status(404).send('User Not Found');
+      res.status(404).send({ error: 'user_not_found' });
     }
-    res.status(200).send(user);
+
+    res.status(200).json(user);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error Fetching User Data');
+    res.status(500).send({ error: 'user_fetch_failed' });
   }
 });
 

@@ -191,7 +191,6 @@ router.get('/:collectionId', async (req, res) => {
       return res.status(404).send({ error: 'collection_not_found' });
     }
 
-    console.log(collection);
     res.status(200).json(collection);
   } catch (err) {
     console.error(err.message);

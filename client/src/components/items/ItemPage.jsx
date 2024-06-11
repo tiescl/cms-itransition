@@ -200,7 +200,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
   return (
     <div
       className='container border border-2 rounded-4 p-3 mb-4 enfore-width-95'
-      style={{ marginTop: '130px' }}
+      style={{ marginTop: '120px' }}
       id='enfore-width-95'
     >
       <div className='row'>

@@ -1,57 +1,134 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
+import Navbar from './Navbar.jsx';
+import ErrorPage from './ErrorPage.jsx';
+import LoadingScreen from './LoadingScreen.jsx';
+
+import getHumanReadableError from '../utils/getHumanReadableError.js';
+
 export default function UserPage() {
   const { userId } = useParams();
-  const [user, setUser] = useState(null);
+  const { user } = useContext(UserContext);
+  const [pageUser, setPageUser] = useState(null);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-  //   useEffect(() => {
-  //     const fetchUser = async () => {
-  //       try {
-  //         const response = await fetch(`/api/users/${id}`);
-  //         if (response.ok) {
-  //           const data = await response.json();
-  //           setUser(data);
-  //         } else {
-  //           // Handle errors here
-  //           setError('User not found');
-  //           setTimeout(() => {
-  //             navigate('/'); // Redirect back to the home page or wherever is appropriate
-  //           }, 2000); // Redirect after 2 seconds (adjust as needed)
-  //         }
-  //       } catch (err) {
-  //         console.error('Error fetching user:', err);
-  //         setError('An error occurred. Please try again later.');
-  //       }
-  //     };
+  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
+  const token = localStorage.getItem('auth');
 
-  //     fetchUser();
-  //   }, [id]);
+  useEffect(() => {
+    setIsLoading(true);
+    const controller = new AbortController();
 
-  if (error) {
-    return <div className='alert alert-danger'>{error}</div>;
-  }
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`${prodUrl}/api/users/${userId}`, {
+          signal: controller.signal
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setPageUser(data);
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.error);
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.log(err.message);
+          setError(getHumanReadableError(err.message));
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  //   if (!user) {
-  //     return <div>Loading...</div>;
-  //   }
+    fetchUser();
 
-  return (
-    <div className='container'>
-      <h2>Profile # {userId}</h2>
+    const intervalId = setInterval(fetchUser, 10000);
 
-      {/* <div className='mb-3'>
+    return () => {
+      clearInterval(intervalId);
+      controller.abort();
+    };
+  }, [userId]);
+
+  return error ? (
+    <ErrorPage err={error} />
+  ) : pageUser && !isLoading ? (
+    <>
+      <Navbar />
+
+      <UserDetails pageUser={pageUser} contextUser={user} setError={setError} />
+
+      <div className='container'>
+        <h2>Profile # {userId}</h2>
+
+        {/* <div className='mb-3'>
         <strong>Email:</strong> {user.email}
       </div> */}
 
-      {/* Display other relevant user information here (e.g., language, theme, number of collections) */}
+        {/* Display other relevant user information here (e.g., language, theme, number of collections) */}
 
-      <hr />
+        <hr />
 
-      <h3>Collections</h3>
-      {/* ... (Optionally, display the user's collections here) ... */}
+        <h3>Collections</h3>
+        {/* ... (Optionally, display the user's collections here) ... */}
+      </div>
+    </>
+  ) : (
+    <LoadingScreen message='Fetching user data..' long='true' />
+  );
+}
+
+function UserDetails({ pageUser, contextUser, setError }) {
+  const navigate = useNavigate();
+
+  const handleDeleteUser = () => {};
+
+  return (
+    <div
+      className='container border border-2 rounded-4 p-3 mb-4'
+      style={{ marginTop: '120px' }}
+      id='enfore-width-95'
+    >
+      <div className='row'>
+        <div className='col-10'>
+          <h1 className='fs-1'>
+            {pageUser.username} {pageUser.isAdmin && '👑'}
+          </h1>
+        </div>
+
+        <div className='col-2 d-flex align-items-start justify-content-end'>
+          {pageUser &&
+            (pageUser._id === contextUser._id || contextUser.isAdmin) && (
+              <>
+                <Link to='/'>
+                  <button
+                    className='btn btn-danger mt-1'
+                    onClick={handleDeleteUser}
+                    data-bs-toggle='tooltip'
+                    title='Delete user'
+                  >
+                    <i className='bi bi-trash'></i>
+                  </button>
+                </Link>
+              </>
+            )}
+        </div>
+      </div>
+
+      <p className='mb-1'>
+        <span className='fw-bold'>Email: </span>
+        <code>{pageUser.email}</code>
+      </p>
+
+      <p className='text-body-secondary mt-3 mb-1'>
+        <small>Created: {stringifyDate(pageUser.registerDate)}</small>
+      </p>
+      <p className='text-body-secondary mb-2'>
+        <small>Last Modified: {stringifyDate(pageUser.lastLoginDate)}</small>
+      </p>
     </div>
   );
 }

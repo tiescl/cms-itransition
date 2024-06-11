@@ -70,6 +70,7 @@ export default function CollectionPage() {
             items={collection.items}
             collection={collection}
             collectionId={collection._id}
+            contextUser={user}
             setError={setError}
           />
         </>
@@ -207,7 +208,13 @@ function CollectionDetails({ collection, user, setError }) {
   );
 }
 
-function ItemsDetails({ items, collection, collectionId, setError }) {
+function ItemsDetails({
+  items,
+  collection,
+  collectionId,
+  contextUser,
+  setError
+}) {
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
 
@@ -232,7 +239,7 @@ function ItemsDetails({ items, collection, collectionId, setError }) {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
-    } catch (error) {
+    } catch (err) {
       setError(getHumanReadableError(err.message));
     }
   };
@@ -275,20 +282,26 @@ function ItemsDetails({ items, collection, collectionId, setError }) {
                     </Link>
                   </td>
                   <td className='text-end' style={{ borderLeft: 'none' }}>
-                    <Link
-                      to={`/collections/${collectionId}/items/${item._id}/edit`}
-                      state={{ collectionData: collection }}
-                    >
-                      <button className='btn btn-primary btn-sm me-2'>
-                        <i className='bi bi-pencil-square'></i>
-                      </button>
-                    </Link>
-                    <button
-                      className='btn btn-danger btn-sm me-2'
-                      onClick={handleDeleteItem}
-                    >
-                      <i className='bi bi-trash'></i>
-                    </button>
+                    {contextUser &&
+                      (collection.user._id.includes(contextUser._id) ||
+                        contextUser.isAdmin) && (
+                        <>
+                          <Link
+                            to={`/collections/${collectionId}/items/${item._id}/edit`}
+                            state={{ collectionData: collection }}
+                          >
+                            <button className='btn btn-primary btn-sm me-2'>
+                              <i className='bi bi-pencil-square'></i>
+                            </button>
+                          </Link>
+                          <button
+                            className='btn btn-danger btn-sm me-2'
+                            onClick={() => handleDeleteItem(item._id)}
+                          >
+                            <i className='bi bi-trash'></i>
+                          </button>
+                        </>
+                      )}
                   </td>
                 </tr>
                 {item.fields.map((field, index) => (

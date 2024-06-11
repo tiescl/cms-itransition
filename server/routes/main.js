@@ -18,9 +18,8 @@ router.get('/', async (req, res) => {
 
 router.get('/warmup', async (req, res) => {
   try {
-    // Database Connection Test
     const userExists = await User.exists({ email: 'admin@tiescl.uz' });
-    console.log(userExists);
+
     if (userExists) {
       return res.status(200).send({ message: 'all_good' });
     } else {
@@ -33,7 +32,6 @@ router.get('/warmup', async (req, res) => {
 
 router.get('/current-user', checkCurrentUser, async (req, res) => {
   try {
-    // fetch the current user for context
     if (res.locals.user) {
       res.json(res.locals.user);
     } else {
@@ -63,7 +61,6 @@ router.post('/register', async (req, res) => {
 
   try {
     // handle user registration
-    // consider implementing the handleErrors function
     const userExists = await User.exists({ email: email });
     if (userExists) {
       return res.status(400).send({ error: 'email_in_use' });

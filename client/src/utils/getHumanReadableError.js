@@ -8,6 +8,10 @@ export default function getHumanReadableError(error_message) {
       return 'User with the given email does not exist.';
     case 'incorrect_password':
       return 'Entered password is invalid.';
+    case 'user_not_found':
+      return 'User not found. Does he/she exist?';
+    case 'user_fetch_failed':
+      return 'Failed to fetch user data. Please try again.';
     case 'user_blocked':
       return 'Your account has been blocked. Stay cool✌️';
     case 'email_in_use':
