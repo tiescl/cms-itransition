@@ -115,9 +115,9 @@ function CollectionDetails({ collection, user, setError }) {
 
   return (
     <div
-      className='container border border-2 rounded-4 p-3 mb-4 enfore-width-95'
+      className='container border border-2 rounded-4 p-3 mb-4'
       style={{ marginTop: '130px' }}
-      id='enfore-width-95'
+      id='enforce-width-95-coll1'
     >
       <div className='row'>
         <div className='col-lg-8'>
@@ -215,6 +215,8 @@ function ItemsDetails({
   contextUser,
   setError
 }) {
+  const navigate = useNavigate();
+
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
 
@@ -240,6 +242,7 @@ function ItemsDetails({
         throw new Error(errorData.error);
       }
     } catch (err) {
+      console.log(err.message);
       setError(getHumanReadableError(err.message));
     }
   };
@@ -247,7 +250,7 @@ function ItemsDetails({
   return (
     <div className='mt-4'>
       <div
-        id='another-enfore-width-95'
+        id='enforce-width-95-coll2'
         className='container border border-2 rounded-4 p-3 mb-4 mt-2 align-middle'
       >
         <div className='row mb-2 mt-1'>

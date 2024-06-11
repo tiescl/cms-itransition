@@ -93,7 +93,7 @@ export default function ItemPage() {
           </div>
 
           <div
-            id='yet-another-enfore-width-95'
+            id='enforce-width-95-item1'
             className='container border border-2 rounded-4 p-3 mb-4 mt-2'
           >
             <h2 className='fw-semibold fs-2'>
@@ -199,9 +199,9 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
 
   return (
     <div
-      className='container border border-2 rounded-4 p-3 mb-4 enfore-width-95'
+      className='container border border-2 rounded-4 p-3 mb-4'
       style={{ marginTop: '120px' }}
-      id='enfore-width-95'
+      id='enforce-width-95-item2'
     >
       <div className='row'>
         <div className='col-9'>
@@ -368,7 +368,7 @@ function ItemFields({ fields }) {
     <>
       <div className='mt-4'>
         <div
-          id='another-enfore-width-95'
+          id='enforce-width-95-item3'
           className='container border border-2 rounded-4 p-3 mb-4 mt-2'
         >
           <h2 className='fs-2 fw-semibold mb-3'>

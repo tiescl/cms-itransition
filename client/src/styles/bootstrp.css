@@ -12,13 +12,12 @@
 }
 
 @media (max-width: 576px) {
-  #enfore-width-95 {
-    width: 95%;
-  }
-  #another-enfore-width-95 {
-    width: 95%;
-  }
-  #yet-another-enfore-width-95 {
+  #enforce-width-95-item1,
+  #enforce-width-95-item2,
+  #enforce-width-95-item3,
+  #enforce-width-95-user1,
+  #enforce-width-95-coll1,
+  #enforce-width-95-coll2 {
     width: 95%;
   }
 }

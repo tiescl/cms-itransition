@@ -1,11 +1,13 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import UserContext from '../context/UserContext.jsx';
 
 import Navbar from './Navbar.jsx';
 import ErrorPage from './ErrorPage.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
 
 import getHumanReadableError from '../utils/getHumanReadableError.js';
+import stringifyDate from '../utils/stringifyDate.js';
 
 export default function UserPage() {
   const { userId } = useParams();
@@ -90,7 +92,7 @@ function UserDetails({ pageUser, contextUser, setError }) {
     <div
       className='container border border-2 rounded-4 p-3 mb-4'
       style={{ marginTop: '120px' }}
-      id='enfore-width-95'
+      id='enforce-width-95-user1'
     >
       <div className='row'>
         <div className='col-10'>
@@ -101,6 +103,7 @@ function UserDetails({ pageUser, contextUser, setError }) {
 
         <div className='col-2 d-flex align-items-start justify-content-end'>
           {pageUser &&
+            contextUser &&
             (pageUser._id === contextUser._id || contextUser.isAdmin) && (
               <>
                 <Link to='/'>
@@ -124,10 +127,10 @@ function UserDetails({ pageUser, contextUser, setError }) {
       </p>
 
       <p className='text-body-secondary mt-3 mb-1'>
-        <small>Created: {stringifyDate(pageUser.registerDate)}</small>
+        <small>Registered: {stringifyDate(pageUser.registerDate)}</small>
       </p>
       <p className='text-body-secondary mb-2'>
-        <small>Last Modified: {stringifyDate(pageUser.lastLoginDate)}</small>
+        <small>Last Visit: {stringifyDate(pageUser.lastLoginDate)}</small>
       </p>
     </div>
   );
