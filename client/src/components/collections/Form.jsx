@@ -36,7 +36,6 @@ export default function CollectionForm({
 
     if (
       !formSubmitData.name ||
-      !formSubmitData.name.match(/^[A-Za-z][A-Za-z0-9\s]*$/) ||
       !formSubmitData.category ||
       formSubmitData.customFieldDefinitions.length === 0
     ) {
@@ -69,7 +68,7 @@ export default function CollectionForm({
       setRequestError('');
 
       try {
-        if (user === null || user === '') {
+        if (!user) {
           throw new Error('operation_forbidden');
         }
 
@@ -83,7 +82,19 @@ export default function CollectionForm({
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ ...formData, user: user._id })
+          body: JSON.stringify({
+            ...formData,
+            name: formData.name.trim(),
+            customFieldDefinitions: formData.customFieldDefinitions.map(
+              (customField) => {
+                return {
+                  ...customField,
+                  name: customField.name.trim()
+                };
+              }
+            ),
+            user: user._id
+          })
         });
 
         if (response.ok) {
@@ -177,7 +188,7 @@ function NameInput({ formData, setFormData }) {
         value={formData.name}
         onChange={(event) =>
           setFormData((prevFormData) => {
-            return { ...prevFormData, name: event.target.value.trim() };
+            return { ...prevFormData, name: event.target.value };
           })
         }
       />
@@ -330,7 +341,7 @@ function CreateField({ setFormData }) {
         ...prevFormData.customFieldDefinitions,
         {
           client_id: uuidv4(),
-          name: fieldName.trim(),
+          name: fieldName,
           type: fieldType
         }
       ]

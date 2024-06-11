@@ -118,7 +118,7 @@ function UserDetails({ pageUser, contextUser, setError }) {
 
   return (
     <div
-      className='container border border-2 rounded-4 p-3 mb-4'
+      className='container border border-2 rounded-4 p-3 mb-4 fs-5'
       style={{ marginTop: '120px' }}
       id='enforce-width-95-user1'
     >
