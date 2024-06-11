@@ -5,6 +5,7 @@ import UserContext from '../context/UserContext.jsx';
 import Navbar from './Navbar.jsx';
 import ErrorPage from './ErrorPage.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
+import CollectionCard from './collections/Card.jsx';
 import { StatusWrapper } from './UsersPanelTiny.jsx';
 
 import getHumanReadableError from '../utils/getHumanReadableError.js';
@@ -64,8 +65,21 @@ export default function UserPage() {
 
       <UserDetails pageUser={pageUser} contextUser={user} setError={setError} />
 
-      <div className='container'>
-        <h1>Collections</h1>
+      <div
+        className='container border border-2 rounded-4 p-3 mb-4'
+        id='enforce-width-95-user0'
+      >
+        <h1 className='mb-4'>
+          <i className='bi bi-collection'></i> Collections (
+          {pageUser.collections?.length || 0})
+        </h1>
+        <div className='row d-flex'>
+          {pageUser.collections?.map((collection) => {
+            return (
+              <CollectionCard key={collection._id} collection={collection} />
+            );
+          })}
+        </div>
       </div>
     </>
   ) : (

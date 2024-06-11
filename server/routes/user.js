@@ -21,7 +21,10 @@ router.get('/:userId', async (req, res) => {
   try {
     const user = await User.findById(userId).populate({
       path: 'collections',
-      select: 'items'
+      populate: {
+        path: 'items',
+        select: 'name fields'
+      }
     });
 
     if (!user) {
