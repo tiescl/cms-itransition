@@ -1,11 +1,90 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import checkCurrentUser from './middleware/checkCurrentUser.js';
+import JiraClient from 'jira-client';
+
 import User from '../db/models/user.js';
+import checkCurrentUser from './middleware/checkCurrentUser.js';
+
 const router = express.Router();
 
 const maxCookieAge = 1 * 24 * 60 * 60;
+const jiraApiKey = process.env.JIRA_API_KEY;
+
+const jira = new JiraClient({
+  protocol: 'https',
+  host: 'cms-tiescl.atlassian.net',
+  username: 'tiescl.to@gmail.com',
+  password: jiraApiKey,
+  apiVersion: '2',
+  strictSSL: true
+});
+
+router.post('/create-ticket', checkCurrentUser, async (req, res) => {
+  const currentUser = res.locals.user;
+
+  try {
+    const { summary, priority, collection, link } = req.body;
+
+    if (!currentUser) {
+      return res.status(404).send({ error: 'user_not_found' });
+    }
+
+    // console.log(currentUser)
+
+    const user = await jira.searchUsers({
+      query: currentUser.email
+    });
+    const userExists = user?.length > 0 || false;
+
+    let reporterAccountId;
+
+    // console.log('user');
+    // console.log(user[0]);
+
+    if (!userExists) {
+      const newUser = await jira.createUser({
+        emailAddress: currentUser.email,
+        displayName: currentUser.username,
+        products: []
+      });
+      reporterAccountId = newUser.accountId;
+      console.log('new user' + newUser);
+    } else {
+      reporterAccountId = user[0].accountId;
+    }
+
+    const issue = {
+      fields: {
+        project: {
+          key: 'CSUP'
+        },
+        issuetype: {
+          name: 'Ticket'
+        },
+        summary: summary,
+        priority: {
+          name: priority
+        },
+        customfield_10033: { accountId: reporterAccountId },
+        customfield_10034: collection,
+        customfield_10035: link
+      }
+    };
+
+    //const createdIssue = await jira.addNewIssue(issue);
+
+    //console.log(createdIssue);
+
+    res.status(201).json({
+      message: 'ticket_init_successful'
+      //issueKey: createdIssue.key
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send({ error: 'ticket_init_failed' });
+  }
+});
 
 router.get('/', async (req, res) => {
   try {

@@ -1,8 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
-import { UserRow } from './UsersPanelTiny.jsx';
+
 import UserContext from '../context/UserContext.jsx';
-import 'bootstrap/dist/css/bootstrap.css';
-import Navbar from './Navbar.jsx';
+import { UserRow } from './UsersPanelTiny.jsx';
 
 function AdminPanel() {
   const { user } = useContext(UserContext);
@@ -184,8 +183,6 @@ function AdminPanel() {
 
   return (
     <>
-      <Navbar />
-
       <h1
         style={{
           marginTop: '130px',

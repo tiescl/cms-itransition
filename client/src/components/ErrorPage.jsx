@@ -1,4 +1,4 @@
-import Navbar from './Navbar';
+import Navbar from './Navbar.jsx';
 
 export default function ErrorPage({ err = 'Something went wrong.' }) {
   return (

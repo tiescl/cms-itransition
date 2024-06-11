@@ -8,9 +8,7 @@ import stringifyDate from '../../utils/stringifyDate.js';
 
 import LoadingScreen from '../LoadingScreen.jsx';
 import ErrorPage from '../ErrorPage.jsx';
-import Navbar from '../Navbar.jsx';
 
-import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import '../../styles/bootstrp.css';
 
 export default function CollectionPage() {
@@ -58,8 +56,6 @@ export default function CollectionPage() {
         <ErrorPage err={error} />
       ) : collection && !isLoading ? (
         <>
-          <Navbar />
-
           <CollectionDetails
             collection={collection}
             user={user}

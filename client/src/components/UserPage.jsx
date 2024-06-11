@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import UserContext from '../context/UserContext.jsx';
 
-import Navbar from './Navbar.jsx';
 import ErrorPage from './ErrorPage.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
 import CollectionCard from './collections/Card.jsx';
@@ -61,8 +60,6 @@ export default function UserPage() {
     <ErrorPage err={error} />
   ) : pageUser && !isLoading ? (
     <>
-      <Navbar />
-
       <UserDetails pageUser={pageUser} contextUser={user} setError={setError} />
 
       <div

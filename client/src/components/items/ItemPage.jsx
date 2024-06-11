@@ -8,9 +8,7 @@ import { v4 as uuid } from 'uuid';
 
 import LoadingScreen from '../LoadingScreen.jsx';
 import ErrorPage from '../ErrorPage.jsx';
-import Navbar from '../Navbar.jsx';
 
-import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import '../../styles/bootstrp.css';
 
 export default function ItemPage() {
@@ -68,8 +66,6 @@ export default function ItemPage() {
         <ErrorPage err={error} />
       ) : item && !isLoading ? (
         <>
-          <Navbar />
-
           <ItemDetails
             collectionId={collectionId}
             item={item}

@@ -56,6 +56,8 @@ export default function getHumanReadableError(error_message) {
       return 'Failed to like/unlike the item. Please try again later.';
     case 'name_fields_required':
       return "Name and all custom fields are required. Make sure they don't contain extra spaces or characters.";
+    case 'ticket_init_failed':
+      return 'Failed to create a support ticket. Please try again.';
     default:
       return 'Something went wrong. Please try again';
   }

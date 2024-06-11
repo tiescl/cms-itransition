@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import CollectionCard from './Card.jsx';
-import Navbar from '../Navbar.jsx';
 import LoadingScreen from '../LoadingScreen.jsx';
 import ErrorPage from '../ErrorPage.jsx';
 
@@ -50,8 +49,6 @@ export default function Collections() {
         <ErrorPage err={error} />
       ) : (
         <>
-          <Navbar />
-
           <h1
             style={{
               marginTop: '130px',

@@ -240,6 +240,10 @@ router.delete('/:collectionId', checkCurrentUser, async (req, res) => {
       )
     );
 
+    await User.findByIdAndUpdate(collection.user._id, {
+      $pull: { collections: collectionId }
+    });
+
     const deletedCollection = await collection.deleteOne();
     res.status(200).json(deletedCollection);
   } catch (err) {

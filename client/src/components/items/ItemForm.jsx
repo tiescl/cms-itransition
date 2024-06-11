@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
-import Navbar from '../Navbar';
 
 import getHumanReadableError from '../../utils/getHumanReadableError';
 import UserContext from '../../context/UserContext.jsx';
@@ -100,8 +99,6 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
 
   return (
     <>
-      <Navbar />
-
       <div className='container'>
         <FormTitle editMode={editMode} />
 
