@@ -16,8 +16,6 @@ export default function UserPage() {
   const { user } = useContext(UserContext);
   const [pageUser, setPageUser] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isTicketLoading, setIsTicketLoading] = useState(false);
   const [issues, setIssues] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,7 +24,6 @@ export default function UserPage() {
   const token = localStorage.getItem('auth');
 
   useEffect(() => {
-    setIsLoading(true);
     const controller = new AbortController();
 
     const fetchUser = async () => {
@@ -46,8 +43,6 @@ export default function UserPage() {
           console.log(err.message);
           setError(getHumanReadableError(err.message));
         }
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -62,7 +57,6 @@ export default function UserPage() {
   }, [userId]);
 
   useEffect(() => {
-    setIsTicketLoading(true);
     const controller = new AbortController();
 
     const fetchTickets = async () => {
@@ -92,20 +86,20 @@ export default function UserPage() {
           console.log(err.message);
           setError(getHumanReadableError(err.message));
         }
-      } finally {
-        setIsTicketLoading(false);
       }
     };
 
-    fetchTickets();
+    if (user?._id === userId) {
+      fetchTickets();
 
-    const intervalId = setInterval(fetchTickets, 10000);
+      const intervalId = setInterval(fetchTickets, 10000);
 
-    return () => {
-      clearInterval(intervalId);
-      controller.abort();
-    };
-  }, [currentPage]);
+      return () => {
+        clearInterval(intervalId);
+        controller.abort();
+      };
+    }
+  }, [currentPage, user, userId]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -113,47 +107,49 @@ export default function UserPage() {
 
   return error ? (
     <ErrorPage err={error} />
-  ) : pageUser && !isLoading ? (
+  ) : pageUser ? (
     <>
       <UserDetails pageUser={pageUser} contextUser={user} setError={setError} />
 
-      <div
-        className='container border border-2 rounded-4 p-3 mb-4 table-responsive'
-        id='enforce-width-95-user0'
-      >
-        <>
-          <h1 className='mb-4'>
-            <i className='bi bi-ticket-perforated'></i> My Jira Tickets
-          </h1>
-          {isTicketLoading || !issues ? (
-            <InlineLoadingScreen message='Fetching tickets..' />
-          ) : (
-            <>
-              <JiraTickets issues={issues} />
+      {user?._id === userId && (
+        <div
+          className='container border border-2 rounded-4 p-3 mb-4 table-responsive'
+          id='enforce-width-95-user0'
+        >
+          <>
+            <h1 className='mb-4'>
+              <i className='bi bi-ticket-perforated'></i> My Jira Tickets
+            </h1>
+            {issues ? (
+              <>
+                <JiraTickets issues={issues} />
 
-              <Pagination className='justify-content-center'>
-                <Pagination.Prev
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                />
-                {Array.from({ length: totalPages }, (_, index) => (
-                  <Pagination.Item
-                    key={index + 1}
-                    active={index + 1 === currentPage}
-                    onClick={() => handlePageChange(index + 1)}
-                  >
-                    {index + 1}
-                  </Pagination.Item>
-                ))}
-                <Pagination.Next
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                />
-              </Pagination>
-            </>
-          )}
-        </>
-      </div>
+                <Pagination className='justify-content-center'>
+                  <Pagination.Prev
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  />
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <Pagination.Item
+                      key={index + 1}
+                      active={index + 1 === currentPage}
+                      onClick={() => handlePageChange(index + 1)}
+                    >
+                      {index + 1}
+                    </Pagination.Item>
+                  ))}
+                  <Pagination.Next
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  />
+                </Pagination>
+              </>
+            ) : (
+              <InlineLoadingScreen message='Fetching tickets..' />
+            )}
+          </>
+        </div>
+      )}
 
       <div
         className='container border border-2 rounded-4 p-3 mb-4'
