@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import UserContext from '../context/UserContext.jsx';
 import getHumanReadableError from '../utils/getHumanReadableError.js';
 import Navbar from './Navbar.jsx';
+import HelpButton from './jiraElems/HelpButton.jsx';
 
 export default function Login() {
   const { setUser, setTrigger } = useContext(UserContext);
@@ -93,6 +94,7 @@ export default function Login() {
             </Link>
           </p>
         </form>
+        <HelpButton />
       </div>
     </>
   );

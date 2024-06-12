@@ -2,15 +2,20 @@ import { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import getHumanReadableError from '../../utils/getHumanReadableError';
 
+import { Link } from 'react-router-dom';
+
 export default function TicketForm({ show, handleClose }) {
   const [formData, setFormData] = useState({
     summary: '',
-    priority: 'Average',
+    priority: 'Medium',
     collection: '',
+    description: '',
     link: window.location.href
   });
   const [error, setError] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [issueLink, setIssueLink] = useState('');
+  const [userNew, setUserNew] = useState(false);
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -43,12 +48,26 @@ export default function TicketForm({ show, handleClose }) {
         body: JSON.stringify({
           ...formData,
           summary: formData.summary.trim(),
-          collection: formData.collection?.trim()
+          collection: formData.collection?.trim(),
+          description: formData.description?.trim()
         })
       });
 
       if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setUserNew(data.userNew ? true : false);
+        setIssueLink(data.issueLink || '');
         setShowAlert(true);
+        setFormData((prevData) => {
+          return {
+            ...prevData,
+            summary: '',
+            priority: 'Medium',
+            collection: '',
+            description: ''
+          };
+        });
       } else {
         const data = await response.json();
         throw new Error(data.error);
@@ -77,6 +96,18 @@ export default function TicketForm({ show, handleClose }) {
               rows={3}
               name='summary'
               value={formData.summary}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group controlId='description' className='mb-3'>
+            <Form.Label>Description (Optional)</Form.Label>
+            <Form.Control
+              as='textarea'
+              rows={3}
+              name='description'
+              value={formData.description}
               onChange={handleChange}
               required
             />
@@ -115,7 +146,20 @@ export default function TicketForm({ show, handleClose }) {
               onClose={() => setShowAlert(false)}
               dismissible
             >
-              Ticket created successfully!
+              Ticket created successfully! See it{' '}
+              <Link to={`${issueLink || '/'}`} className='text-decoration-none'>
+                here
+              </Link>
+              .
+              {userNew && (
+                <>
+                  <hr />
+                  <p>
+                    We made you a Jira account! Check your inbox to finish
+                    setting it up.
+                  </p>
+                </>
+              )}
             </Alert>
           )}
 

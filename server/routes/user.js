@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../db/models/user.js';
 import Collection from '../db/models/collection.js';
+import jira from '../jira.js';
 import checkCurrentUser from './middleware/checkCurrentUser.js';
 import { ObjectId } from 'mongodb';
 
@@ -12,6 +13,56 @@ router.get('/', async (req, res) => {
     res.status(200).send(users);
   } catch (err) {
     res.status(500).send({ error: err.message });
+  }
+});
+
+router.get('/:userId/tickets', checkCurrentUser, async (req, res) => {
+  const currentUser = res.locals.user;
+  const userId = new ObjectId(String(req.params.userId));
+
+  try {
+    const startAt = req.query.startAt || 0;
+    const maxResults = 10;
+
+    if (!currentUser) {
+      return res.status(403).send('operation_forbidden');
+    }
+    if (!currentUser.isAdmin && !userId.equals(currentUser._id)) {
+      return res.status(403).send('operation_forbidden');
+    }
+
+    const user = await jira.searchUsers({
+      query: currentUser.email
+    });
+    const userExists = user?.length > 0 || false;
+
+    if (!userExists) {
+      return res.status(404).send({ error: 'jira_user_not_found' });
+    }
+    let reporterAccountId = user[0].accountId;
+
+    const jql = `'Reported By' = "${reporterAccountId}" ORDER BY created DESC`;
+    const results = await jira.searchJira(jql, {
+      startAt,
+      maxResults,
+      fields: ['summary', 'status', 'priority']
+    });
+
+    const issues = results.issues.map((issue) => ({
+      key: issue.key,
+      summary: issue.fields.summary,
+      status: issue.fields.status.name,
+      priority: issue.fields.priority.name
+    }));
+
+    res.json({
+      issues: issues,
+      total: results.total,
+      startAt: startAt + maxResults
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'tickets_fetch_failed' });
   }
 });
 

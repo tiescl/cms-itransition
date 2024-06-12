@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import JiraClient from 'jira-client';
+import jira from '../jira.js';
 
 import User from '../db/models/user.js';
 import checkCurrentUser from './middleware/checkCurrentUser.js';
@@ -9,28 +9,18 @@ import checkCurrentUser from './middleware/checkCurrentUser.js';
 const router = express.Router();
 
 const maxCookieAge = 1 * 24 * 60 * 60;
-const jiraApiKey = process.env.JIRA_API_KEY;
-
-const jira = new JiraClient({
-  protocol: 'https',
-  host: 'cms-tiescl.atlassian.net',
-  username: 'tiescl.to@gmail.com',
-  password: jiraApiKey,
-  apiVersion: '2',
-  strictSSL: true
-});
 
 router.post('/create-ticket', checkCurrentUser, async (req, res) => {
   const currentUser = res.locals.user;
 
   try {
-    const { summary, priority, collection, link } = req.body;
+    const { summary, description, priority, collection, link } = req.body;
+
+    console.log(req.body);
 
     if (!currentUser) {
       return res.status(404).send({ error: 'user_not_found' });
     }
-
-    // console.log(currentUser)
 
     const user = await jira.searchUsers({
       query: currentUser.email
@@ -38,9 +28,7 @@ router.post('/create-ticket', checkCurrentUser, async (req, res) => {
     const userExists = user?.length > 0 || false;
 
     let reporterAccountId;
-
-    // console.log('user');
-    // console.log(user[0]);
+    let userNew = false;
 
     if (!userExists) {
       const newUser = await jira.createUser({
@@ -49,7 +37,7 @@ router.post('/create-ticket', checkCurrentUser, async (req, res) => {
         products: []
       });
       reporterAccountId = newUser.accountId;
-      console.log('new user' + newUser);
+      userNew = true;
     } else {
       reporterAccountId = user[0].accountId;
     }
@@ -66,19 +54,21 @@ router.post('/create-ticket', checkCurrentUser, async (req, res) => {
         priority: {
           name: priority
         },
+        description: description,
         customfield_10033: { accountId: reporterAccountId },
         customfield_10034: collection,
         customfield_10035: link
       }
     };
 
-    //const createdIssue = await jira.addNewIssue(issue);
+    const createdIssue = await jira.addNewIssue(issue);
 
-    //console.log(createdIssue);
+    console.log(createdIssue);
 
     res.status(201).json({
-      message: 'ticket_init_successful'
-      //issueKey: createdIssue.key
+      message: 'ticket_init_successful',
+      issueLink: `https://cms-tiescl.atlassian.net/browse/${createdIssue.key}`,
+      userNew: userNew
     });
   } catch (err) {
     console.error(err.message);

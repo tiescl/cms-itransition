@@ -5,6 +5,7 @@ import UserContext from '../context/UserContext.jsx';
 import ErrorPage from './ErrorPage.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
 import CollectionCard from './collections/Card.jsx';
+import { Pagination } from 'react-bootstrap';
 import { StatusWrapper } from './UsersPanelTiny.jsx';
 
 import getHumanReadableError from '../utils/getHumanReadableError.js';
@@ -16,6 +17,10 @@ export default function UserPage() {
   const [pageUser, setPageUser] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isTicketLoading, setIsTicketLoading] = useState(false);
+  const [issues, setIssues] = useState(null);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
@@ -56,11 +61,99 @@ export default function UserPage() {
     };
   }, [userId]);
 
+  useEffect(() => {
+    setIsTicketLoading(true);
+    const controller = new AbortController();
+
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch(
+          `${prodUrl}/api/users/${userId}/tickets?startAt=${
+            (currentPage - 1) * 10
+          }`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            signal: controller.signal
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setIssues(data.issues);
+          setTotalPages(Math.ceil(data.total / 10));
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.error);
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.log(err.message);
+          setError(getHumanReadableError(err.message));
+        }
+      } finally {
+        setIsTicketLoading(false);
+      }
+    };
+
+    fetchTickets();
+
+    const intervalId = setInterval(fetchTickets, 10000);
+
+    return () => {
+      clearInterval(intervalId);
+      controller.abort();
+    };
+  }, [currentPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return error ? (
     <ErrorPage err={error} />
   ) : pageUser && !isLoading ? (
     <>
       <UserDetails pageUser={pageUser} contextUser={user} setError={setError} />
+
+      <div
+        className='container border border-2 rounded-4 p-3 mb-4 table-responsive'
+        id='enforce-width-95-user0'
+      >
+        <>
+          <h1 className='mb-4'>
+            <i className='bi bi-ticket-perforated'></i> My Jira Tickets
+          </h1>
+          {isTicketLoading || !issues ? (
+            <InlineLoadingScreen message='Fetching tickets..' />
+          ) : (
+            <>
+              <JiraTickets issues={issues} />
+
+              <Pagination className='justify-content-center'>
+                <Pagination.Prev
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                />
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <Pagination.Item
+                    key={index + 1}
+                    active={index + 1 === currentPage}
+                    onClick={() => handlePageChange(index + 1)}
+                  >
+                    {index + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                />
+              </Pagination>
+            </>
+          )}
+        </>
+      </div>
 
       <div
         className='container border border-2 rounded-4 p-3 mb-4'
@@ -183,6 +276,56 @@ function UserDetails({ pageUser, contextUser, setError }) {
       <p className='text-body-secondary mb-2'>
         <small>Last Visit: {stringifyDate(pageUser.lastLoginDate)}</small>
       </p>
+    </div>
+  );
+}
+
+function JiraTickets({ issues }) {
+  return (
+    <table className='table table-bordered table-striped table-hover'>
+      <caption className='text-center'>
+        {issues.length} {issues.length === 1 ? 'ticket' : 'tickets'}
+      </caption>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Summary</th>
+          <th>Status</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        {issues.map((issue) => (
+          <tr key={issue.key}>
+            <td>
+              <Link
+                to={`https://cms-tiescl.atlassian.net/browse/${issue.key}`}
+                target='_blank'
+                rel='noreferrer'
+              >
+                {issue.key}
+              </Link>
+            </td>
+            <td>{issue.summary}</td>
+            <td>{issue.status}</td>
+            <td>{issue.priority}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function InlineLoadingScreen({ message }) {
+  return (
+    <div
+      className='position-relative w-100 h-100 d-flex flex-column text-black justify-content-center align-items-center'
+      style={{ opacity: 0.5 }}
+    >
+      <div className='spinner-border' role='status'>
+        <span className='visually-hidden'>Loading...</span>
+      </div>
+      <p className='mt-3 fs-4'>{message}</p>
     </div>
   );
 }

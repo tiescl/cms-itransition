@@ -1,8 +1,3 @@
-import 'bootstrap-icons/font/bootstrap-icons.min.css';
-import { Link } from 'react-router-dom';
-import { useContext } from 'react';
-import UserContext from './context/UserContext.jsx';
-
 function App() {
   return (
     <>

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import FormField from './RegisterInputField.jsx';
 import getHumanReadableError from '../utils/getHumanReadableError.js';
 import Navbar from './Navbar.jsx';
+import HelpButton from './jiraElems/HelpButton.jsx';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -181,6 +182,7 @@ export default function Register() {
           </Link>
         </p>
       </form>
+      <HelpButton />
     </div>
   );
 }

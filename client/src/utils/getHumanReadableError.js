@@ -58,6 +58,10 @@ export default function getHumanReadableError(error_message) {
       return "Name and all custom fields are required. Make sure they don't contain extra spaces or characters.";
     case 'ticket_init_failed':
       return 'Failed to create a support ticket. Please try again.';
+    case 'tickets_fetch_failed':
+      return 'Failed to fetch your tickets. Please try again.';
+    case 'jira_user_not_found':
+      return 'Jira user not found. Do you have a Jira account?';
     default:
       return 'Something went wrong. Please try again';
   }
