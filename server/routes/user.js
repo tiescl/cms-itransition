@@ -45,13 +45,13 @@ router.get('/:userId/tickets', checkCurrentUser, async (req, res) => {
     const results = await jira.searchJira(jql, {
       startAt,
       maxResults,
-      fields: ['summary', 'status', 'priority']
+      fields: ['summary', 'customfield_10037', 'priority']
     });
 
     const issues = results.issues?.map((issue) => ({
       key: issue.key,
       summary: issue.fields.summary,
-      status: issue.fields.status.name,
+      status: issue.fields.customfield_10037.value,
       priority: issue.fields.priority.name
     }));
 

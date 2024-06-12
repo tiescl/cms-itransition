@@ -279,9 +279,6 @@ function UserDetails({ pageUser, contextUser, setError }) {
 function JiraTickets({ issues }) {
   return (
     <table className='table table-bordered table-striped table-hover'>
-      <caption className='text-center'>
-        {issues.length} {issues.length === 1 ? 'ticket' : 'tickets'}
-      </caption>
       <thead>
         <tr>
           <th>Key</th>
