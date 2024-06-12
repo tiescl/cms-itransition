@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import getHumanReadableError from '../../utils/getHumanReadableError';
 
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function TicketForm({ show, handleClose }) {
+  const location = useLocation();
+
   const [formData, setFormData] = useState({
     summary: '',
     priority: 'Medium',
     collection: '',
     description: '',
-    link: window.location.href
+    link: window.location.origin + location.pathname
   });
   const [error, setError] = useState('');
   const [showAlert, setShowAlert] = useState(false);
