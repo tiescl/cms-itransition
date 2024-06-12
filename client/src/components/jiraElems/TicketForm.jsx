@@ -55,7 +55,6 @@ export default function TicketForm({ show, handleClose }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setUserNew(data.userNew ? true : false);
         setIssueLink(data.issueLink || '');
         setShowAlert(true);

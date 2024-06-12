@@ -16,8 +16,6 @@ router.post('/create-ticket', checkCurrentUser, async (req, res) => {
   try {
     const { summary, description, priority, collection, link } = req.body;
 
-    console.log(req.body);
-
     if (!currentUser) {
       return res.status(404).send({ error: 'user_not_found' });
     }
@@ -62,8 +60,6 @@ router.post('/create-ticket', checkCurrentUser, async (req, res) => {
     };
 
     const createdIssue = await jira.addNewIssue(issue);
-
-    console.log(createdIssue);
 
     res.status(201).json({
       message: 'ticket_init_successful',

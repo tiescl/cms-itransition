@@ -48,7 +48,7 @@ router.get('/:userId/tickets', checkCurrentUser, async (req, res) => {
       fields: ['summary', 'status', 'priority']
     });
 
-    const issues = results.issues.map((issue) => ({
+    const issues = results.issues?.map((issue) => ({
       key: issue.key,
       summary: issue.fields.summary,
       status: issue.fields.status.name,
