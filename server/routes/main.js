@@ -56,7 +56,7 @@ router.post('/create-ticket', checkCurrentUser, async (req, res) => {
         customfield_10033: { accountId: reporterAccountId },
         customfield_10034: collection,
         customfield_10035: link,
-        customfield_10037: 'Opened'
+        customfield_10037: { value: 'Opened' }
       }
     };
 
