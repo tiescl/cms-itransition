@@ -5,14 +5,12 @@ import getHumanReadableError from '../../utils/getHumanReadableError';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function TicketForm({ show, handleClose }) {
-  const location = useLocation();
-
   const [formData, setFormData] = useState({
     summary: '',
     priority: 'Medium',
     collection: '',
     description: '',
-    link: window.location.origin + location.pathname
+    link: window.location.href
   });
   const [error, setError] = useState('');
   const [showAlert, setShowAlert] = useState(false);
@@ -20,7 +18,11 @@ export default function TicketForm({ show, handleClose }) {
   const [userNew, setUserNew] = useState(false);
 
   const handleChange = (event) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+      link: window.location.href
+    });
   };
 
   const handleSubmit = async (event) => {
@@ -66,7 +68,8 @@ export default function TicketForm({ show, handleClose }) {
             summary: '',
             priority: 'Medium',
             collection: '',
-            description: ''
+            description: '',
+            link: window.location.href
           };
         });
       } else {
