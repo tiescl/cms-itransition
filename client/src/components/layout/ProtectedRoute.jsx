@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
-import UserContext from '../context/UserContext.jsx';
+import UserContext from '../../context/UserContext.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
 import { Navigate, Outlet } from 'react-router-dom';
 import Layout from './Layout.jsx';

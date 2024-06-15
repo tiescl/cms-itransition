@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
-import UserContext from '../context/UserContext';
+import UserContext from '../../context/UserContext';
 import { useContext } from 'react';
-import '../styles/bootstrp.css';
-import searchImage from '../data/image-search.svg';
+
+import searchImage from '../../data/image-search.svg';
+import '../../styles/bootstrp.css';
 
 export default function Navbar() {
   const { user, setUser, setTrigger } = useContext(UserContext);

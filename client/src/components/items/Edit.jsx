@@ -1,5 +1,5 @@
-import LoadingScreen from '../LoadingScreen.jsx';
-import ErrorPage from '../ErrorPage.jsx';
+import LoadingScreen from '../layout/LoadingScreen.jsx';
+import ErrorPage from '../layout/ErrorPage.jsx';
 
 import { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';

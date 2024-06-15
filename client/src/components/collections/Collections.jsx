@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import CollectionCard from './Card.jsx';
-import LoadingScreen from '../LoadingScreen.jsx';
-import ErrorPage from '../ErrorPage.jsx';
+import LoadingScreen from '../layout/LoadingScreen.jsx';
+import ErrorPage from '../layout/ErrorPage.jsx';
 
 import fetchCollections from './fetchCollection.js';
 import getHumanReadableError from '../../utils/getHumanReadableError.js';

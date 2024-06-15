@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './App.jsx';
 
-import Login from './components/Login.jsx';
-import Register from './components/Register.jsx';
+import Login from './components/auth/Login.jsx';
+import Register from './components/auth/Register.jsx';
 
 import { UserProvider } from './context/UserContext.jsx';
 
@@ -17,11 +17,11 @@ import CreateItem from './components/items/Create.jsx';
 import ItemPage from './components/items/ItemPage.jsx';
 import EditItem from './components/items/Edit.jsx';
 
-import AdminPanel from './components/UsersPanel.jsx';
-import UserPage from './components/UserPage.jsx';
+import AdminPanel from './components/users/UsersPanel.jsx';
+import UserPage from './components/users/UserPage.jsx';
 
-import ErrorPage from './components/ErrorPage.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
+import ErrorPage from './components/layout/ErrorPage.jsx';
+import ProtectedRoute from './components/layout/ProtectedRoute.jsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';

@@ -1,15 +1,15 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import UserContext from '../context/UserContext.jsx';
+import UserContext from '../../context/UserContext.jsx';
 
-import ErrorPage from './ErrorPage.jsx';
-import LoadingScreen from './LoadingScreen.jsx';
-import CollectionCard from './collections/Card.jsx';
+import ErrorPage from '../layout/ErrorPage.jsx';
+import LoadingScreen from '../layout/LoadingScreen.jsx';
+import CollectionCard from '../collections/Card.jsx';
 import { Pagination } from 'react-bootstrap';
 import { StatusWrapper } from './UsersPanelTiny.jsx';
 
-import getHumanReadableError from '../utils/getHumanReadableError.js';
-import stringifyDate from '../utils/stringifyDate.js';
+import getHumanReadableError from '../../utils/getHumanReadableError.js';
+import stringifyDate from '../../utils/stringifyDate.js';
 
 export default function UserPage() {
   const { userId } = useParams();

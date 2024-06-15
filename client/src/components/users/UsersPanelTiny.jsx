@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import stringifyDate from '../utils/stringifyDate.js';
+import stringifyDate from '../../utils/stringifyDate.js';
 
 export function UserRow({ user, selectedUsers, onChange }) {
   return (

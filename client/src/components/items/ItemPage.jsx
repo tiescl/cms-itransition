@@ -6,8 +6,8 @@ import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import stringifyDate from '../../utils/stringifyDate.js';
 import { v4 as uuid } from 'uuid';
 
-import LoadingScreen from '../LoadingScreen.jsx';
-import ErrorPage from '../ErrorPage.jsx';
+import LoadingScreen from '../layout/LoadingScreen.jsx';
+import ErrorPage from '../layout/ErrorPage.jsx';
 
 import '../../styles/bootstrp.css';
 

@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
 
-import UserContext from '../context/UserContext.jsx';
+import UserContext from '../../context/UserContext.jsx';
 import { UserRow } from './UsersPanelTiny.jsx';
 
 function AdminPanel() {
