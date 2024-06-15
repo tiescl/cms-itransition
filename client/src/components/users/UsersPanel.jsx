@@ -1,10 +1,13 @@
 import { useEffect, useState, useContext } from 'react';
 
 import UserContext from '../../context/UserContext.jsx';
+import ThemeContext from '../../context/ThemeContext.jsx';
+
 import { UserRow } from './UsersPanelTiny.jsx';
 
 function AdminPanel() {
   const { user } = useContext(UserContext);
+  const { theme } = useContext(ThemeContext);
 
   const [userList, setUserList] = useState([]),
     [selectedUsers, setSelectedUsers] = useState([]),
@@ -185,7 +188,7 @@ function AdminPanel() {
     <>
       <h1
         style={{
-          marginTop: '130px',
+          marginTop: '125px',
           marginBottom: '30px',
           fontSize: '40px',
           fontWeight: '500'
@@ -198,19 +201,25 @@ function AdminPanel() {
       {user && user.isAdmin ? (
         <div className='container'>
           <button
-            className='btn text-black border-2 fw-bold btn-outline-warning mb-2 mx-1'
+            className={`btn text-${
+              theme === 'light' ? 'black' : 'light'
+            } border-2 fw-bold btn-outline-success mb-2 mx-1`}
             onClick={handleBlock}
           >
             Block 🔒
           </button>
           <button
-            className='btn btn-outline-success text-black border-2 fw-bold mb-2 mx-1'
+            className={`btn btn-outline-success text-${
+              theme === 'light' ? 'black' : 'light'
+            } border-2 fw-bold mb-2 mx-1`}
             onClick={handleUnblock}
           >
             Unblock 🔓
           </button>
           <button
-            className='btn btn-outline-danger text-black border-2 fw-bold mb-2 mx-1'
+            className={`btn btn-outline-danger text-${
+              theme === 'light' ? 'black' : 'light'
+            } border-2 fw-bold mb-2 mx-1`}
             onClick={handleDelete}
           >
             Delete 🗑️
@@ -218,13 +227,15 @@ function AdminPanel() {
           <div
             style={{
               display: 'inline',
-              borderLeft: '2px solid black',
+              borderLeft: '2px solid gray',
               height: '20px',
               margin: '0 20px'
             }}
           ></div>
           <button
-            className='btn btn-dark border-2  fw-semibold mb-2 mx-1'
+            className={`btn btn-${
+              theme === 'light' ? 'dark' : 'light'
+            } border-2  fw-semibold mb-2 mx-1`}
             onClick={handleMakeAdmin}
           >
             Make Admin 👑
@@ -243,7 +254,7 @@ function AdminPanel() {
           <caption className='text-center'>
             {userList.length} {userList.length === 1 ? 'user' : 'users'}
           </caption>
-          <thead className='table-light'>
+          <thead className={`table-${theme === 'light' ? 'light' : 'dark'}`}>
             <tr className='align-middle'>
               <th>
                 Selection

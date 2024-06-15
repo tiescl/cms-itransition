@@ -30,7 +30,7 @@
 }
 
 @media (max-width: 991px) {
-  .hide-on-small-screen {
+  #hide-on-small-screen {
     display: none;
   }
 }
@@ -84,4 +84,8 @@ table tr.align-middle > td:first-child {
 
 #enforce-right {
   margin-left: calc(100% - 5.25rem) !important;
+}
+
+#react-select-3-listbox {
+  padding: 0 !important;
 }

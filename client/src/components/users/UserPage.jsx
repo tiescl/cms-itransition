@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import UserContext from '../../context/UserContext.jsx';
+import ThemeContext from '../../context/ThemeContext.jsx';
 
 import ErrorPage from '../layout/ErrorPage.jsx';
 import LoadingScreen from '../layout/LoadingScreen.jsx';
@@ -311,9 +312,13 @@ function JiraTickets({ issues }) {
 }
 
 function InlineLoadingScreen({ message }) {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <div
-      className='position-relative w-100 h-100 d-flex flex-column text-black justify-content-center align-items-center'
+      className={`position-relative w-100 h-100 d-flex flex-column text-black justify-content-center align-items-center text-${
+        theme === 'light' ? 'black' : 'white'
+      }`}
       style={{ opacity: 0.5 }}
     >
       <div className='spinner-border' role='status'>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import UserContext from '../../context/UserContext.jsx';
+import ThemeContext from '../../context/ThemeContext.jsx';
 
 import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import stringifyDate from '../../utils/stringifyDate.js';
@@ -265,6 +266,8 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
 }
 
 function CommentBox({ comment }) {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <div className='border-top border-bottom p-2 w-100'>
       <div className='d-flex align-items-center'>
@@ -272,7 +275,11 @@ function CommentBox({ comment }) {
           to={`/users/${comment.author._id}`}
           className='text-decoration-none'
         >
-          <span className='fw-bold text-dark'>{comment.author.username}</span>
+          <span
+            className={`fw-bold text-${theme === 'light' ? 'dark' : 'light'} `}
+          >
+            {comment.author.username}
+          </span>
         </Link>
         <small className='text-body-secondary'>
           , added {stringifyDate(comment.createdAt || new Date())}

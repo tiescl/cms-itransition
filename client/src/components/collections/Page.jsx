@@ -275,7 +275,7 @@ function ItemsDetails({
                   <td>
                     <Link
                       to={`/collections/${collectionId}/items/${item._id}`}
-                      className='text-decoration-none text-secondary'
+                      className='text-decoration-none text-body-secondary'
                     >
                       <h6 className='m-0 fs-4 fw-bold my-2'>{item.name}</h6>
                     </Link>
@@ -309,7 +309,7 @@ function ItemsDetails({
                     style={{
                       borderBottom: `${
                         index === item.fields.length - 1
-                          ? '2px dashed black'
+                          ? '2px dashed #989898'
                           : ''
                       }`
                     }}

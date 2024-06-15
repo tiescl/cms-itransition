@@ -4,6 +4,9 @@ import CreatableSelect from 'react-select/creatable';
 
 import getHumanReadableError from '../../utils/getHumanReadableError';
 import UserContext from '../../context/UserContext.jsx';
+import ThemeContext from '../../context/ThemeContext.jsx';
+
+import '../../styles/bootstrp.css';
 
 export default function ItemForm({ collectionData, itemData, editMode }) {
   const { user } = useContext(UserContext);
@@ -240,6 +243,7 @@ function TagSelection({
   tagError,
   setTagError
 }) {
+  const { theme } = useContext(ThemeContext);
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -288,6 +292,49 @@ function TagSelection({
     setTags((prev) => [...prev, newOption]);
   };
 
+  const colourStyles = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'light' ? 'light' : 'dark',
+      borderColor: theme === 'light' ? 'lightgrey' : 'grey'
+    }),
+    option: (styles, { isSelected }) => {
+      return {
+        ...styles,
+        'backgroundColor': isSelected
+          ? theme === 'dark'
+            ? '#495057'
+            : '#007bff'
+          : theme === 'dark'
+          ? '#343a40'
+          : 'white',
+        'color': isSelected ? 'white' : theme === 'dark' ? 'white' : 'black',
+        ':hover': {
+          backgroundColor: isSelected
+            ? theme === 'dark'
+              ? '#495057'
+              : '#007bff'
+            : theme === 'dark'
+            ? '#495057'
+            : '#e9ecef'
+        },
+
+        'color': theme === 'light' ? 'black' : 'white'
+      };
+    },
+    multiValueLabel: (styles) => ({
+      ...styles,
+      color: 'black'
+    }),
+    multiValueRemove: (styles, { data }) => ({
+      ...styles,
+      'color': 'grey',
+      ':hover': {
+        backgroundColor: 'lightgrey'
+      }
+    })
+  };
+
   return (
     <div className='mb-4'>
       <label htmlFor='collTags' className='form-label'>
@@ -311,10 +358,11 @@ function TagSelection({
           }
         }}
         onCreateOption={handleCreateOption}
+        styles={colourStyles}
       />
-      <div className='form-text'>
+      {/* <div className='form-text z-n1'>
         Tags must not contain spaces, and must not exceed 50 characters
-      </div>
+      </div> */}
 
       {tagError && <h5 className='text-danger mt-2'>{tagError}</h5>}
     </div>
@@ -324,7 +372,7 @@ function TagSelection({
 function FormTitle({ editMode }) {
   return (
     <h1
-      style={{ fontSize: '35px', margin: '120px auto 20px auto' }}
+      style={{ fontSize: '35px', margin: '125px auto 20px auto' }}
       className='text-center fw-semibold'
     >
       {editMode === 'true' ? 'Edit' : 'Create'} Item

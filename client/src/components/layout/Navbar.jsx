@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import UserContext from '../../context/UserContext';
-import { useContext } from 'react';
+import ThemeContext from '../../context/ThemeContext';
+import { useContext, useState, useEffect } from 'react';
 
-import searchImage from '../../data/image-search.svg';
 import '../../styles/bootstrp.css';
 
 export default function Navbar() {
   const { user, setUser, setTrigger } = useContext(UserContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const handleLogout = () => {
     setUser(null);
@@ -18,7 +19,11 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className='navbar navbar-light bg-light fixed-top navbar-expand-lg'>
+      <nav
+        className={`navbar navbar-light bg-${
+          theme === 'light' ? 'light' : 'dark'
+        } border-bottom border-2 fixed-top navbar-expand-lg`}
+      >
         <div className='container-fluid'>
           <Link to='/' className='navbar-brand fw-bold fs-1 ms-4 me-2'>
             CMS
@@ -46,6 +51,7 @@ export default function Navbar() {
             <div className='offcanvas-header'>
               <h5 className='offcanvas-title fs-4 ms-2'>
                 <strong>{user?.username || 'Guest'}</strong>
+                <ThemeSwitch theme={theme} toggleTheme={toggleTheme} />
               </h5>
               <button
                 type='button'
@@ -56,30 +62,37 @@ export default function Navbar() {
             </div>
             <div className='offcanvas-body shift-on-large-screen'>
               <ul className='navbar-nav align-items-center'>
-                <li className='nav-item fs-5 me-2 hide-on-small-screen'>
+                <li
+                  className='nav-link fs-5 text-center'
+                  id='hide-on-small-screen'
+                >
                   <strong>
                     <Link
                       to={`/users/${user?._id || ''}`}
-                      className='text-decoration-none text-black'
+                      className={`text-decoration-none text-${
+                        theme === 'light' ? 'dark' : 'light'
+                      } `}
                     >
                       {user?.username || 'Guest'}
                     </Link>
+                    <ThemeSwitch theme={theme} toggleTheme={toggleTheme} />
                   </strong>
                 </li>
-                <form className='d-flex mb-4 mt-4 me-2 ' role='search'>
+                <form className='d-flex my-4 me-2' role='search'>
                   <div className='input-group'>
                     <input
                       className='form-control'
                       type='search'
                       placeholder='Search'
+                      style={{ maxWidth: '180px' }}
                     />
                     <button className='btn btn-primary' type='submit'>
-                      <img src={searchImage} alt='search icon' />
+                      <i class='bi bi-search'></i>
                     </button>
                   </div>
                 </form>
 
-                <Actions user={user} />
+                <Actions user={user} theme={theme} />
 
                 {user ? (
                   <li className='nav-item m-2'>
@@ -116,27 +129,52 @@ export default function Navbar() {
   );
 }
 
-function Actions({ user }) {
+function Actions({ theme, user }) {
   return (
     <>
       <div className='btn-group m-2'>
         {user?.isAdmin && (
           <Link
             to='/users'
-            className='btn btn-outline-secondary'
-            data-bs-toggle='tooltip'
-            title='Users'
+            className={`btn btn-outline-${
+              theme === 'light' ? 'secondary' : 'info'
+            }`}
           >
             <i className='bi bi-award'></i>
           </Link>
         )}
-        <Link to='/collections' className='btn btn-outline-primary'>
+        <Link
+          to='/collections'
+          className={`btn btn-outline-${
+            theme === 'light' ? 'primary' : 'info'
+          }`}
+        >
           <i className='bi bi-list-ol'></i> Collections
         </Link>
-        <Link to='/collections/create' className='btn btn-outline-primary'>
+        <Link
+          to='/collections/create'
+          className={`btn btn-outline-${
+            theme === 'light' ? 'primary' : 'info'
+          }`}
+        >
           <i className='bi bi-plus-circle'></i> Create
         </Link>
       </div>
     </>
+  );
+}
+
+function ThemeSwitch({ theme, toggleTheme }) {
+  return (
+    <button
+      className='btn btn-link fs-5'
+      onClick={toggleTheme}
+      id='themeSwitch'
+    >
+      <i
+        className={`bi ${theme === 'light' ? 'bi-sun' : 'bi-sun-fill'}`}
+        id='themeIcon'
+      ></i>
+    </button>
   );
 }

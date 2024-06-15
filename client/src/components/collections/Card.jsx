@@ -1,7 +1,12 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+
+import ThemeContext from '../../context/ThemeContext';
+
 import '../../styles/bootstrp.css';
 
 export default function CollectionCard({ collection }) {
+  const { theme } = useContext(ThemeContext);
   const MAX_ITEMS = 3;
 
   return (
@@ -70,7 +75,9 @@ export default function CollectionCard({ collection }) {
                 >
                   <Link
                     to={`/collections/${collection._id}/items/${item._id}`}
-                    className='text-decoration-none text-black'
+                    className={`text-decoration-none text-${
+                      theme === 'light' ? 'dark' : 'light'
+                    }`}
                   >
                     <strong>{item.name}</strong>
                   </Link>

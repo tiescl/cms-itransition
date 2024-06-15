@@ -163,7 +163,7 @@ export default function CollectionForm({
 function FormTitle({ editMode }) {
   return (
     <h1
-      style={{ fontSize: '35px', margin: '110px auto 20px auto' }}
+      style={{ fontSize: '35px', margin: '120px auto 20px auto' }}
       className='text-center fw-semibold'
     >
       {editMode === 'true' ? 'Edit' : 'Create'} Collection
