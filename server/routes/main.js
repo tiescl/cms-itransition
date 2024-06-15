@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import jira from '../jira.js';
 
 import User from '../db/models/user.js';
+import Item from '../db/models/item.js';
+import Collection from '../db/models/collection.js';
 import checkCurrentUser from './middleware/checkCurrentUser.js';
 
 const router = express.Router();
@@ -75,10 +77,35 @@ router.post('/create-ticket', checkCurrentUser, async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    // fetch top 5 collections (with most likes) and 5 largest collections
+    // fetch 5 most recent items
+    // and 5 largest collections
+    const recentItems = await Item.find({}).sort({ createdAt: -1 }).limit(5);
+
+    const selectedCollections = await Collection.aggregate([
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          items: 1,
+          itemCount: { $size: '$items' }
+        }
+      },
+      { $sort: { itemCount: -1 } },
+      { $limit: 5 }
+    ]);
+
+    const largestCollections = await Collection.populate(selectedCollections, {
+      path: 'items',
+      select: 'name'
+    });
+
+    res.status(200).json({
+      recentItems,
+      largestCollections
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error fetching collections');
+    res.status(500).send({ error: 'main_page_fetch_failed' });
   }
 });
 

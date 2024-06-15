@@ -83,5 +83,5 @@ table tr.align-middle > td:first-child {
 }
 
 #enforce-right {
-  margin-left: 90% !important;
+  margin-left: calc(100% - 5.25rem) !important;
 }

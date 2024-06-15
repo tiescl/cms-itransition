@@ -293,6 +293,7 @@ function JiraTickets({ issues }) {
             <td>
               <Link
                 to={`https://cms-tiescl.atlassian.net/browse/${issue.key}`}
+                className='text-decoration-none'
                 target='_blank'
                 rel='noreferrer'
               >

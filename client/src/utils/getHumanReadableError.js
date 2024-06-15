@@ -62,6 +62,8 @@ export default function getHumanReadableError(error_message) {
       return 'Failed to fetch your tickets. Please try again.';
     case 'jira_user_not_found':
       return 'Jira user not found. Do you have a Jira account?';
+    case 'main_page_fetch_failed':
+      return 'Failed to load recent collections and items.';
     default:
       return 'Something went wrong. Please try again';
   }
