@@ -60,7 +60,7 @@ export default function CollectionCard({ collection }) {
 
           {collection.items?.length > 0 && (
             <ul className='list-group list-group-numbered border border-2 rounded list-group-flush'>
-              <div className='card-header text-secondary fw-bold fs-5'>
+              <div className='card-header text-body-secondary fw-bold fs-5'>
                 Items
               </div>
               {collection.items?.slice(0, MAX_ITEMS).map((item) => (

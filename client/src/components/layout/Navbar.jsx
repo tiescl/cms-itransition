@@ -87,7 +87,7 @@ export default function Navbar() {
                       style={{ maxWidth: '180px' }}
                     />
                     <button className='btn btn-primary' type='submit'>
-                      <i class='bi bi-search'></i>
+                      <i className='bi bi-search'></i>
                     </button>
                   </div>
                 </form>
