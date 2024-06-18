@@ -1,5 +1,9 @@
+import { useTranslation } from 'react-i18next';
+
 export default function stringifyDate(today) {
+  const { t } = useTranslation();
   const convertedDate = new Date(today);
+
   let primaryLocale = navigator.language || 'en-US';
   const dateOptions = {
     month: 'long',
@@ -21,5 +25,5 @@ export default function stringifyDate(today) {
     timeOptions
   );
 
-  return `${formattedDate} at ${formattedTime}`;
+  return `${formattedDate} ${t('comments.at')} ${formattedTime}`;
 }

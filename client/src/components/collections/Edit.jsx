@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import fetchCollection from './fetchCollection.js';
-import getHumanReadableError from '../../utils/getHumanReadableError.js';
 
 export default function EditCollection() {
   const { collectionId } = useParams();
@@ -31,7 +30,7 @@ export default function EditCollection() {
           collectionId
         );
       } catch (err) {
-        setError(getHumanReadableError(err.message));
+        setError(err.message);
       }
     };
 
@@ -48,8 +47,8 @@ export default function EditCollection() {
   return error ? (
     <ErrorPage err={error} />
   ) : collectionData && !isLoading ? (
-    <CollectionForm collectionData={collectionData} editMode='true' />
+    <CollectionForm collectionData={collectionData} editMode={true} />
   ) : (
-    <LoadingScreen message='Fetching collection data..' long='true' />
+    <LoadingScreen message='loading.collection' long='true' />
   );
 }

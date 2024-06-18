@@ -1,14 +1,18 @@
+import { useTranslation } from 'react-i18next';
+
 export default function getFieldType(fieldType) {
+  const { t } = useTranslation();
+
   switch (fieldType) {
     case 'text':
-      return 'Short Text';
+      return t('fieldtype.text');
     case 'number':
-      return 'Number';
-    case 'multiline_field':
-      return 'Multiline Field';
+      return t('fieldtype.number');
+    case 'multiline_string':
+      return t('fieldtype.multiline_string');
     case 'date':
-      return 'Date';
+      return t('fieldtype.date');
     case 'checkbox':
-      return 'Checkbox (Yes/No)';
+      return t('fieldtype.checkbox');
   }
 }

@@ -1,10 +1,9 @@
-import LoadingScreen from '../layout/LoadingScreen.jsx';
-import ErrorPage from '../layout/ErrorPage.jsx';
-
 import { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 
-import getHumanReadableError from '../../utils/getHumanReadableError.js';
+import LoadingScreen from '../layout/LoadingScreen.jsx';
+import ErrorPage from '../layout/ErrorPage.jsx';
+
 import ItemForm from './ItemForm.jsx';
 
 export default function EditItem() {
@@ -36,7 +35,7 @@ export default function EditItem() {
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
-          setError(getHumanReadableError(err.message));
+          setError(err.message);
         }
       } finally {
         setIsLoading(false);
@@ -59,9 +58,9 @@ export default function EditItem() {
     <ItemForm
       collectionData={collectionData}
       itemData={itemData}
-      editMode='true'
+      editMode={true}
     />
   ) : (
-    <LoadingScreen message='Fetching item data..' long='true' />
+    <LoadingScreen message='loading.item' long='true' />
   );
 }

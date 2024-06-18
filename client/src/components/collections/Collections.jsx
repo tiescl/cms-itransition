@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import CollectionCard from './Card.jsx';
 import LoadingScreen from '../layout/LoadingScreen.jsx';
 import ErrorPage from '../layout/ErrorPage.jsx';
 
 import fetchCollections from './fetchCollection.js';
-import getHumanReadableError from '../../utils/getHumanReadableError.js';
 
 export default function Collections() {
   const [collectionsList, setCollectionsList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const { t } = useTranslation();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
@@ -28,7 +30,7 @@ export default function Collections() {
         );
       } catch (err) {
         if (err.message !== 'request_canceled') {
-          setError(getHumanReadableError(err.message));
+          setError(err.message);
         }
       }
     };
@@ -58,7 +60,7 @@ export default function Collections() {
             }}
             className='text-center'
           >
-            Collections
+            {t('collections.heading')}
           </h1>
 
           {!isLoading && collectionsList ? (
@@ -75,7 +77,7 @@ export default function Collections() {
               </div>
             </div>
           ) : (
-            <LoadingScreen message='Fetching collections...' />
+            <LoadingScreen message='loading.collections' />
           )}
         </>
       )}

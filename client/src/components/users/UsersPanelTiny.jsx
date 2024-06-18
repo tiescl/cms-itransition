@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import stringifyDate from '../../utils/stringifyDate.js';
 
 export function UserRow({ user, selectedUsers, onChange }) {
+  const { t } = useTranslation();
+
   return (
     <tr style={{ verticalAlign: 'middle' }}>
       <td className='col-sm-1'>
@@ -31,7 +34,9 @@ export function UserRow({ user, selectedUsers, onChange }) {
       <td>{stringifyDate(user.registerDate)}</td>
       <td>
         <StatusWrapper
-          status={user.isBlocked ? 'blocked' : 'active'}
+          status={
+            user.isBlocked ? t('user.status.blocked') : t('user.status.active')
+          }
           accentColor={user.isBlocked ? 'red' : 'darkorange'}
         />
       </td>

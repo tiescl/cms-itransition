@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 export default function FormField({
   type,
   name,
@@ -6,9 +8,11 @@ export default function FormField({
   onChange,
   errorMsg
 }) {
+  const { t } = useTranslation();
+
   return (
     <>
-      <label htmlFor={name}>{label}</label>
+      <label htmlFor={name}>{label}: </label>
       <input
         type={type}
         name={name}
@@ -16,7 +20,9 @@ export default function FormField({
         ref={value}
         onChange={onChange}
       />
-      <div className='form-text fs-5 mb-3 text-danger'>{errorMsg}</div>
+      <div className='form-text fs-5 mb-3 text-danger'>
+        {errorMsg && t(errorMsg, { defaultValue: t('error.default') })}
+      </div>
     </>
   );
 }

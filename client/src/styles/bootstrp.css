@@ -7,10 +7,6 @@
   transition: transform ease-in-out 0.2s;
 }
 
-.hide-on-small-screen {
-  display: block;
-}
-
 @media (max-width: 576px) {
   #enforce-width-95-item1,
   #enforce-width-95-item2,
@@ -26,12 +22,6 @@
 @media (min-width: 992px) {
   .items-table-container {
     max-width: 800px;
-  }
-}
-
-@media (max-width: 991px) {
-  #hide-on-small-screen {
-    display: none;
   }
 }
 
@@ -88,4 +78,20 @@ table tr.align-middle > td:first-child {
 
 #react-select-3-listbox {
   padding: 0 !important;
+}
+
+@media (max-width: 991.98px) {
+  #custom-dropdown-menu {
+    width: 280px !important;
+    right: auto;
+    left: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  #custom-dropdown-menu {
+    width: 300px !important;
+    right: 0;
+    left: auto;
+  }
 }

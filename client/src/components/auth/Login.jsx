@@ -1,13 +1,14 @@
 import { useRef, useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
-import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import Navbar from '../layout/Navbar.jsx';
 import HelpButton from '../jiraElems/HelpButton.jsx';
 
 export default function Login() {
   const { setUser, setTrigger } = useContext(UserContext);
   const navigateTo = useNavigate();
+  const { t } = useTranslation();
 
   const emailRef = useRef(null),
     passwordRef = useRef(null);
@@ -46,7 +47,7 @@ export default function Login() {
           throw new Error(errorData.error);
         }
       } catch (err) {
-        setErrorMessage(getHumanReadableError(err.message));
+        setErrorMessage(err.message);
         setShowError(true);
       }
     }
@@ -57,40 +58,44 @@ export default function Login() {
       <Navbar />
       <div className='container'>
         <h1 className='text-center fs-1 mb-2' style={{ marginTop: '130px' }}>
-          Log In
+          {t('login.title')}
         </h1>
         <form className='col-md-6 fs-5 items-center mx-auto'>
-          <label htmlFor='email'>E-mail: </label>
+          <label htmlFor='email'>{t('emailLabel')}: </label>
           <input
             className='form-control mb-4'
             type='login'
             name='email'
-            placeholder='E-mail'
+            placeholder={t('emailLabel')}
             ref={emailRef}
             onFocus={() => setShowError(false)}
           />
-          <label htmlFor='password'>Password: </label>
+          <label htmlFor='password'>{t('passLabel')}: </label>
           <input
             className='form-control mb-3'
             type='password'
             name='password'
-            placeholder='Password'
+            placeholder={t('passLabel')}
             ref={passwordRef}
             onFocus={() => setShowError(false)}
           />
-          {showError && <p className='text-danger mt-1'>{errorMessage}</p>}
+          {showError && (
+            <p className='text-danger mt-1'>
+              {t(errorMessage, { defaultValue: t('error.default') })}
+            </p>
+          )}
 
           <button
             type='button'
             className='btn btn-primary form-control mt-4'
             onClick={login}
           >
-            Log In
+            {t('login.button')}
           </button>
           <p className='mt-3 fs-4'>
-            Want an account?{' '}
+            {t('login.redirectMsg')}{' '}
             <Link className='text-primary text-decoration-none' to='/register'>
-              Register!
+              {t('login.redirectLink')}
             </Link>
           </p>
         </form>

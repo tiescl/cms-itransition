@@ -1,6 +1,9 @@
 import Navbar from './Navbar.jsx';
+import { useTranslation } from 'react-i18next';
 
-export default function ErrorPage({ err = 'Something went wrong.' }) {
+export default function ErrorPage({ err = ' ' }) {
+  const { t } = useTranslation();
+
   return (
     <>
       <Navbar />
@@ -9,9 +12,11 @@ export default function ErrorPage({ err = 'Something went wrong.' }) {
         style={{ fontSize: '50px', marginTop: '40vh', color: 'red' }}
         className='mx-auto text-center fw-semibold'
       >
-        404 Page Not Found
+        {t('errorPage.heading')}
       </h1>
-      <div style={{ fontSize: '50px', textAlign: 'center' }}>{err}</div>
+      <div style={{ fontSize: '50px', textAlign: 'center' }}>
+        {t(err, { defaultValue: t('error.default') })}
+      </div>
     </>
   );
 }

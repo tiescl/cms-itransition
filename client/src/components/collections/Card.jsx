@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import ThemeContext from '../../context/ThemeContext';
 
@@ -7,6 +8,7 @@ import '../../styles/bootstrp.css';
 
 export default function CollectionCard({ collection }) {
   const { theme } = useContext(ThemeContext);
+  const { t } = useTranslation();
   const MAX_ITEMS = 3;
 
   return (
@@ -34,7 +36,7 @@ export default function CollectionCard({ collection }) {
             </Link>
             <p className='card-subtitle'>
               <em>
-                by{' '}
+                {t('collection.by')}
                 <strong>
                   <Link
                     to={`/users/${collection.user._id}`}
@@ -61,7 +63,7 @@ export default function CollectionCard({ collection }) {
           {collection.items?.length > 0 && (
             <ul className='list-group list-group-numbered border border-2 rounded list-group-flush'>
               <div className='card-header text-body-secondary fw-bold fs-5'>
-                Items
+                {t('collection.items')}
               </div>
               {collection.items?.slice(0, MAX_ITEMS).map((item) => (
                 <li
@@ -91,7 +93,7 @@ export default function CollectionCard({ collection }) {
                 to={`/collections/${collection._id}`}
                 className='text-primary fs-6 text-decoration-none me-3'
               >
-                See More...
+                {t('collection.seeMore')}
               </Link>
             </div>
           )}

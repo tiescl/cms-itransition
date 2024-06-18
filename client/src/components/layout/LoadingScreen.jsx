@@ -1,13 +1,12 @@
 import { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ThemeContext from '../../context/ThemeContext';
 import Navbar from './Navbar';
 
-export default function LoadingScreen({
-  message = 'Taking too long? Try reloading the page',
-  long = 'false'
-}) {
+export default function LoadingScreen({ message, long = 'false' }) {
   const { theme } = useContext(ThemeContext);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -21,11 +20,9 @@ export default function LoadingScreen({
         <div className='spinner-border flex-row' role='status'>
           <span className='visually-hidden'>Loading...</span>
         </div>
-        <p className='flex-row mt-3 fs-4'>{message}</p>
+        {message && <p className='flex-row mt-3 fs-4'>{t(message)}</p>}
         {long === 'true' && (
-          <p className='flex-row fs-4'>
-            Taking too long? Try reloading the page
-          </p>
+          <p className='flex-row fs-4'>{t('loading.long')}</p>
         )}
       </div>
     </>

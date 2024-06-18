@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext, Fragment } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
 
-import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import fetchCollection from './fetchCollection.js';
 import stringifyDate from '../../utils/stringifyDate.js';
 
@@ -36,7 +36,7 @@ export default function CollectionPage() {
           collectionId
         );
       } catch (err) {
-        setError(getHumanReadableError(err.message));
+        setError(err.message);
       }
     };
 
@@ -71,13 +71,14 @@ export default function CollectionPage() {
           />
         </>
       ) : (
-        <LoadingScreen message='Fetching collection data..' />
+        <LoadingScreen message='loading.collection' />
       )}
     </>
   );
 }
 
 function CollectionDetails({ collection, user, setError }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
@@ -105,14 +106,14 @@ function CollectionDetails({ collection, user, setError }) {
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setError(getHumanReadableError(err.message));
+      setError(err.message);
     }
   };
 
   return (
     <div
-      className='container border border-2 rounded-4 p-3 mb-4'
-      style={{ marginTop: '130px' }}
+      className='container border border-2 rounded-4 p-3 mb-4 fs-5'
+      style={{ marginTop: '125px' }}
       id='enforce-width-95-coll1'
     >
       <div className='row'>
@@ -145,7 +146,7 @@ function CollectionDetails({ collection, user, setError }) {
           </div>
 
           <p className='fs-5 mb-1'>
-            by{' '}
+            {t('collection.by')}
             <Link
               to={`/users/${collection.user?._id}`}
               className='text-decoration-none text-body-secondary'
@@ -157,7 +158,7 @@ function CollectionDetails({ collection, user, setError }) {
           </p>
 
           <p className='mb-1'>
-            <span className='fw-bold'>Items:</span>{' '}
+            <span className='fw-bold'>{t('collection.items')}: </span>
             {Array.isArray(collection.items)
               ? collection.items.length
               : collection.items !== undefined
@@ -166,7 +167,8 @@ function CollectionDetails({ collection, user, setError }) {
           </p>
 
           <p className='mb-2 text-capitalize'>
-            <span className='fw-bold'>Category:</span> {collection.category}
+            <span className='fw-bold'>{t('collection.category')}: </span>
+            {collection.category}
           </p>
 
           <p
@@ -175,15 +177,21 @@ function CollectionDetails({ collection, user, setError }) {
               maxHeight: '3.6em'
             }}
           >
-            <span className='fw-bold'>Description:</span>{' '}
+            <span className='fw-bold'>
+              {t('collection.description.short')}:{' '}
+            </span>
             {collection.description}
           </p>
 
           <p className='text-body-secondary mt-4 mb-1'>
-            <small>Created: {stringifyDate(collection.createdAt)}</small>
+            <small>
+              {t('created')}: {stringifyDate(collection.createdAt)}
+            </small>
           </p>
           <p className='text-body-secondary mb-2'>
-            <small>Last Modified: {stringifyDate(collection.updatedAt)}</small>
+            <small>
+              {t('modified')}: {stringifyDate(collection.updatedAt)}
+            </small>
           </p>
         </div>
 
@@ -212,6 +220,7 @@ function ItemsDetails({
   setError
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
@@ -239,7 +248,7 @@ function ItemsDetails({
       }
     } catch (err) {
       console.log(err.message);
-      setError(getHumanReadableError(err.message));
+      setError(err.message);
     }
   };
 
@@ -252,8 +261,8 @@ function ItemsDetails({
         <div className='row mb-2 mt-1'>
           <div className='col-6'>
             <h2 className='fs-2 fw-semibold'>
-              <i className='bi bi-collection fs-3'></i> Items (
-              {items?.length || 0})
+              <i className='bi bi-collection fs-3'></i> {t('collection.items')}{' '}
+              ({items?.length || 0})
             </h2>
           </div>
           <div className='col-6 text-end'>
@@ -262,7 +271,7 @@ function ItemsDetails({
               state={{ collectionData: collection }}
             >
               <button className='btn btn-primary btn-sm'>
-                <i className='bi bi-plus-circle'></i> New Item
+                <i className='bi bi-plus-circle'></i> {t('collection.newItem')}
               </button>
             </Link>
           </div>
@@ -317,9 +326,9 @@ function ItemsDetails({
                     <td className='fw-bold'>{field.name}</td>
                     <td>
                       {field.value === 'true'
-                        ? 'Yes ✅'
+                        ? `${t('fields.true')} ✅`
                         : field.value === 'false'
-                        ? 'No ❌'
+                        ? `${t('fields.false')} ❌`
                         : field.value}
                     </td>
                   </tr>

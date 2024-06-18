@@ -1,15 +1,17 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import CreatableSelect from 'react-select/creatable';
 
-import getHumanReadableError from '../../utils/getHumanReadableError';
 import UserContext from '../../context/UserContext.jsx';
 import ThemeContext from '../../context/ThemeContext.jsx';
 
 import '../../styles/bootstrp.css';
 
 export default function ItemForm({ collectionData, itemData, editMode }) {
+  const { t } = useTranslation();
   const { user } = useContext(UserContext);
+
   const [formData, setFormData] = useState(() => {
     const initialFields = collectionData.customFieldDefinitions.map(
       (fieldDef) => ({
@@ -95,7 +97,7 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
       } catch (err) {
         e.target.disabled = false;
         // console.log(err.message);
-        setError(getHumanReadableError(err.message));
+        setError(err.message);
       }
     }
   };
@@ -121,7 +123,11 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
                 setTagError={setTagError}
               />
 
-              {error && <h5 className='text-danger mt-2'>{error}</h5>}
+              {error && (
+                <h5 className='text-danger mt-2'>
+                  {t(error, { defaultValue: t('error.default') })}
+                </h5>
+              )}
 
               <div className='my-5'>
                 <button
@@ -129,7 +135,7 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
                   onClick={handleSubmit}
                   className='btn btn-primary form-control'
                 >
-                  {editMode === 'true' ? 'Save Changes' : 'Create'}
+                  {editMode === true ? t('item.saveEdit') : t('item.save')}
                 </button>
               </div>
             </div>
@@ -141,9 +147,11 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
 }
 
 function Items({ formData, setFormData }) {
+  const { t } = useTranslation();
+
   return (
     <div className='mb-4'>
-      <h1 className='fs-3 fw-semibold'>Item Details</h1>
+      <h1 className='fs-3 fw-semibold'>{t('item.details.heading')}</h1>
       {formData.fields.map((field) => {
         return (
           <div key={field.client_id} className='mb-2'>
@@ -156,6 +164,8 @@ function Items({ formData, setFormData }) {
 }
 
 function Item({ field, setFormData }) {
+  const { t } = useTranslation();
+
   const handleFieldChange = (fieldId, value) => {
     setFormData((prevFormData) => {
       const updatedFields = prevFormData.fields.map((field) =>
@@ -191,7 +201,7 @@ function Item({ field, setFormData }) {
                 handleFieldChange(field.client_id, event.target.value);
               }
             }}
-            placeholder='Value'
+            placeholder={t('item.field.placeholder')}
           />
         </div>
       </div>
@@ -243,6 +253,7 @@ function TagSelection({
   tagError,
   setTagError
 }) {
+  const { t } = useTranslation();
   const { theme } = useContext(ThemeContext);
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
@@ -266,7 +277,7 @@ function TagSelection({
         );
       } catch (error) {
         if (error.name !== 'AbortError') {
-          setTagError(getHumanReadableError(error.message));
+          setTagError(error.message);
         }
       } finally {
         setIsLoading(false);
@@ -295,7 +306,7 @@ function TagSelection({
   const colourStyles = {
     control: (styles) => ({
       ...styles,
-      backgroundColor: theme === 'light' ? 'light' : 'dark',
+      backgroundColor: theme,
       borderColor: theme === 'light' ? 'lightgrey' : 'grey'
     }),
     option: (styles, { isSelected }) => {
@@ -326,7 +337,7 @@ function TagSelection({
       ...styles,
       color: 'black'
     }),
-    multiValueRemove: (styles, { data }) => ({
+    multiValueRemove: (styles) => ({
       ...styles,
       'color': 'grey',
       ':hover': {
@@ -338,7 +349,7 @@ function TagSelection({
   return (
     <div className='mb-4'>
       <label htmlFor='collTags' className='form-label'>
-        Tags
+        {t('tags.heading')}
       </label>
 
       <CreatableSelect
@@ -360,37 +371,44 @@ function TagSelection({
         onCreateOption={handleCreateOption}
         styles={colourStyles}
       />
-      {/* <div className='form-text z-n1'>
-        Tags must not contain spaces, and must not exceed 50 characters
-      </div> */}
+      <div className='form-text'>{t('tags.rules')}</div>
 
-      {tagError && <h5 className='text-danger mt-2'>{tagError}</h5>}
+      {tagError && (
+        <h5 className='text-danger mt-2'>
+          {t(tagError, { defaultValue: t('error.default') })}
+        </h5>
+      )}
     </div>
   );
 }
 
 function FormTitle({ editMode }) {
+  const { t } = useTranslation();
+
   return (
     <h1
       style={{ fontSize: '35px', margin: '125px auto 20px auto' }}
       className='text-center fw-semibold'
     >
-      {editMode === 'true' ? 'Edit' : 'Create'} Item
+      {editMode === true ? t('item.edit') : t('item.create')}{' '}
+      {t('item.heading')}
     </h1>
   );
 }
 
 function NameInput({ formData, setFormData }) {
+  const { t } = useTranslation();
+
   return (
     <div className='mb-4'>
       <label htmlFor='collName' className='form-label'>
-        Item name
+        {t('item.name')}
       </label>
       <input
         type='text'
         id='collName'
         className='form-control'
-        placeholder='e.g. Shawshank Redemption'
+        placeholder={t('item.placeholder')}
         value={formData.name}
         onChange={(event) =>
           setFormData((prevFormData) => {

@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import UserContext from '../../context/UserContext.jsx';
 import ThemeContext from '../../context/ThemeContext.jsx';
@@ -8,6 +9,7 @@ import { UserRow } from './UsersPanelTiny.jsx';
 function AdminPanel() {
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
+  const { t } = useTranslation();
 
   const [userList, setUserList] = useState([]),
     [selectedUsers, setSelectedUsers] = useState([]),
@@ -195,7 +197,7 @@ function AdminPanel() {
         }}
         className='text-center'
       >
-        Users
+        {t('panel.heading')}
       </h1>
 
       {user && user.isAdmin ? (
@@ -206,7 +208,7 @@ function AdminPanel() {
             } border-2 fw-bold btn-outline-success mb-2 mx-1`}
             onClick={handleBlock}
           >
-            Block 🔒
+            {t('panel.block')} 🔒
           </button>
           <button
             className={`btn btn-outline-success text-${
@@ -214,7 +216,7 @@ function AdminPanel() {
             } border-2 fw-bold mb-2 mx-1`}
             onClick={handleUnblock}
           >
-            Unblock 🔓
+            {t('panel.unblock')} 🔓
           </button>
           <button
             className={`btn btn-outline-danger text-${
@@ -222,7 +224,7 @@ function AdminPanel() {
             } border-2 fw-bold mb-2 mx-1`}
             onClick={handleDelete}
           >
-            Delete 🗑️
+            {t('panel.delete')} 🗑️
           </button>
           <div
             style={{
@@ -238,13 +240,13 @@ function AdminPanel() {
             } border-2  fw-semibold mb-2 mx-1`}
             onClick={handleMakeAdmin}
           >
-            Make Admin 👑
+            {t('panel.promote')} 👑
           </button>
           <button
             className='btn btn-warning border-2 fw-semibold mb-2 mx-1'
             onClick={handleAdminDelete}
           >
-            Revoke Admin ❌
+            {t('panel.demote')} 🪓
           </button>
         </div>
       ) : null}
@@ -252,12 +254,15 @@ function AdminPanel() {
       <div className='container text-center table-responsive'>
         <table className='table table-striped table-bordered table-hover table-md'>
           <caption className='text-center'>
-            {userList.length} {userList.length === 1 ? 'user' : 'users'}
+            {userList.length}{' '}
+            {userList.length === 1
+              ? t('panel.caption.singular')
+              : t('panel.caption.plural')}
           </caption>
-          <thead className={`table-${theme === 'light' ? 'light' : 'dark'}`}>
+          <thead className={`table-${theme}`}>
             <tr className='align-middle'>
               <th>
-                Selection
+                {t('panel.selection')}
                 <input
                   type='checkbox'
                   style={{ width: '20px', height: '20px', display: 'block' }}
@@ -266,12 +271,12 @@ function AdminPanel() {
                   onChange={handleSelectAllChange}
                 />
               </th>
-              <th style={{ minWidth: '200px' }}>Username</th>
-              <th>E-mail</th>
-              <th>Collections</th>
-              <th style={{ minWidth: '240px' }}>Last Visit</th>
-              <th style={{ minWidth: '240px' }}>Register Date</th>
-              <th style={{ minWidth: '70px' }}>Status</th>
+              <th style={{ minWidth: '200px' }}>{t('panel.username')}</th>
+              <th>{t('emailLabel')}</th>
+              <th>{t('user.collections')}</th>
+              <th style={{ minWidth: '240px' }}>{t('user.lastLogin')}</th>
+              <th style={{ minWidth: '240px' }}>{t('user.registered')}</th>
+              <th style={{ minWidth: '70px' }}>{t('user.status')}</th>
             </tr>
           </thead>
           <tbody>

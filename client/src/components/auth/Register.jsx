@@ -1,12 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import FormField from './RegisterInputField.jsx';
-import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import Navbar from '../layout/Navbar.jsx';
 import HelpButton from '../jiraElems/HelpButton.jsx';
 
 export default function Register() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const usernameRef = useRef(null),
     emailRef = useRef(null),
@@ -25,7 +26,7 @@ export default function Register() {
 
   const handleUsernameChange = (e) => {
     if (e.target.value.trim().length === 0) {
-      setUsernameWarn('Username should not be empty.');
+      setUsernameWarn('invalid_username');
     } else {
       setUsernameWarn('');
     }
@@ -33,14 +34,14 @@ export default function Register() {
 
   const handleEmailChange = (e) => {
     if (e.target.value.trim().length === 0) {
-      setEmailWarn('Email should not be empty.');
+      setEmailWarn('invalid_email_empty');
     } else if (
       !e.target.value
         .toLowerCase()
         .trim()
         .match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)
     ) {
-      setEmailWarn('Invalid email.');
+      setEmailWarn('invalid_email_match');
     } else {
       setEmailWarn('');
     }
@@ -48,13 +49,13 @@ export default function Register() {
 
   const handlePasswordChange = (e) => {
     if (e.target.value.trim().length < 8) {
-      setPasswordWarn('Password must be at least 8 characters long.');
+      setPasswordWarn('invalid_pass_length');
     } else {
       setPasswordWarn('');
     }
     if (confirmPasswordRef.current) {
       if (e.target.value !== confirmPasswordRef.current.value) {
-        setConfirmPasswordWarn('Passwords do not match.');
+        setConfirmPasswordWarn('invalid_pass_match');
       } else {
         setConfirmPasswordWarn('');
       }
@@ -64,7 +65,7 @@ export default function Register() {
   const handleConfirmPasswordChange = (e) => {
     if (passwordRef.current) {
       if (e.target.value !== passwordRef.current.value) {
-        setConfirmPasswordWarn('Passwords do not match');
+        setConfirmPasswordWarn('invalid_pass_match');
       } else {
         setConfirmPasswordWarn('');
       }
@@ -98,7 +99,7 @@ export default function Register() {
             throw new Error(errorData.error);
           }
         } catch (err) {
-          setErrorMessage(getHumanReadableError(err.message));
+          setErrorMessage(err.message);
           setShowError(true);
           e.target.disabled = false;
         }
@@ -126,13 +127,13 @@ export default function Register() {
     <div className='container'>
       <Navbar />
       <h1 className='text-center fs-1 mb-3' style={{ marginTop: '130px' }}>
-        Register
+        {t('register.title')}
       </h1>
       <form className='col-md-6 fs-5 mx-auto'>
         <FormField
           type='text'
           name='full_name'
-          label='Username: '
+          label={t('register.usernameLabel')}
           value={usernameRef}
           onChange={handleUsernameChange}
           errorMsg={usernameWarn}
@@ -141,7 +142,7 @@ export default function Register() {
         <FormField
           type='email'
           name='e-mail'
-          label='E-mail: '
+          label={t('emailLabel')}
           value={emailRef}
           onChange={handleEmailChange}
           errorMsg={emailWarn}
@@ -150,7 +151,7 @@ export default function Register() {
         <FormField
           type='password'
           name='pwd'
-          label='Password: '
+          label={t('passLabel')}
           value={passwordRef}
           onChange={handlePasswordChange}
           errorMsg={passwordWarn}
@@ -159,13 +160,17 @@ export default function Register() {
         <FormField
           type='password'
           name='confirm_pwd'
-          label='Confirm Password: '
+          label={t('register.confirmPassLabel')}
           value={confirmPasswordRef}
           onChange={handleConfirmPasswordChange}
           errorMsg={confirmPasswordWarn}
           onFocus={() => setShowError(false)}
         />
-        {showError && <p className='text-danger mt-3'>{errorMessage}</p>}
+        {showError && (
+          <p className='text-danger mt-3'>
+            {t(errorMessage, { defaultValue: t('error.default') })}
+          </p>
+        )}
         <br />
         <button
           type='button'
@@ -173,12 +178,12 @@ export default function Register() {
           onClick={handleSubmit}
           disabled={handleDisabled()}
         >
-          Register
+          {t('register.button')}
         </button>
         <p className='mt-3 fs-4'>
-          Got an account?{' '}
+          {t('register.redirectMsg')}{' '}
           <Link className='text-primary text-decoration-none' to='/login'>
-            Log in!
+            {t('register.redirectLink')}
           </Link>
         </p>
       </form>

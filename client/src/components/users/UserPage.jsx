@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
 import ThemeContext from '../../context/ThemeContext.jsx';
 
@@ -9,7 +10,6 @@ import CollectionCard from '../collections/Card.jsx';
 import { Pagination } from 'react-bootstrap';
 import { StatusWrapper } from './UsersPanelTiny.jsx';
 
-import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import stringifyDate from '../../utils/stringifyDate.js';
 
 export default function UserPage() {
@@ -20,6 +20,8 @@ export default function UserPage() {
   const [issues, setIssues] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { t } = useTranslation();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
@@ -42,7 +44,7 @@ export default function UserPage() {
       } catch (err) {
         if (err.name !== 'AbortError') {
           console.log(err.message);
-          setError(getHumanReadableError(err.message));
+          setError(err.message);
         }
       }
     };
@@ -85,7 +87,7 @@ export default function UserPage() {
       } catch (err) {
         if (err.name !== 'AbortError') {
           console.log(err.message);
-          setError(getHumanReadableError(err.message));
+          setError(err.message);
         }
       }
     };
@@ -119,7 +121,8 @@ export default function UserPage() {
         >
           <>
             <h1 className='mb-4'>
-              <i className='bi bi-ticket-perforated'></i> My Jira Tickets
+              <i className='bi bi-ticket-perforated'></i>{' '}
+              {t('user.jiraHeading')}
             </h1>
             {issues ? (
               <>
@@ -146,7 +149,7 @@ export default function UserPage() {
                 </Pagination>
               </>
             ) : (
-              <InlineLoadingScreen message='Fetching tickets..' />
+              <InlineLoadingScreen message='inlineLoading.tickets' />
             )}
           </>
         </div>
@@ -157,7 +160,7 @@ export default function UserPage() {
         id='enforce-width-95-user0'
       >
         <h1 className='mb-4'>
-          <i className='bi bi-collection'></i> Collections (
+          <i className='bi bi-collection'></i> {t('user.collections')} (
           {pageUser.collections?.length || 0})
         </h1>
         <div className='row d-flex'>
@@ -170,12 +173,13 @@ export default function UserPage() {
       </div>
     </>
   ) : (
-    <LoadingScreen message='Fetching user data..' long='true' />
+    <LoadingScreen message='loading.user' long='true' />
   );
 }
 
 function UserDetails({ pageUser, contextUser, setError }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
@@ -199,14 +203,14 @@ function UserDetails({ pageUser, contextUser, setError }) {
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setError(getHumanReadableError(err.message));
+      setError(err.message);
     }
   };
 
   return (
     <div
       className='container border border-2 rounded-4 p-3 mb-4 fs-5'
-      style={{ marginTop: '120px' }}
+      style={{ marginTop: '125px' }}
       id='enforce-width-95-user1'
     >
       <div className='row'>
@@ -225,7 +229,6 @@ function UserDetails({ pageUser, contextUser, setError }) {
                   <button
                     className='btn btn-danger mt-1'
                     onClick={() => handleDeleteUser(pageUser._id)}
-                    data-bs-toggle='tooltip'
                     title='Delete user'
                   >
                     <i className='bi bi-trash'></i>
@@ -242,25 +245,29 @@ function UserDetails({ pageUser, contextUser, setError }) {
       </p>
 
       <p className='mb-2'>
-        <span className='fw-bold'>Email: </span>
+        <span className='fw-bold'>{t('emailLabel')}: </span>
         <code>{pageUser.email}</code>
       </p>
 
       <p className='mb-2'>
-        <span className='fw-bold'>Status:</span>{' '}
+        <span className='fw-bold'>{t('user.status')}: </span>
         <StatusWrapper
-          status={pageUser.isBlocked ? 'blocked' : 'active'}
+          status={
+            pageUser.isBlocked
+              ? t('user.status.blocked')
+              : t('user.status.active')
+          }
           accentColor={pageUser.isBlocked ? 'red' : 'darkorange'}
         />
       </p>
 
       <p className='mb-2'>
-        <span className='fw-bold'>Collections:</span>{' '}
+        <span className='fw-bold'>{t('user.collections')}: </span>
         {pageUser.collections?.length || 0}
       </p>
 
       <p className='mb-2'>
-        <span className='fw-bold'>Total items created:</span>{' '}
+        <span className='fw-bold'>{t('user.totalItems')}: </span>
         {pageUser.collections?.reduce(
           (total, collection) => total + collection.items?.length,
           0
@@ -268,24 +275,30 @@ function UserDetails({ pageUser, contextUser, setError }) {
       </p>
 
       <p className='text-body-secondary mt-3 mb-1'>
-        <small>Registered: {stringifyDate(pageUser.registerDate)}</small>
+        <small>
+          {t('user.registered')}: {stringifyDate(pageUser.registerDate)}
+        </small>
       </p>
       <p className='text-body-secondary mb-2'>
-        <small>Last Visit: {stringifyDate(pageUser.lastLoginDate)}</small>
+        <small>
+          {t('user.lastLogin')}: {stringifyDate(pageUser.lastLoginDate)}
+        </small>
       </p>
     </div>
   );
 }
 
 function JiraTickets({ issues }) {
+  const { t } = useTranslation();
+
   return (
     <table className='table table-bordered table-striped table-hover'>
       <thead>
         <tr>
-          <th>Key</th>
-          <th>Summary</th>
-          <th>Status</th>
-          <th>Priority</th>
+          <th>{t('user.jKey')}</th>
+          <th>{t('user.jSummary')}</th>
+          <th>{t('user.jStatus')}</th>
+          <th>{t('user.jPriority')}</th>
         </tr>
       </thead>
       <tbody>
@@ -313,6 +326,7 @@ function JiraTickets({ issues }) {
 
 function InlineLoadingScreen({ message }) {
   const { theme } = useContext(ThemeContext);
+  const { t } = useTranslation();
 
   return (
     <div
@@ -324,7 +338,7 @@ function InlineLoadingScreen({ message }) {
       <div className='spinner-border' role='status'>
         <span className='visually-hidden'>Loading...</span>
       </div>
-      <p className='mt-3 fs-4'>{message}</p>
+      <p className='mt-3 fs-4'>{t(message)}</p>
     </div>
   );
 }

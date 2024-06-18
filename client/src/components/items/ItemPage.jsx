@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
 import ThemeContext from '../../context/ThemeContext.jsx';
 
-import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import stringifyDate from '../../utils/stringifyDate.js';
 import { v4 as uuid } from 'uuid';
 
@@ -15,6 +15,7 @@ import '../../styles/bootstrp.css';
 export default function ItemPage() {
   const { collectionId, itemId } = useParams();
   const { user } = useContext(UserContext);
+  const { t } = useTranslation();
   const [item, setItem] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,7 +45,7 @@ export default function ItemPage() {
       } catch (err) {
         if (err.name !== 'AbortError') {
           // console.log(err.message);
-          setError(getHumanReadableError(err.message));
+          setError(err.message);
         }
       } finally {
         setIsLoading(false);
@@ -94,7 +95,7 @@ export default function ItemPage() {
             className='container border border-2 rounded-4 p-3 mb-4 mt-2'
           >
             <h2 className='fw-semibold fs-2'>
-              <i className='bi bi-chat-text'></i> Comments (
+              <i className='bi bi-chat-text'></i> {t('item.comments')} (
               {item.comments?.length || 0})
             </h2>
 
@@ -104,7 +105,7 @@ export default function ItemPage() {
             {item.comments.length ? (
               ''
             ) : (
-              <h4 className='mt-3'>Be the first to comment!</h4>
+              <h4 className='mt-3'>{t('comments.firstMsg')}</h4>
             )}
 
             {user && (
@@ -119,7 +120,7 @@ export default function ItemPage() {
           </div>
         </>
       ) : (
-        <LoadingScreen message='Fetching item data..' />
+        <LoadingScreen message='loading.item' />
       )}
     </>
   );
@@ -129,6 +130,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
   const [liked, setLiked] = useState(item.likes?.includes(user?._id) || false);
   const [likesCount, setLikesCount] = useState(item.likes?.length || 0);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
@@ -162,7 +164,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setError(getHumanReadableError(err.message));
+      setError(err.message);
     } finally {
       event.target.disabled = false;
     }
@@ -190,14 +192,14 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setError(getHumanReadableError(err.message));
+      setError(err.message);
     }
   };
 
   return (
     <div
-      className='container border border-2 rounded-4 p-3 mb-4'
-      style={{ marginTop: '120px' }}
+      className='container border border-2 rounded-4 p-3 mb-4 fs-5'
+      style={{ marginTop: '125px' }}
       id='enforce-width-95-item2'
     >
       <div className='row'>
@@ -232,7 +234,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
       </div>
 
       <p className='fs-5 mb-1'>
-        Item in:{' '}
+        {t('item.location')}:{' '}
         <Link
           to={`/collections/${collectionId}`}
           className='text-decoration-none text-body-secondary'
@@ -252,14 +254,18 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
             liked ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'
           }`}
         ></i>{' '}
-        {item.likes?.length || likesCount} Likes
+        {item.likes?.length || likesCount} {t('item.likes')}
       </button>
 
       <p className='text-body-secondary mt-3 mb-1'>
-        <small>Created: {stringifyDate(item.createdAt)}</small>
+        <small>
+          {t('created')}: {stringifyDate(item.createdAt)}
+        </small>
       </p>
       <p className='text-body-secondary mb-2'>
-        <small>Last Modified: {stringifyDate(item.updatedAt)}</small>
+        <small>
+          {t('modified')}: {stringifyDate(item.updatedAt)}
+        </small>
       </p>
     </div>
   );
@@ -267,6 +273,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
 
 function CommentBox({ comment }) {
   const { theme } = useContext(ThemeContext);
+  const { t } = useTranslation();
 
   return (
     <div className='border-top border-bottom p-2 w-100'>
@@ -282,7 +289,8 @@ function CommentBox({ comment }) {
           </span>
         </Link>
         <small className='text-body-secondary'>
-          , added {stringifyDate(comment.createdAt || new Date())}
+          , {t('comments.added')}{' '}
+          {stringifyDate(comment.createdAt || new Date())}
         </small>
       </div>
       <p className='mb-0'>{comment.text}</p>
@@ -293,6 +301,8 @@ function CommentBox({ comment }) {
 function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
   const [commentText, setCommentText] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const { t } = useTranslation();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -342,24 +352,28 @@ function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setErrorMessage(getHumanReadableError(err.message));
+      setErrorMessage(err.message);
     }
   };
 
   return (
     <>
-      {errorMessage && <p className='text-danger mt-1'>{errorMessage}</p>}
+      {errorMessage && (
+        <p className='text-danger mt-1'>
+          {t(errorMessage, { defaultValue: t('error.default') })}
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className='mb-3 mt-5'>
         <textarea
           className='form-control'
-          placeholder='Add a comment...'
+          placeholder={t('comments.placeholder')}
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           onFocus={() => setErrorMessage('')}
         ></textarea>
         <button type='submit' className='btn btn-primary mt-2'>
-          Add Comment
+          {t('comments.button')}
         </button>
       </form>
     </>
@@ -367,6 +381,8 @@ function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
 }
 
 function ItemFields({ fields }) {
+  const { t } = useTranslation();
+
   return (
     <>
       <div className='mt-4'>
@@ -375,14 +391,14 @@ function ItemFields({ fields }) {
           className='container border border-2 rounded-4 p-3 mb-4 mt-2'
         >
           <h2 className='fs-2 fw-semibold mb-3'>
-            <i className='bi bi-collection fs-3'></i> Fields (
+            <i className='bi bi-collection fs-3'></i> {t('item.fields')} (
             {fields?.length || 0})
           </h2>
           <table className='table table-bordered table-striped table-hover w-full mx-auto'>
             <thead>
               <tr>
-                <th className='col-6'>Name</th>
-                <th className='col-6'>Value</th>
+                <th className='col-6'>{t('fields.name')}</th>
+                <th className='col-6'>{t('fields.value')}</th>
               </tr>
             </thead>
             <tbody>
@@ -391,9 +407,9 @@ function ItemFields({ fields }) {
                   <td style={{ whiteSpace: 'normal' }}>{field.name}</td>
                   <td style={{ whiteSpace: 'normal' }}>
                     {field.value === 'true'
-                      ? 'Yes ✅'
+                      ? `${t('fields.true')} ✅`
                       : field.value === 'false'
-                      ? 'No ❌'
+                      ? `${t('fields.false')} ❌`
                       : field.value}
                   </td>
                 </tr>

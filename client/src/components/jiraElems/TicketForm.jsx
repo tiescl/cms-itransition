@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
-import getHumanReadableError from '../../utils/getHumanReadableError';
 
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function TicketForm({ show, handleClose }) {
+  const { t } = useTranslation();
+
   const [formData, setFormData] = useState({
     summary: '',
-    priority: 'Medium',
+    priority: t('jForm.priority.medium'),
     collection: '',
     description: '',
     link: window.location.href
@@ -32,11 +34,11 @@ export default function TicketForm({ show, handleClose }) {
     const token = localStorage.getItem('auth');
 
     if (!formData.summary.trim()) {
-      setError('Summary is required.');
+      setError('jForm.required_summary');
       return;
     }
     if (!formData.priority) {
-      setError('Priority is required.');
+      setError('jForm.required_priority');
       return;
     }
 
@@ -66,7 +68,7 @@ export default function TicketForm({ show, handleClose }) {
           return {
             ...prevData,
             summary: '',
-            priority: 'Medium',
+            priority: t('jForm.priority.medium'),
             collection: '',
             description: '',
             link: window.location.href
@@ -77,7 +79,7 @@ export default function TicketForm({ show, handleClose }) {
         throw new Error(data.error);
       }
     } catch (err) {
-      setError(getHumanReadableError(err.message));
+      setError(err.message);
     }
   };
 
@@ -89,12 +91,12 @@ export default function TicketForm({ show, handleClose }) {
       className='modal-fullscreen-sm-down'
     >
       <Modal.Header closeButton>
-        <Modal.Title>Create Support Ticket</Modal.Title>
+        <Modal.Title>{t('jForm.heading')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form className='fs-5'>
           <Form.Group controlId='summary' className='mb-3'>
-            <Form.Label>Summary (Required)</Form.Label>
+            <Form.Label>{t('jForm.summaryLabel')}</Form.Label>
             <Form.Control
               as='textarea'
               rows={3}
@@ -106,7 +108,7 @@ export default function TicketForm({ show, handleClose }) {
           </Form.Group>
 
           <Form.Group controlId='description' className='mb-3'>
-            <Form.Label>Description (Optional)</Form.Label>
+            <Form.Label>{t('jForm.descriptionLabel')}</Form.Label>
             <Form.Control
               as='textarea'
               rows={3}
@@ -118,7 +120,7 @@ export default function TicketForm({ show, handleClose }) {
           </Form.Group>
 
           <Form.Group controlId='priority' className='mb-3'>
-            <Form.Label>Priority (Required)</Form.Label>
+            <Form.Label>{t('jForm.priorityLabel')}</Form.Label>
             <Form.Control
               as='select'
               name='priority'
@@ -126,16 +128,16 @@ export default function TicketForm({ show, handleClose }) {
               onChange={handleChange}
               required
             >
-              <option value='Highest'>Highest</option>
-              <option value='High'>High</option>
-              <option value='Medium'>Medium</option>
-              <option value='Low'>Low</option>
-              <option value='Lowest'>Lowest</option>
+              <option value='Highest'>{t('jForm.priority.highest')}</option>
+              <option value='High'>{t('jForm.priority.high')}</option>
+              <option value='Medium'>{t('jForm.priority.medium')}</option>
+              <option value='Low'>{t('jForm.priority.low')}</option>
+              <option value='Lowest'>{t('jForm.priority.lowest')}</option>
             </Form.Control>
           </Form.Group>
 
           <Form.Group controlId='collection' className='mb-4'>
-            <Form.Label>Collection (Optional)</Form.Label>
+            <Form.Label>{t('jForm.collectionLabel')}</Form.Label>
             <Form.Control
               type='text'
               name='collection'
@@ -150,24 +152,25 @@ export default function TicketForm({ show, handleClose }) {
               onClose={() => setShowAlert(false)}
               dismissible
             >
-              Ticket created successfully! See it{' '}
+              {t('jForm.successMsg')}
               <Link to={`${issueLink || '/'}`} className='text-decoration-none'>
-                here
+                {t('jForm.successLink')}
               </Link>
               .
               {userNew && (
                 <>
                   <hr />
-                  <p>
-                    We made you a Jira account! Check your inbox to finish
-                    setting it up.
-                  </p>
+                  <p>{t('jForm.newAccount')}</p>
                 </>
               )}
             </Alert>
           )}
 
-          {error && <p className='text-danger mt-1'>{error}</p>}
+          {error && (
+            <p className='text-danger mt-1'>
+              {t(error, { defaultValue: t('error.default') })}
+            </p>
+          )}
         </Form>
       </Modal.Body>
       <Modal.Footer>

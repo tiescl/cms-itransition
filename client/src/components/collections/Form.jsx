@@ -1,9 +1,9 @@
 import { useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
 
 import { v4 as uuidv4 } from 'uuid';
-import getHumanReadableError from '../../utils/getHumanReadableError.js';
 import categoriesData from '../../data/categories.json';
 import getFieldType from '../../utils/getFieldType.js';
 
@@ -12,6 +12,7 @@ export default function CollectionForm({
   editMode = false
 }) {
   const { user } = useContext(UserContext);
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { collectionId } = useParams();
   const [formData, setFormData] = useState({
@@ -37,7 +38,7 @@ export default function CollectionForm({
       !formSubmitData.category ||
       formSubmitData.customFieldDefinitions.length === 0
     ) {
-      setError('Name, category, and at least one custom field are required.');
+      setError('collection.requiredFields');
       return true;
     } else {
       setError('');
@@ -45,7 +46,7 @@ export default function CollectionForm({
 
     for (const field of formSubmitData.customFieldDefinitions) {
       if (!field.client_id || !field.name || !field.type) {
-        setError('Custom field name must not be empty.');
+        setError('collection.emptyCustomFields');
         return true;
       } else {
         setError('');
@@ -106,7 +107,7 @@ export default function CollectionForm({
         }
       } catch (err) {
         e.target.disabled = false;
-        setRequestError(getHumanReadableError(err.message));
+        setRequestError(err.message);
       }
     }
   };
@@ -120,13 +121,16 @@ export default function CollectionForm({
           <div className='row'>
             <div className='col-md-8 mx-auto'>
               <NameInput formData={formData} setFormData={setFormData} />
+
               <DescriptionInput formData={formData} setFormData={setFormData} />
+
               <ImageInput
                 formData={formData}
                 setFormData={setFormData}
                 imageError={imageError}
                 setImageError={setImageError}
               />
+
               <CategorySelection
                 formData={formData}
                 setFormData={setFormData}
@@ -138,9 +142,15 @@ export default function CollectionForm({
 
               <CreateField setFormData={setFormData} />
 
-              {error && <h5 className='text-danger mt-2'>{error}</h5>}
+              {error && (
+                <h5 className='text-danger mt-2'>
+                  {t(error, { defaultValue: t('error.default') })}
+                </h5>
+              )}
               {error === '' && requestError && (
-                <h5 className='text-danger mt-2'>{requestError}</h5>
+                <h5 className='text-danger mt-2'>
+                  {t(requestError, { defaultValue: t('error.default') })}
+                </h5>
               )}
 
               <div className='my-5'>
@@ -149,7 +159,9 @@ export default function CollectionForm({
                   onClick={handleSubmit}
                   className='btn btn-primary form-control'
                 >
-                  {editMode === 'true' ? 'Save Changes' : 'Create'}
+                  {editMode === true
+                    ? t('collection.saveChanges')
+                    : t('collection.create')}
                 </button>
               </div>
             </div>
@@ -161,27 +173,32 @@ export default function CollectionForm({
 }
 
 function FormTitle({ editMode }) {
+  const { t } = useTranslation();
+
   return (
     <h1
       style={{ fontSize: '35px', margin: '120px auto 20px auto' }}
       className='text-center fw-semibold'
     >
-      {editMode === 'true' ? 'Edit' : 'Create'} Collection
+      {editMode === true ? t('collection.edit') : t('collection.create')}
+      {t('collection.heading')}
     </h1>
   );
 }
 
 function NameInput({ formData, setFormData }) {
+  const { t } = useTranslation();
+
   return (
     <div className='mb-4'>
       <label htmlFor='collName' className='form-label'>
-        Collection name
+        {t('collection.name')}
       </label>
       <input
         type='text'
         id='collName'
         className='form-control'
-        placeholder='e.g. My Reading List'
+        placeholder={t('collection.namePlaceholder')}
         value={formData.name}
         onChange={(event) =>
           setFormData((prevFormData) => {
@@ -194,15 +211,17 @@ function NameInput({ formData, setFormData }) {
 }
 
 function DescriptionInput({ formData, setFormData }) {
+  const { t } = useTranslation();
+
   return (
     <div className='mb-4'>
       <label htmlFor='collDescription' className='form-label'>
-        Collection Description
+        {t('collection.description')}
       </label>
       <textarea
         id='collDescription'
         className='form-control'
-        placeholder='Briefly describe what this collection is about'
+        placeholder={t('collection.descriptionPlaceholder')}
         rows='5'
         value={formData.description}
         onChange={(event) =>
@@ -216,6 +235,7 @@ function DescriptionInput({ formData, setFormData }) {
 }
 
 function ImageInput({ formData, setFormData, imageError, setImageError }) {
+  const { t } = useTranslation();
   const api_key = import.meta.env.VITE_IMGBB_APIKEY;
 
   const handleFileChange = async (event) => {
@@ -223,9 +243,7 @@ function ImageInput({ formData, setFormData, imageError, setImageError }) {
 
     const acceptedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (!acceptedTypes.includes(file.type) || file.size > 5000000) {
-      setImageError(
-        'Please select a valid image (JPG/PNG) with a size up to 5mb'
-      );
+      setImageError('invalid.image');
       event.target.value = '';
       return;
     }
@@ -255,7 +273,8 @@ function ImageInput({ formData, setFormData, imageError, setImageError }) {
         throw new Error(data.error.message);
       }
     } catch (error) {
-      setImageError(`Upload failed: ${error.message}`);
+      console.error(error.message);
+      setImageError(error.message);
     }
   };
 
@@ -271,7 +290,7 @@ function ImageInput({ formData, setFormData, imageError, setImageError }) {
         ''
       )}
       <label htmlFor='collImage' className='form-label'>
-        Choose an image that represents this collection (JPG or PNG format)
+        {t('collection.image')}
       </label>
       <input
         type='file'
@@ -282,20 +301,28 @@ function ImageInput({ formData, setFormData, imageError, setImageError }) {
       {!imageError && formData.imageUrl && (
         <>
           <h5 className='text-success mt-2'>
-            Success! View it{' '}
-            <a href={formData.imageUrl} className='text-primary'>
-              here
+            {t('image.success')}
+            <a
+              href={formData.imageUrl}
+              className='text-primary text-decoration-none'
+            >
+              {t('image.link')}
             </a>
             .
           </h5>
         </>
       )}
-      {imageError && <h5 className='text-danger mt-2'>{imageError}</h5>}
+      {imageError && (
+        <h5 className='text-danger mt-2'>
+          {t(imageError, { defaultValue: t('error.default') })}
+        </h5>
+      )}
     </div>
   );
 }
 
 function CategorySelection({ formData, setFormData }) {
+  const { t } = useTranslation();
   const categories = categoriesData.categories;
 
   const handleCategoryChange = (event) => {
@@ -308,7 +335,7 @@ function CategorySelection({ formData, setFormData }) {
   return (
     <div className='mb-4'>
       <label htmlFor='collCategory' className='form-label'>
-        Category
+        {t('collection.category')}
       </label>
       <select
         id='collCategory'
@@ -316,7 +343,7 @@ function CategorySelection({ formData, setFormData }) {
         value={formData.category}
         onChange={handleCategoryChange}
       >
-        <option value=''>Select a Category</option>
+        <option value=''>{t('category.defOption')}</option>
         {categories.map((category) => (
           <option key={category} value={category}>
             {category}
@@ -330,6 +357,8 @@ function CategorySelection({ formData, setFormData }) {
 function CreateField({ setFormData }) {
   const [fieldName, setFieldName] = useState('');
   const [fieldType, setFieldType] = useState('text');
+
+  const { t } = useTranslation();
 
   const handleAddField = () => {
     setFormData((prevFormData) => ({
@@ -351,7 +380,7 @@ function CreateField({ setFormData }) {
   return (
     <div className='mb-4'>
       <label htmlFor='field-name' className='form-label'>
-        Add Custom Fields
+        {t('collection.customFields')}
       </label>
       <div className='input-group'>
         <input
@@ -359,7 +388,7 @@ function CreateField({ setFormData }) {
           className='form-control'
           id='field-name'
           value={fieldName}
-          placeholder='Field Name'
+          placeholder={t('customFields.placeholder')}
           onChange={(e) => setFieldName(e.target.value)}
         />
         <select
@@ -368,11 +397,13 @@ function CreateField({ setFormData }) {
           value={fieldType}
           onChange={(e) => setFieldType(e.target.value)}
         >
-          <option value='text'>Short Text</option>
-          <option value='number'>Number</option>
-          <option value='date'>Date</option>
-          <option value='checkbox'>Checkbox (Yes/No)</option>
-          <option value='multiline_string'>Multiline Text</option>
+          <option value='text'>{t('fieldtype.text')}</option>
+          <option value='number'>{t('fieldtype.number')}</option>
+          <option value='date'>{t('fieldtype.date')}</option>
+          <option value='checkbox'>{t('fieldtype.checkbox')}</option>
+          <option value='multiline_string'>
+            {t('fieldtype.multiline_string')}
+          </option>
         </select>
         <button
           className='btn btn-primary'
@@ -380,7 +411,7 @@ function CreateField({ setFormData }) {
           onClick={handleAddField}
           disabled={!fieldName}
         >
-          Add Field
+          {t('customFields.button')}
         </button>
       </div>
     </div>
@@ -388,6 +419,8 @@ function CreateField({ setFormData }) {
 }
 
 function Fields({ formData, setFormData }) {
+  const { t } = useTranslation();
+
   return (
     <div className='mb-3 container border border-2 rounded-2 table-responsive p-2 mt-5'>
       <table
@@ -397,9 +430,9 @@ function Fields({ formData, setFormData }) {
         <thead>
           <tr>
             <th>#</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Action</th>
+            <th>{t('field.name')}</th>
+            <th>{t('field.type')}</th>
+            <th>{t('field.action')}</th>
           </tr>
         </thead>
         <tbody>
@@ -425,6 +458,8 @@ function Fields({ formData, setFormData }) {
 }
 
 function RemoveButton({ fieldId, setFormData }) {
+  const { t } = useTranslation();
+
   const handleRemoveField = (fieldUniqueId) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -441,7 +476,7 @@ function RemoveButton({ fieldId, setFormData }) {
         type='button'
         onClick={() => handleRemoveField(fieldId)}
       >
-        Remove
+        {t('field.button')}
       </button>
     </div>
   );
