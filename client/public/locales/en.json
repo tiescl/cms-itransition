@@ -1,4 +1,9 @@
 {
+  "main.recent.items": "Recently Created Items",
+  "main.largest.collections": "Largest Collections",
+  "main.heading": "Unleash Your Inner Collector",
+  "main.description": "Whether you're a passionate bookworm, a stamp enthusiast, or a connoisseur of rare coins, our platform empowers you to curate, showcase, and connect with fellow collectors.",
+
   "login.title": "Log In",
   "emailLabel": "E-mail",
   "passLabel": "Password",
@@ -19,6 +24,7 @@
   "loading.collections": "Fetching collections..",
   "loading.collection": "Fetching collection data..",
   "loading.item": "Fetching item data..",
+  "loading.recent": "Fetching recent collections and items..",
 
   "nav.nameFallback": "Guest",
   "nav.search": "Search",
@@ -26,6 +32,7 @@
   "nav.login": "Log in",
   "nav.register": "Register",
   "nav.collections": "Collections",
+  "nav.browseCollections": "Browse Collections",
   "nav.create": "Create",
   "nav.viewProfile": "View Profile",
   "nav.darkMode": "Dark Mode",
@@ -46,6 +53,8 @@
   "jForm.successMsg": "Ticket created successfully! See it ",
   "jForm.successLink": "here",
   "jForm.newAccount": "We made you a Jira account! Check your inbox to finish setting it up.",
+  "jForm.close": "Close",
+  "jForm.submit": "Submit",
 
   "user.jiraHeading": "My Jira Tickets",
   "user.collections": "Collections",
@@ -90,7 +99,9 @@
   "comments.placeholder": "Add a comment...",
   "comments.button": "Add Comment",
   "item.location": "Item in",
+  "item.location.small": "in",
   "item.likes": "Likes",
+  "item.seeMore": "See More...",
   "created": "Created",
   "modified": "Last Modified",
   "item.fields": "Fields",

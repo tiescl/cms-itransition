@@ -175,10 +175,10 @@ export default function TicketForm({ show, handleClose }) {
       </Modal.Body>
       <Modal.Footer>
         <Button variant='secondary' onClick={handleClose}>
-          Close
+          {t('jForm.close')}
         </Button>
         <Button variant='primary' type='submit' onClick={handleSubmit}>
-          Submit
+          {t('jForm.submit')}
         </Button>
       </Modal.Footer>
     </Modal>

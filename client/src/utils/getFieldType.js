@@ -1,8 +1,4 @@
-import { useTranslation } from 'react-i18next';
-
-export default function getFieldType(fieldType) {
-  const { t } = useTranslation();
-
+export default function getFieldType(fieldType, t) {
   switch (fieldType) {
     case 'text':
       return t('fieldtype.text');

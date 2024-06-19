@@ -1,4 +1,9 @@
 {
+  "main.recent.items": "Neueste Artikel",
+  "main.largest.collections": "Größte Sammlungen",
+  "main.heading": "Entfesseln Sie den Sammler in Sich",
+  "main.description": "Ob Sie ein leidenschaftlicher Bücherwurm, ein Briefmarkensammler oder ein Kenner seltener Münzen sind, unsere Plattform ermöglicht es Ihnen, Ihre Sammlungen zu pflegen, zu präsentieren und sich mit anderen Sammlern zu verbinden.",
+
   "login.title": "Anmelden",
   "emailLabel": "E-Mail",
   "passLabel": "Passwort",
@@ -19,6 +24,7 @@
   "loading.collections": "Lade Sammlungen..",
   "loading.collection": "Lade Sammlungsdaten..",
   "loading.item": "Artikeldaten abrufen..",
+  "loading.recent": "Lade neueste Sammlungen und Artikel..",
 
   "nav.nameFallback": "Gast",
   "nav.search": "Suche",
@@ -26,6 +32,7 @@
   "nav.login": "Anmelden",
   "nav.register": "Registrieren",
   "nav.collections": "Sammlungen",
+  "nav.browseCollections": "Sammlungen durchsuchen",
   "nav.create": "Erstellen",
   "nav.viewProfile": "Profil Anzeigen",
   "nav.darkMode": "Dunkler Modus",
@@ -46,6 +53,8 @@
   "jForm.successMsg": "Ticket erfolgreich erstellt! ",
   "jForm.successLink": "Hier ansehen",
   "jForm.newAccount": "Jira-Konto erstellt! Überprüfen Sie Ihren Posteingang zur Einrichtung.",
+  "jForm.close": "Schließen",
+  "jForm.submit": "Absenden",
 
   "user.jiraHeading": "Meine Jira Tickets",
   "user.collections": "Sammlungen",
@@ -90,7 +99,9 @@
   "comments.placeholder": "Kommentar hinzufügen...",
   "comments.button": "Kommentar hinzufügen",
   "item.location": "Artikel in",
+  "item.location.small": "in",
   "item.likes": "Likes",
+  "item.seeMore": "Mehr anzeigen...",
   "created": "Erstellt",
   "modified": "Zuletzt geändert",
   "item.fields": "Felder",

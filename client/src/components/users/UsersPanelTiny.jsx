@@ -30,8 +30,8 @@ export function UserRow({ user, selectedUsers, onChange }) {
           ? 1
           : 0}
       </td>
-      <td>{stringifyDate(user.lastLoginDate)}</td>
-      <td>{stringifyDate(user.registerDate)}</td>
+      <td>{stringifyDate(user.lastLoginDate, t)}</td>
+      <td>{stringifyDate(user.registerDate, t)}</td>
       <td>
         <StatusWrapper
           status={

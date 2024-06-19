@@ -185,12 +185,12 @@ function CollectionDetails({ collection, user, setError }) {
 
           <p className='text-body-secondary mt-4 mb-1'>
             <small>
-              {t('created')}: {stringifyDate(collection.createdAt)}
+              {t('created')}: {stringifyDate(collection.createdAt, t)}
             </small>
           </p>
           <p className='text-body-secondary mb-2'>
             <small>
-              {t('modified')}: {stringifyDate(collection.updatedAt)}
+              {t('modified')}: {stringifyDate(collection.updatedAt, t)}
             </small>
           </p>
         </div>

@@ -259,12 +259,12 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
 
       <p className='text-body-secondary mt-3 mb-1'>
         <small>
-          {t('created')}: {stringifyDate(item.createdAt)}
+          {t('created')}: {stringifyDate(item.createdAt, t)}
         </small>
       </p>
       <p className='text-body-secondary mb-2'>
         <small>
-          {t('modified')}: {stringifyDate(item.updatedAt)}
+          {t('modified')}: {stringifyDate(item.updatedAt, t)}
         </small>
       </p>
     </div>
@@ -290,7 +290,7 @@ function CommentBox({ comment }) {
         </Link>
         <small className='text-body-secondary'>
           , {t('comments.added')}{' '}
-          {stringifyDate(comment.createdAt || new Date())}
+          {stringifyDate(comment.createdAt || new Date(), t)}
         </small>
       </div>
       <p className='mb-0'>{comment.text}</p>

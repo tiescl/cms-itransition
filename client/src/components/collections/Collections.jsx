@@ -1,53 +1,40 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 import CollectionCard from './Card.jsx';
 import LoadingScreen from '../layout/LoadingScreen.jsx';
 import ErrorPage from '../layout/ErrorPage.jsx';
 
-import fetchCollections from './fetchCollection.js';
-
 export default function Collections() {
   const [collectionsList, setCollectionsList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const { t } = useTranslation();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
-  useEffect(() => {
-    setIsLoading(true);
-    const controller = new AbortController();
-
-    const fetchCollectionsData = async () => {
-      try {
-        await fetchCollections(
-          prodUrl,
-          setCollectionsList,
-          setError,
-          setIsLoading,
-          controller.signal
-        );
-      } catch (err) {
-        if (err.message !== 'request_canceled') {
-          setError(err.message);
-        }
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ['collectionsData'],
+    queryFn: async () => {
+      const response = await fetch(`${prodUrl}/api/collections`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
       }
-    };
+      return response.json();
+    },
+    staleTime: 60 * 1000,
+    gcTime: 10 * 60 * 1000
+  });
 
-    fetchCollectionsData();
-
-    const intervalId = setInterval(fetchCollectionsData, 10000);
-
-    return () => {
-      clearInterval(intervalId);
-      controller.abort();
-    };
-  }, []);
+  useEffect(() => {
+    if (!isLoading) {
+      setCollectionsList(data);
+    }
+  }, [data]);
 
   return (
     <>
-      {error ? (
+      {isError ? (
         <ErrorPage err={error} />
       ) : (
         <>
@@ -63,7 +50,7 @@ export default function Collections() {
             {t('collections.heading')}
           </h1>
 
-          {!isLoading && collectionsList ? (
+          {!isLoading && collectionsList.length !== 0 ? (
             <div className='container'>
               <div className='row d-flex'>
                 {collectionsList.map((collection) => {

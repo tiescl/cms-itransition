@@ -1,5 +1,3 @@
-import getHumanReadableError from '../../utils/getHumanReadableError';
-
 async function fetchCollection(
   prodUrl,
   setCollectionData,

@@ -1,10 +1,7 @@
-import { useTranslation } from 'react-i18next';
-
-export default function stringifyDate(today) {
-  const { t } = useTranslation();
+export default function stringifyDate(today, t) {
   const convertedDate = new Date(today);
 
-  let primaryLocale = navigator.language || 'en-US';
+  let primaryLocale = localStorage.getItem('lang') || 'en-US';
   const dateOptions = {
     month: 'long',
     day: 'numeric',

@@ -79,14 +79,20 @@ router.get('/', async (req, res) => {
   try {
     // fetch 5 most recent items
     // and 5 largest collections
-    const recentItems = await Item.find({}).sort({ createdAt: -1 }).limit(5);
+    const recentItems = await Item.find({})
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate({
+        path: 'collectionId',
+        select: 'name'
+      })
+      .populate('tags')
+      .lean();
 
     const selectedCollections = await Collection.aggregate([
       {
         $project: {
           _id: 1,
-          name: 1,
-          items: 1,
           itemCount: { $size: '$items' }
         }
       },
@@ -94,10 +100,14 @@ router.get('/', async (req, res) => {
       { $limit: 5 }
     ]);
 
-    const largestCollections = await Collection.populate(selectedCollections, {
-      path: 'items',
-      select: 'name'
-    });
+    const collectionIds = selectedCollections.map((c) => c._id);
+
+    const largestCollections = await Collection.find({
+      _id: { $in: collectionIds }
+    })
+      .populate({ path: 'items', select: 'name' })
+      .populate({ path: 'user', select: 'username' })
+      .lean();
 
     res.status(200).json({
       recentItems,

@@ -3,7 +3,22 @@
 }
 
 .collection-box {
+  transition: transform ease-in-out 0.2s;
+}
+
+#collections-collection-card {
   max-width: 450px;
+}
+
+#collection-card {
+  min-width: 450px;
+}
+
+.item-box:hover {
+  transform: scale(1.03);
+}
+
+.item-box {
   transition: transform ease-in-out 0.2s;
 }
 
@@ -36,11 +51,12 @@ table tr.align-middle > td:first-child {
 }
 
 .placeholder-image {
-  background-color: #f0f0f0;
+  background-color: #989898;
   background-image: url('../data/image-icon.svg');
   background-position: center;
   background-repeat: no-repeat;
-  color: #999;
+  border-radius: 5px;
+  color: #989898;
   font-size: 1.2rem;
   display: flex;
   align-items: center;
@@ -52,11 +68,12 @@ table tr.align-middle > td:first-child {
 }
 
 .placeholder-image-page {
-  background-color: #f0f0f0;
+  background-color: #989898;
   background-image: url('../data/image-icon.svg');
   background-position: center;
   background-repeat: no-repeat;
-  color: #999;
+  border-radius: 5px;
+  color: #989898;
   font-size: 1.2rem;
   display: flex;
   align-items: center;

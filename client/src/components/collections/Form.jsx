@@ -136,9 +136,7 @@ export default function CollectionForm({
                 setFormData={setFormData}
               />
 
-              {formData.customFieldDefinitions.length ? (
-                <Fields formData={formData} setFormData={setFormData} />
-              ) : null}
+              <Fields formData={formData} setFormData={setFormData} />
 
               <CreateField setFormData={setFormData} />
 
@@ -421,6 +419,10 @@ function CreateField({ setFormData }) {
 function Fields({ formData, setFormData }) {
   const { t } = useTranslation();
 
+  if (formData.customFieldDefinitions.length === 0) {
+    return null;
+  }
+
   return (
     <div className='mb-3 container border border-2 rounded-2 table-responsive p-2 mt-5'>
       <table
@@ -440,12 +442,13 @@ function Fields({ formData, setFormData }) {
             <tr key={field.client_id} className='align-middle'>
               <td>{index + 1}</td>
               <td>{field.name}</td>
-              <td>{getFieldType(field.type)}</td>
+              <td>{getFieldType(field.type, t)}</td>
               <td>
                 {
                   <RemoveButton
                     fieldId={field.client_id}
                     setFormData={setFormData}
+                    t={t}
                   />
                 }
               </td>
@@ -457,9 +460,7 @@ function Fields({ formData, setFormData }) {
   );
 }
 
-function RemoveButton({ fieldId, setFormData }) {
-  const { t } = useTranslation();
-
+function RemoveButton({ fieldId, setFormData, t }) {
   const handleRemoveField = (fieldUniqueId) => {
     setFormData((prevFormData) => ({
       ...prevFormData,

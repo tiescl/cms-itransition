@@ -276,12 +276,12 @@ function UserDetails({ pageUser, contextUser, setError }) {
 
       <p className='text-body-secondary mt-3 mb-1'>
         <small>
-          {t('user.registered')}: {stringifyDate(pageUser.registerDate)}
+          {t('user.registered')}: {stringifyDate(pageUser.registerDate, t)}
         </small>
       </p>
       <p className='text-body-secondary mb-2'>
         <small>
-          {t('user.lastLogin')}: {stringifyDate(pageUser.lastLoginDate)}
+          {t('user.lastLogin')}: {stringifyDate(pageUser.lastLoginDate, t)}
         </small>
       </p>
     </div>

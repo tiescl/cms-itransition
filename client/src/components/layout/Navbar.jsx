@@ -104,7 +104,7 @@ function Actions({ theme, user }) {
             theme === 'light' ? 'primary' : 'info'
           }`}
         >
-          <i className='bi bi-list-ol'></i> {t('nav.collections')}
+          <i className='bi bi-list-ul'></i> {t('nav.collections')}
         </Link>
         <Link
           to='/collections/create'
