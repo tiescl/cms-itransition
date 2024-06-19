@@ -201,7 +201,7 @@ function AdminPanel() {
       </h1>
 
       {user && user.isAdmin ? (
-        <div className='container'>
+        <div className='container-fluid px-4 px-md-5'>
           <button
             className={`btn text-${
               theme === 'light' ? 'black' : 'light'
@@ -251,7 +251,7 @@ function AdminPanel() {
         </div>
       ) : null}
 
-      <div className='container text-center table-responsive'>
+      <div className='container-fluid text-center table-responsive px-4 px-md-5'>
         <table className='table table-striped table-bordered table-hover table-md'>
           <caption className='text-center'>
             {userList.length}{' '}

@@ -61,6 +61,6 @@ export default function EditItem() {
       editMode={true}
     />
   ) : (
-    <LoadingScreen message='loading.item' long='true' />
+    <LoadingScreen message='loading.item' long={true} />
   );
 }

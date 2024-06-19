@@ -49,6 +49,6 @@ export default function EditCollection() {
   ) : collectionData && !isLoading ? (
     <CollectionForm collectionData={collectionData} editMode={true} />
   ) : (
-    <LoadingScreen message='loading.collection' long='true' />
+    <LoadingScreen message='loading.collection' long={true} />
   );
 }

@@ -44,31 +44,29 @@ export default function App() {
       ) : (
         <>
           <Greeting t={t} />
-          <h1 className='text-center fw-semibold fs-2 py-4 border-bottom border-1'>
+          <h1 className='text-center fw-semibold fs-1 py-4 border-bottom border-1'>
             {t('main.recent.items')}
           </h1>
           <div
             style={{ whiteSpace: 'nowrap' }}
-            className='overflow-x-auto d-flex'
+            className='overflow-x-auto d-flex ps-2'
           >
             {items.map((item) => (
-              <div style={{ minWidth: '425px' }} key={item._id}>
+              <div style={{ minWidth: '360px' }} key={item._id}>
                 <ItemCard item={item} />
               </div>
             ))}
           </div>
-          <h1 className='text-center fw-semibold fs-2 mt-2 py-4 border-bottom border-1'>
+
+          <h1 className='text-center fw-semibold fs-1 mt-2 mb-5 py-4 border-bottom border-1'>
             {t('main.largest.collections')}
           </h1>
-          <div
-            style={{ whiteSpace: 'nowrap' }}
-            className='overflow-x-auto d-flex'
-          >
-            {collections.map((collection) => (
-              <div key={collection._id} className=' p-5'>
-                <CollectionCard collection={collection} />
-              </div>
-            ))}
+          <div className='container'>
+            <div className='row d-flex'>
+              {collections.map((collection) => (
+                <CollectionCard collection={collection} key={collection._id} />
+              ))}
+            </div>
           </div>
         </>
       )}
@@ -84,7 +82,7 @@ function Greeting({ t }) {
         marginTop: '125px'
       }}
     >
-      <div className='col-md-8 col-lg-5 mx-4 mb-4'>
+      <div className='col-md-8 col-lg-5 mx-2 mx-md-4 mb-4'>
         <h2>{t('main.heading')}</h2>
         <p className='fs-5'>{t('main.description')}</p>
         <Link to='/collections' className='btn btn-primary'>

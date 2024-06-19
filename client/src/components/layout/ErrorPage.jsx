@@ -9,12 +9,12 @@ export default function ErrorPage({ err = ' ' }) {
       <Navbar />
 
       <h1
-        style={{ fontSize: '50px', marginTop: '40vh', color: 'red' }}
-        className='mx-auto text-center fw-semibold'
+        style={{ marginTop: '30vh' }}
+        className='mx-auto text-center fw-semibold display-3 text-danger'
       >
         {t('errorPage.heading')}
       </h1>
-      <div style={{ fontSize: '50px', textAlign: 'center' }}>
+      <div style={{ textAlign: 'center' }} className='fs-4 mx-1'>
         {t(err, { defaultValue: t('error.default') })}
       </div>
     </>

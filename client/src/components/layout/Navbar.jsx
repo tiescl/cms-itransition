@@ -187,10 +187,10 @@ function ProfileDropdown({ theme, toggleTheme }) {
 
   const handleLogout = () => {
     setUser(null);
-    setTrigger((prev) => !prev);
     localStorage.removeItem('auth');
     localStorage.removeItem('tokenExpiration');
     console.log('logged out');
+    setTrigger((prev) => !prev);
   };
 
   return (

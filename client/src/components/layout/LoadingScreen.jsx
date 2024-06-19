@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import ThemeContext from '../../context/ThemeContext';
 import Navbar from './Navbar';
 
-export default function LoadingScreen({ message, long = 'false' }) {
+export default function LoadingScreen({ message, long = false }) {
   const { theme } = useContext(ThemeContext);
   const { t } = useTranslation();
 
@@ -21,8 +21,8 @@ export default function LoadingScreen({ message, long = 'false' }) {
           <span className='visually-hidden'>Loading...</span>
         </div>
         {message && <p className='flex-row mt-3 fs-4'>{t(message)}</p>}
-        {long === 'true' && (
-          <p className='flex-row fs-4'>{t('loading.long')}</p>
+        {long === true && (
+          <p className='flex-row fs-4 text-center'>{t('loading.long')}</p>
         )}
       </div>
     </>

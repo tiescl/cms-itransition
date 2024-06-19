@@ -18,7 +18,7 @@ export default function ProtectedRoute() {
   }, [isLoading]);
 
   if (isLoading && !timeoutExpired) {
-    return <LoadingScreen long='true' />;
+    return <LoadingScreen long={true} />;
   }
 
   if (timeoutExpired) {

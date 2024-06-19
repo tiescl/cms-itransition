@@ -173,7 +173,7 @@ export default function UserPage() {
       </div>
     </>
   ) : (
-    <LoadingScreen message='loading.user' long='true' />
+    <LoadingScreen message='loading.user' long={true} />
   );
 }
 
@@ -240,7 +240,7 @@ function UserDetails({ pageUser, contextUser, setError }) {
       </div>
 
       <p className='mb-2'>
-        <span className='fw-bold'>ID</span>{' '}
+        <span className='fw-bold'>{t('user.collector')} ID: </span>
         <code className='text-body-secondary'>#{pageUser._id}</code>
       </p>
 

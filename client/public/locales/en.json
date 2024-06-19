@@ -2,7 +2,7 @@
   "main.recent.items": "Recently Created Items",
   "main.largest.collections": "Largest Collections",
   "main.heading": "Unleash Your Inner Collector",
-  "main.description": "Whether you're a passionate bookworm, a stamp enthusiast, or a connoisseur of rare coins, our platform empowers you to curate, showcase, and connect with fellow collectors.",
+  "main.description": "Whether you're a bookworm, a stamp enthusiast, or a connoisseur of rare coins, our platform empowers you to curate, showcase, and connect with fellow collectors.",
 
   "login.title": "Log In",
   "emailLabel": "E-mail",
@@ -58,6 +58,7 @@
 
   "user.jiraHeading": "My Jira Tickets",
   "user.collections": "Collections",
+  "user.collector": "Collector",
   "user.status": "Status",
   "user.status.blocked": "blocked",
   "user.status.active": "active",

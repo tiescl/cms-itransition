@@ -5,8 +5,8 @@ const MAX_FIELDS = 3;
 
 export default function ItemCard({ item }) {
   return (
-    <div className='m-5'>
-      <div className='card shadow item-box'>
+    <div className='m-4'>
+      <div className='card shadow border-2 item-box'>
         <div className='card-body'>
           <Header item={item} />
 
@@ -80,7 +80,7 @@ function Fields({ fields, collectionId, itemId }) {
 
   return (
     <>
-      <ul className='list-group border border-2 rounded list-group-flush'>
+      <ul className='list-group border rounded list-group-flush'>
         <div className='card-header text-body-secondary fw-bold fs-5'>
           {t('item.fields')}
         </div>

@@ -2,7 +2,7 @@
   "main.recent.items": "Neueste Artikel",
   "main.largest.collections": "Größte Sammlungen",
   "main.heading": "Entfesseln Sie den Sammler in Sich",
-  "main.description": "Ob Sie ein leidenschaftlicher Bücherwurm, ein Briefmarkensammler oder ein Kenner seltener Münzen sind, unsere Plattform ermöglicht es Ihnen, Ihre Sammlungen zu pflegen, zu präsentieren und sich mit anderen Sammlern zu verbinden.",
+  "main.description": "Ob Bücherwurm, Briefmarkensammler oder Münzkenner, unsere Plattform ermöglicht Ihnen, Ihre Sammlungen zu pflegen, zu präsentieren und sich mit anderen Sammlern zu verbinden.",
 
   "login.title": "Anmelden",
   "emailLabel": "E-Mail",
@@ -58,6 +58,7 @@
 
   "user.jiraHeading": "Meine Jira Tickets",
   "user.collections": "Sammlungen",
+  "user.collector": "Sammler",
   "user.status": "Status",
   "user.status.blocked": "gesperrt",
   "user.status.active": "aktiv",

@@ -13,14 +13,7 @@ export default function CollectionCard({ collection }) {
 
   return (
     <div className='col-11 col-md-6 mb-5 mx-auto flex-fill d-flex justify-content-center'>
-      <div
-        className='card shadow collection-box flex-fill'
-        id={`${
-          window.location.pathname === '/collections'
-            ? 'collections-collection-card'
-            : 'collection-card'
-        }`}
-      >
+      <div className='card shadow collection-box border-2 flex-fill'>
         <div className='card-img-top' style={{ position: 'relative' }}>
           {collection.imageUrl ? (
             <img
@@ -68,7 +61,7 @@ export default function CollectionCard({ collection }) {
           </div>
 
           {collection.items?.length > 0 && (
-            <ul className='list-group list-group-numbered border border-2 rounded list-group-flush'>
+            <ul className='list-group list-group-numbered border rounded list-group-flush'>
               <div className='card-header text-body-secondary fw-bold fs-5'>
                 {t('collection.items')}
               </div>
