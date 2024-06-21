@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext, Fragment } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
 
-import fetchCollection from './fetchCollection.js';
 import stringifyDate from '../../utils/stringifyDate.js';
 
 import LoadingScreen from '../layout/LoadingScreen.jsx';
@@ -15,51 +15,43 @@ export default function CollectionPage() {
   const { collectionId } = useParams();
   const { user } = useContext(UserContext);
   const [collection, setCollection] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [error, setError] = useState('');
+  const [reqError, setReqError] = useState('');
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
-  useEffect(() => {
-    setIsLoading(true);
-    const controller = new AbortController();
-
-    const fetchCollectionData = async () => {
-      try {
-        await fetchCollection(
-          prodUrl,
-          setCollection,
-          setError,
-          setIsLoading,
-          controller.signal,
-          collectionId
-        );
-      } catch (err) {
-        setError(err.message);
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ['collectionData', collectionId],
+    queryFn: async () => {
+      const response = await fetch(
+        `${prodUrl}/api/collections/${collectionId}`
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
       }
-    };
+      return response.json();
+    },
+    staleTime: 10 * 1000,
+    gcTime: 10 * 60 * 1000,
+    enabled: !!collectionId
+  });
 
-    fetchCollectionData();
-
-    const intervalId = setInterval(fetchCollectionData, 10000);
-
-    return () => {
-      clearInterval(intervalId);
-      controller.abort();
-    };
-  }, [collectionId]);
+  useEffect(() => {
+    if (!isLoading) {
+      setCollection(data);
+    }
+  }, [data, collectionId]);
 
   return (
     <>
-      {error ? (
-        <ErrorPage err={error} />
+      {isError || reqError ? (
+        <ErrorPage err={isError ? error : reqError} />
       ) : collection && !isLoading ? (
         <>
           <CollectionDetails
             collection={collection}
             user={user}
-            setError={setError}
+            setError={setReqError}
           />
 
           <ItemsDetails
@@ -67,7 +59,7 @@ export default function CollectionPage() {
             collection={collection}
             collectionId={collection._id}
             contextUser={user}
-            setError={setError}
+            setError={setReqError}
           />
         </>
       ) : (
@@ -78,8 +70,13 @@ export default function CollectionPage() {
 }
 
 function CollectionDetails({ collection, user, setError }) {
-  const { t } = useTranslation();
+  const [forceUpdate, setForceUpdate] = useState(false);
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setForceUpdate(!forceUpdate);
+  }, [i18n.language]);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
@@ -159,11 +156,7 @@ function CollectionDetails({ collection, user, setError }) {
 
           <p className='mb-1'>
             <span className='fw-bold'>{t('collection.items')}: </span>
-            {Array.isArray(collection.items)
-              ? collection.items.length
-              : collection.items !== undefined
-              ? 1
-              : 0}
+            {collection.items.length}
           </p>
 
           <p className='mb-2 text-capitalize'>
@@ -185,12 +178,14 @@ function CollectionDetails({ collection, user, setError }) {
 
           <p className='text-body-secondary mt-4 mb-1'>
             <small>
-              {t('created')}: {stringifyDate(collection.createdAt, t)}
+              {t('created')}:{' '}
+              {stringifyDate(collection.createdAt, t, forceUpdate)}
             </small>
           </p>
           <p className='text-body-secondary mb-2'>
             <small>
-              {t('modified')}: {stringifyDate(collection.updatedAt, t)}
+              {t('modified')}:{' '}
+              {stringifyDate(collection.updatedAt, t, forceUpdate)}
             </small>
           </p>
         </div>
@@ -266,14 +261,19 @@ function ItemsDetails({
             </h2>
           </div>
           <div className='col-6 text-end'>
-            <Link
-              to={`/collections/${collectionId}/items/create`}
-              state={{ collectionData: collection }}
-            >
-              <button className='btn btn-primary btn-sm'>
-                <i className='bi bi-plus-circle'></i> {t('collection.newItem')}
-              </button>
-            </Link>
+            {contextUser &&
+              (collection.user._id.includes(contextUser._id) ||
+                contextUser.isAdmin) && (
+                <Link
+                  to={`/collections/${collectionId}/items/create`}
+                  state={{ collectionData: collection }}
+                >
+                  <button className='btn btn-primary btn-sm'>
+                    <i className='bi bi-plus-circle'></i>{' '}
+                    {t('collection.newItem')}
+                  </button>
+                </Link>
+              )}
           </div>
         </div>
         <table className='table table-fixed table-bordered table-hover'>

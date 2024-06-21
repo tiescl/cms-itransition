@@ -1,12 +1,18 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import stringifyDate from '../../utils/stringifyDate.js';
 
 export function UserRow({ user, selectedUsers, onChange }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [forceUpdate, setForceUpdate] = useState(false);
+
+  useEffect(() => {
+    setForceUpdate(!forceUpdate);
+  }, [i18n.language]);
 
   return (
-    <tr style={{ verticalAlign: 'middle' }}>
+    <tr className='align-middle'>
       <td className='col-sm-1'>
         <CheckBox
           user={user}
@@ -30,8 +36,8 @@ export function UserRow({ user, selectedUsers, onChange }) {
           ? 1
           : 0}
       </td>
-      <td>{stringifyDate(user.lastLoginDate, t)}</td>
-      <td>{stringifyDate(user.registerDate, t)}</td>
+      <td>{stringifyDate(user.lastLoginDate, t, forceUpdate)}</td>
+      <td>{stringifyDate(user.registerDate, t, forceUpdate)}</td>
       <td>
         <StatusWrapper
           status={

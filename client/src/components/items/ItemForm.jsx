@@ -309,6 +309,10 @@ function TagSelection({
       backgroundColor: theme,
       borderColor: theme === 'light' ? 'lightgrey' : 'grey'
     }),
+    input: (styles) => ({
+      ...styles,
+      color: theme === 'light' ? 'black' : 'white'
+    }),
     option: (styles, { isSelected }) => {
       return {
         ...styles,
@@ -328,9 +332,7 @@ function TagSelection({
             : theme === 'dark'
             ? '#495057'
             : '#e9ecef'
-        },
-
-        'color': theme === 'light' ? 'black' : 'white'
+        }
       };
     },
     multiValueLabel: (styles) => ({

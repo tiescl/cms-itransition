@@ -1,4 +1,4 @@
-export default function stringifyDate(today, t) {
+export default function stringifyDate(today, t, forceUpdate = false) {
   const convertedDate = new Date(today);
 
   let primaryLocale = localStorage.getItem('lang') || 'en-US';

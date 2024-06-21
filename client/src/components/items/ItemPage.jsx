@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
 import ThemeContext from '../../context/ThemeContext.jsx';
@@ -17,55 +18,37 @@ export default function ItemPage() {
   const { user } = useContext(UserContext);
   const { t } = useTranslation();
   const [item, setItem] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [error, setError] = useState('');
+  const [reqError, setReqError] = useState('');
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
-  useEffect(() => {
-    setIsLoading(true);
-    const controller = new AbortController();
-
-    const fetchItem = async () => {
-      try {
-        const response = await fetch(
-          `${prodUrl}/api/collections/${collectionId}/items/${itemId}`,
-          {
-            signal: controller.signal
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setItem(data);
-        } else {
-          const errorData = await response.json();
-          throw new Error(errorData.error);
-        }
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          // console.log(err.message);
-          setError(err.message);
-        }
-      } finally {
-        setIsLoading(false);
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ['itemData', itemId, collectionId],
+    queryFn: async () => {
+      const response = await fetch(
+        `${prodUrl}/api/collections/${collectionId}/items/${itemId}`
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
       }
-    };
+      return response.json();
+    },
+    staleTime: 10 * 1000,
+    gcTime: 10 * 60 * 1000,
+    enabled: !!itemId
+  });
 
-    fetchItem();
-
-    const intervalId = setInterval(fetchItem, 10000);
-
-    return () => {
-      clearInterval(intervalId);
-      controller.abort();
-    };
-  }, [collectionId, itemId]);
+  useEffect(() => {
+    if (!isLoading) {
+      setItem(data);
+    }
+  }, [data, itemId, collectionId]);
 
   return (
     <>
-      {error ? (
-        <ErrorPage err={error} />
+      {isError || reqError ? (
+        <ErrorPage err={isError ? error : reqError} />
       ) : item && !isLoading ? (
         <>
           <ItemDetails
@@ -73,7 +56,7 @@ export default function ItemPage() {
             item={item}
             setItem={setItem}
             user={user}
-            setError={setError}
+            setError={setReqError}
           />
 
           <ItemFields fields={item.fields} />
@@ -129,8 +112,13 @@ export default function ItemPage() {
 function ItemDetails({ collectionId, item, setItem, user, setError }) {
   const [liked, setLiked] = useState(item.likes?.includes(user?._id) || false);
   const [likesCount, setLikesCount] = useState(item.likes?.length || 0);
+  const [forceUpdate, setForceUpdate] = useState(false);
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+
+  useEffect(() => {
+    setForceUpdate(!forceUpdate);
+  }, [i18n.language]);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
@@ -254,17 +242,20 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
             liked ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'
           }`}
         ></i>{' '}
-        {item.likes?.length || likesCount} {t('item.likes')}
+        {item.likes?.length || likesCount}{' '}
+        {item.likes?.length === 1 || likesCount === 1
+          ? t('item.like')
+          : t('item.likes')}
       </button>
 
       <p className='text-body-secondary mt-3 mb-1'>
         <small>
-          {t('created')}: {stringifyDate(item.createdAt, t)}
+          {t('created')}: {stringifyDate(item.createdAt, t, forceUpdate)}
         </small>
       </p>
       <p className='text-body-secondary mb-2'>
         <small>
-          {t('modified')}: {stringifyDate(item.updatedAt, t)}
+          {t('modified')}: {stringifyDate(item.updatedAt, t, forceUpdate)}
         </small>
       </p>
     </div>

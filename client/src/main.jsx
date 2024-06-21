@@ -24,6 +24,7 @@ import EditItem from './components/items/Edit.jsx';
 import AdminPanel from './components/users/UsersPanel.jsx';
 import UserPage from './components/users/UserPage.jsx';
 
+import SearchPage from './components/layout/SearchPage.jsx';
 import ErrorPage from './components/layout/ErrorPage.jsx';
 import ProtectedRoute from './components/layout/ProtectedRoute.jsx';
 
@@ -43,6 +44,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Routes>
                 <Route element={<ProtectedRoute />}>
                   <Route path='/' element={<App />} />
+                  <Route path='/search' element={<SearchPage />} />
                   <Route path='/users' element={<AdminPanel />} />
                   <Route path='/users/:userId' element={<UserPage />} />
                   <Route path='/collections' element={<Collections />} />

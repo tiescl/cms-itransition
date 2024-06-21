@@ -1,15 +1,14 @@
-import { Link } from 'react-router-dom';
+import { useState, useContext, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext';
 import ThemeContext from '../../context/ThemeContext';
-import { useState, useContext, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import '../../styles/bootstrp.css';
 
 export default function Navbar() {
   const { user } = useContext(UserContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const { t } = useTranslation();
 
   return (
     <>
@@ -55,18 +54,7 @@ export default function Navbar() {
             </div>
             <div className='offcanvas-body shift-on-large-screen'>
               <ul className='navbar-nav align-items-center'>
-                <form className='d-flex my-4 me-2' role='search'>
-                  <div className='input-group'>
-                    <input
-                      className='form-control'
-                      type='search'
-                      placeholder={t('nav.search')}
-                    />
-                    <button className='btn btn-primary' type='submit'>
-                      <i className='bi bi-search'></i>
-                    </button>
-                  </div>
-                </form>
+                <NavbarSearch />
 
                 <Actions user={user} theme={theme} />
 
@@ -296,5 +284,33 @@ function ProfileDropdown({ theme, toggleTheme }) {
         </li>
       </ul>
     </div>
+  );
+}
+
+function NavbarSearch() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className='d-flex my-4 me-2' role='search'>
+      <div className='input-group'>
+        <input
+          className='form-control'
+          type='search'
+          placeholder={t('nav.search')}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button className='btn btn-primary' type='submit'>
+          <i className='bi bi-search'></i>
+        </button>
+      </div>
+    </form>
   );
 }

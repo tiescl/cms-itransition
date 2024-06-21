@@ -4,6 +4,19 @@
   "main.heading": "Unleash Your Inner Collector",
   "main.description": "Whether you're a bookworm, a stamp enthusiast, or a connoisseur of rare coins, our platform empowers you to curate, showcase, and connect with fellow collectors.",
 
+  "search.heading": "Search",
+  "search.loading": "Fetching search results..",
+  "search.button": "Search",
+  "search.itemName": "Item Name",
+  "search.collection": "Collection",
+  "search.author": "Author",
+  "search.origin": "Source",
+  "search.noResults": "No matches found for",
+  "search.results.singular": "result",
+  "search.results.plural": "results",
+  "search.results.thereWas": "Found",
+  "search.results.found": "matching",
+
   "login.title": "Log In",
   "emailLabel": "E-mail",
   "passLabel": "Password",
@@ -27,7 +40,7 @@
   "loading.recent": "Fetching recent collections and items..",
 
   "nav.nameFallback": "Guest",
-  "nav.search": "Search",
+  "nav.search": "Search...",
   "nav.logout": "Log out",
   "nav.login": "Log in",
   "nav.register": "Register",
@@ -101,6 +114,7 @@
   "comments.button": "Add Comment",
   "item.location": "Item in",
   "item.location.small": "in",
+  "item.like": "Like",
   "item.likes": "Likes",
   "item.seeMore": "See More...",
   "created": "Created",
@@ -183,5 +197,8 @@
   "ticket_init_failed": "Failed to create a support ticket. Please try again.",
   "tickets_fetch_failed": "Failed to fetch your tickets. Please try again.",
   "jira_user_not_found": "Jira user not found. Do you have a Jira account?",
-  "main_page_fetch_failed": "Failed to load recent collections and items."
+  "main_page_fetch_failed": "Failed to load recent collections and items.",
+  "empty_search_query": "Search query cannot be empty.",
+  "invalid_paging": "Invalid pagination options.",
+  "search_results_fetch_failed": "Failed to fetch search results. Please try again."
 }

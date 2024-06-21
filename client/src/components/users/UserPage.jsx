@@ -2,10 +2,10 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
-import ThemeContext from '../../context/ThemeContext.jsx';
 
 import ErrorPage from '../layout/ErrorPage.jsx';
 import LoadingScreen from '../layout/LoadingScreen.jsx';
+import InlineLoadingScreen from '../layout/InlineLoadingScreen.jsx';
 import CollectionCard from '../collections/Card.jsx';
 import { Pagination } from 'react-bootstrap';
 import { StatusWrapper } from './UsersPanelTiny.jsx';
@@ -179,7 +179,12 @@ export default function UserPage() {
 
 function UserDetails({ pageUser, contextUser, setError }) {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const [forceUpdate, setForceUpdate] = useState(false);
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    setForceUpdate(!forceUpdate);
+  }, [i18n.language]);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
@@ -276,12 +281,14 @@ function UserDetails({ pageUser, contextUser, setError }) {
 
       <p className='text-body-secondary mt-3 mb-1'>
         <small>
-          {t('user.registered')}: {stringifyDate(pageUser.registerDate, t)}
+          {t('user.registered')}:{' '}
+          {stringifyDate(pageUser.registerDate, t, forceUpdate)}
         </small>
       </p>
       <p className='text-body-secondary mb-2'>
         <small>
-          {t('user.lastLogin')}: {stringifyDate(pageUser.lastLoginDate, t)}
+          {t('user.lastLogin')}:{' '}
+          {stringifyDate(pageUser.lastLoginDate, t, forceUpdate)}
         </small>
       </p>
     </div>
@@ -321,24 +328,5 @@ function JiraTickets({ issues }) {
         ))}
       </tbody>
     </table>
-  );
-}
-
-function InlineLoadingScreen({ message }) {
-  const { theme } = useContext(ThemeContext);
-  const { t } = useTranslation();
-
-  return (
-    <div
-      className={`position-relative w-100 h-100 d-flex flex-column text-black justify-content-center align-items-center text-${
-        theme === 'light' ? 'black' : 'white'
-      }`}
-      style={{ opacity: 0.5 }}
-    >
-      <div className='spinner-border' role='status'>
-        <span className='visually-hidden'>Loading...</span>
-      </div>
-      <p className='mt-3 fs-4'>{t(message)}</p>
-    </div>
   );
 }

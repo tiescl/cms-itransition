@@ -86,7 +86,7 @@ table tr.align-middle > td:first-child {
   margin-left: calc(100% - 5.25rem) !important;
 }
 
-#react-select-3-listbox {
+[id^='react-select'][id$='-listbox'] {
   padding: 0 !important;
 }
 

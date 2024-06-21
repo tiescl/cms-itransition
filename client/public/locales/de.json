@@ -4,6 +4,19 @@
   "main.heading": "Entfesseln Sie den Sammler in Sich",
   "main.description": "Ob Bücherwurm, Briefmarkensammler oder Münzkenner, unsere Plattform ermöglicht Ihnen, Ihre Sammlungen zu pflegen, zu präsentieren und sich mit anderen Sammlern zu verbinden.",
 
+  "search.heading": "Suche",
+  "search.loading": "Lade Suchergebnisse..",
+  "search.button": "Suchen",
+  "search.itemName": "Artikelname",
+  "search.collection": "Sammlung",
+  "search.author": "Autor",
+  "search.origin": "Fundstelle",
+  "search.noResults": "Keine Ergebnisse gefunden für",
+  "search.results.singular": "Ergebnis",
+  "search.results.plural": "Ergebnisse",
+  "search.results.thereWas": "Es wurden",
+  "search.results.found": "gefunden für",
+
   "login.title": "Anmelden",
   "emailLabel": "E-Mail",
   "passLabel": "Passwort",
@@ -27,7 +40,7 @@
   "loading.recent": "Lade neueste Sammlungen und Artikel..",
 
   "nav.nameFallback": "Gast",
-  "nav.search": "Suche",
+  "nav.search": "Suche...",
   "nav.logout": "Abmelden",
   "nav.login": "Anmelden",
   "nav.register": "Registrieren",
@@ -101,6 +114,7 @@
   "comments.button": "Kommentar hinzufügen",
   "item.location": "Artikel in",
   "item.location.small": "in",
+  "item.like": "Like",
   "item.likes": "Likes",
   "item.seeMore": "Mehr anzeigen...",
   "created": "Erstellt",
@@ -183,5 +197,8 @@
   "ticket_init_failed": "Fehler beim Erstellen eines Support Ticket. Bitte erneut versuchen.",
   "tickets_fetch_failed": "Fehler beim Abrufen deiner Tickets. Bitte erneut versuchen.",
   "jira_user_not_found": "Jira Benutzer nicht gefunden. Hast du ein Jira Konto?",
-  "main_page_fetch_failed": "Fehler beim Laden der neuesten Sammlungen und Artikel."
+  "main_page_fetch_failed": "Fehler beim Laden der neuesten Sammlungen und Artikel.",
+  "empty_search_query": "Suchanfrage darf nicht leer sein.",
+  "invalid_paging": "Ungültige Paginierungsoptionen.",
+  "search_results_fetch_failed": "Fehler beim Abrufen der Suchergebnisse. Bitte erneut versuchen."
 }
