@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
 
-import stringifyDate from '../../utils/stringifyDate.js';
+import stringifyDate from '../../utils/stringifyDate.ts';
 
 import LoadingScreen from '../layout/LoadingScreen.jsx';
 import ErrorPage from '../layout/ErrorPage.jsx';
@@ -95,7 +95,7 @@ function CollectionDetails({ collection, user, setError }) {
       );
 
       if (response.ok) {
-        const data = await response.json();
+        // const data = await response.json();
         // console.log(data);
         navigate('/collections');
       } else {
@@ -121,24 +121,25 @@ function CollectionDetails({ collection, user, setError }) {
             </div>
 
             <div className='col-3 d-flex align-items-start justify-content-end'>
-              {user && (user._id === collection.user._id || user.isAdmin) && (
-                <>
-                  <Link to={`/collections/${collection._id}/edit`}>
-                    <button className='btn btn-primary mt-1 me-2'>
-                      <i className='bi bi-pencil-square'></i>
-                    </button>
-                  </Link>
+              {user &&
+                (user._id === collection.user._id || user.isAdmin) && (
+                  <>
+                    <Link to={`/collections/${collection._id}/edit`}>
+                      <button className='btn btn-primary mt-1 me-2'>
+                        <i className='bi bi-pencil-square'></i>
+                      </button>
+                    </Link>
 
-                  <Link to='/collections'>
-                    <button
-                      className='btn btn-danger mt-1'
-                      onClick={handleDeleteCollection}
-                    >
-                      <i className='bi bi-trash'></i>
-                    </button>
-                  </Link>
-                </>
-              )}
+                    <Link to='/collections'>
+                      <button
+                        className='btn btn-danger mt-1'
+                        onClick={handleDeleteCollection}
+                      >
+                        <i className='bi bi-trash'></i>
+                      </button>
+                    </Link>
+                  </>
+                )}
             </div>
           </div>
 
@@ -234,7 +235,7 @@ function ItemsDetails({
       );
 
       if (response.ok) {
-        const data = await response.json();
+        // const data = await response.json();
         // console.log(data);
         navigate(`/collections/${collectionId}`);
       } else {
@@ -256,8 +257,8 @@ function ItemsDetails({
         <div className='row mb-2 mt-1'>
           <div className='col-6'>
             <h2 className='fs-2 fw-semibold'>
-              <i className='bi bi-collection fs-3'></i> {t('collection.items')}{' '}
-              ({items?.length || 0})
+              <i className='bi bi-collection fs-3'></i>{' '}
+              {t('collection.items')} ({items?.length || 0})
             </h2>
           </div>
           <div className='col-6 text-end'>
@@ -286,7 +287,9 @@ function ItemsDetails({
                       to={`/collections/${collectionId}/items/${item._id}`}
                       className='text-decoration-none text-body-secondary'
                     >
-                      <h6 className='m-0 fs-4 fw-bold my-2'>{item.name}</h6>
+                      <h6 className='m-0 fs-4 fw-bold my-2'>
+                        {item.name}
+                      </h6>
                     </Link>
                   </td>
                   <td className='text-end' style={{ borderLeft: 'none' }}>
@@ -328,8 +331,8 @@ function ItemsDetails({
                       {field.value === 'true'
                         ? `${t('fields.true')} ✅`
                         : field.value === 'false'
-                        ? `${t('fields.false')} ❌`
-                        : field.value}
+                          ? `${t('fields.false')} ❌`
+                          : field.value}
                     </td>
                   </tr>
                 ))}

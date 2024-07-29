@@ -1,4 +1,4 @@
-export default function getHumanReadableError(error_message) {
+export default function getHumanReadableError(error_message: string) {
   switch (error_message) {
     case 'Load failed':
       return 'Failed to load data.';

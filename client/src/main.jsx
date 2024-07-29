@@ -10,7 +10,7 @@ import Register from './components/auth/Register.jsx';
 import { UserProvider } from './context/UserContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { I18nextProvider } from 'react-i18next';
-import i18n from '../src/utils/i18n.js';
+import i18n from '../src/utils/i18n.ts';
 
 import EditCollection from './components/collections/Edit.jsx';
 import CreateCollection from './components/collections/Create.jsx';

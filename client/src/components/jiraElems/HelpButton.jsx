@@ -11,7 +11,10 @@ export default function HelpButton() {
     const tooltipTriggerList = document.querySelectorAll(
       '[data-bs-toggle="tooltip"]'
     );
-    const tooltipList = [...tooltipTriggerList].map((tt) => new Tooltip(tt));
+    // eslint-disable-next-line
+    const tooltipList = [...tooltipTriggerList].map(
+      (tt) => new Tooltip(tt)
+    );
   }, []);
 
   const handleClose = () => setShowModal(false);

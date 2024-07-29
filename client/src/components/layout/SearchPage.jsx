@@ -2,7 +2,13 @@ import { useState, useEffect, useRef, useContext } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { Form, InputGroup, Button, Table, Pagination } from 'react-bootstrap';
+import {
+  Form,
+  InputGroup,
+  Button,
+  Table,
+  Pagination
+} from 'react-bootstrap';
 
 import ThemeContext from '../../context/ThemeContext.jsx';
 
@@ -93,7 +99,9 @@ export default function SearchPage() {
               <i className='bi bi-search'></i> {t('search.button')}
             </Button>
           </InputGroup>
-          {reqError && <p className='text-danger fs-5 mt-2'>{t(reqError)}</p>}
+          {reqError && (
+            <p className='text-danger fs-5 mt-2'>{t(reqError)}</p>
+          )}
         </Form>
       </div>
       {isError ? (
@@ -106,7 +114,7 @@ export default function SearchPage() {
         <>
           {results && results.results.length === 0 ? (
             <p className='fs-2 px-4 px-md-5 text-info-emphasis'>
-              {t('search.noResults')} "{searchParams.get('q')}"
+              {t('search.noResults')} &quot;{searchParams.get('q')}&quot;
             </p>
           ) : (
             <>
@@ -115,7 +123,8 @@ export default function SearchPage() {
                 {results.totalResults === 1
                   ? t('search.results.singular')
                   : t('search.results.plural')}{' '}
-                {t('search.results.found')} "{searchParams.get('q')}"
+                {t('search.results.found')}
+                &quot;{searchParams.get('q')}&quot;
               </p>
               <div className='container-fluid text-center table-responsive px-4 px-md-5'>
                 <SearchResultItem results={results?.results || []} />

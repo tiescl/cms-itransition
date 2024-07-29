@@ -1,0 +1,55 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/recommended",
+    // requires everything to be type checked
+    "prettier"
+  ],
+  "plugins": ["react", "react-hooks", "import", "@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    // eslint won't throw an error
+    // if prop types aren't defined
+    "react/prop-types": 0,
+    // and if react isn't imported
+    "react/react-in-jsx-scope": 0,
+    "@typescript-eslint/no-empty-function": 0,
+    "no-var": 0,
+    "prefer-const": 0
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module",
+    "project": "tsconfig.json",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      }
+      // This tells node.js import resolver to consider
+      // files with the extensions .js and .jsx
+      // as valid modules when resolving import statements.
+      // "node": {
+      //   "extensions": [".js", ".jsx"]
+      // }
+    }
+  }
+}

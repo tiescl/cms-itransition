@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import stringifyDate from '../../utils/stringifyDate.js';
+import stringifyDate from '../../utils/stringifyDate.ts';
 
 export function UserRow({ user, selectedUsers, onChange }) {
   const { t, i18n } = useTranslation();
@@ -33,15 +33,17 @@ export function UserRow({ user, selectedUsers, onChange }) {
         {Array.isArray(user.collections)
           ? user.collections?.length
           : user.collections !== undefined
-          ? 1
-          : 0}
+            ? 1
+            : 0}
       </td>
       <td>{stringifyDate(user.lastLoginDate, t, forceUpdate)}</td>
       <td>{stringifyDate(user.registerDate, t, forceUpdate)}</td>
       <td>
         <StatusWrapper
           status={
-            user.isBlocked ? t('user.status.blocked') : t('user.status.active')
+            user.isBlocked
+              ? t('user.status.blocked')
+              : t('user.status.active')
           }
           accentColor={user.isBlocked ? 'red' : 'darkorange'}
         />

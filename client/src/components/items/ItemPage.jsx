@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext.jsx';
 import ThemeContext from '../../context/ThemeContext.jsx';
 
-import stringifyDate from '../../utils/stringifyDate.js';
+import stringifyDate from '../../utils/stringifyDate.ts';
 import { v4 as uuid } from 'uuid';
 
 import LoadingScreen from '../layout/LoadingScreen.jsx';
@@ -110,7 +110,9 @@ export default function ItemPage() {
 }
 
 function ItemDetails({ collectionId, item, setItem, user, setError }) {
-  const [liked, setLiked] = useState(item.likes?.includes(user?._id) || false);
+  const [liked, setLiked] = useState(
+    item.likes?.includes(user?._id) || false
+  );
   const [likesCount, setLikesCount] = useState(item.likes?.length || 0);
   const [forceUpdate, setForceUpdate] = useState(false);
   const { t, i18n } = useTranslation();
@@ -172,7 +174,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
       );
 
       if (response.ok) {
-        const data = await response.json();
+        // const data = await response.json();
         // console.log(data);
         navigate(`/collections/${collectionId}`);
       } else {
@@ -301,7 +303,6 @@ function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
     const token = localStorage.getItem('auth');
 
     try {
-      const now = String(new Date());
       setItem((prevItem) => ({
         ...prevItem,
         comments: [
@@ -400,8 +401,8 @@ function ItemFields({ fields }) {
                     {field.value === 'true'
                       ? `${t('fields.true')} ✅`
                       : field.value === 'false'
-                      ? `${t('fields.false')} ❌`
-                      : field.value}
+                        ? `${t('fields.false')} ❌`
+                        : field.value}
                   </td>
                 </tr>
               ))}

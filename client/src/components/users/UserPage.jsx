@@ -10,7 +10,7 @@ import CollectionCard from '../collections/Card.jsx';
 import { Pagination } from 'react-bootstrap';
 import { StatusWrapper } from './UsersPanelTiny.jsx';
 
-import stringifyDate from '../../utils/stringifyDate.js';
+import stringifyDate from '../../utils/stringifyDate.ts';
 
 export default function UserPage() {
   const { userId } = useParams();
@@ -112,7 +112,11 @@ export default function UserPage() {
     <ErrorPage err={error} />
   ) : pageUser ? (
     <>
-      <UserDetails pageUser={pageUser} contextUser={user} setError={setError} />
+      <UserDetails
+        pageUser={pageUser}
+        contextUser={user}
+        setError={setError}
+      />
 
       {user?._id === userId && (
         <div
@@ -166,7 +170,10 @@ export default function UserPage() {
         <div className='row d-flex'>
           {pageUser.collections?.map((collection) => {
             return (
-              <CollectionCard key={collection._id} collection={collection} />
+              <CollectionCard
+                key={collection._id}
+                collection={collection}
+              />
             );
           })}
         </div>

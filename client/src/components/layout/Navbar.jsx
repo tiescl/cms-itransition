@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import UserContext from '../../context/UserContext';
 import ThemeContext from '../../context/ThemeContext';
@@ -42,7 +42,10 @@ export default function Navbar() {
             <div className='offcanvas-header'>
               <div className='offcanvas-title'>
                 <div className='d-block d-lg-none'>
-                  <ProfileDropdown theme={theme} toggleTheme={toggleTheme} />
+                  <ProfileDropdown
+                    theme={theme}
+                    toggleTheme={toggleTheme}
+                  />
                 </div>
               </div>
               <button
@@ -59,7 +62,10 @@ export default function Navbar() {
                 <Actions user={user} theme={theme} />
 
                 <div className='d-none d-lg-block'>
-                  <ProfileDropdown theme={theme} toggleTheme={toggleTheme} />
+                  <ProfileDropdown
+                    theme={theme}
+                    toggleTheme={toggleTheme}
+                  />
                 </div>
               </ul>
             </div>
@@ -276,7 +282,11 @@ function ProfileDropdown({ theme, toggleTheme }) {
             </div>
           ) : (
             <div className='text-center py-1'>
-              <Link to='/' onClick={handleLogout} className='btn btn-primary'>
+              <Link
+                to='/'
+                onClick={handleLogout}
+                className='btn btn-primary'
+              >
                 {t('nav.logout')}
               </Link>
             </div>
@@ -298,7 +308,11 @@ function NavbarSearch() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className='d-flex my-4 me-2' role='search'>
+    <form
+      onSubmit={handleSubmit}
+      className='d-flex my-4 me-2'
+      role='search'
+    >
       <div className='input-group'>
         <input
           className='form-control'

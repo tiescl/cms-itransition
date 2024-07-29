@@ -1,4 +1,6 @@
-export default function getFieldType(fieldType, t) {
+import { TFunction } from 'i18next';
+
+export default function getFieldType(fieldType: string, t: TFunction) {
   switch (fieldType) {
     case 'text':
       return t('fieldtype.text');

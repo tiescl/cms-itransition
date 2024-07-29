@@ -76,7 +76,9 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
               return {
                 ...field,
                 value:
-                  field.type !== 'checkbox' ? field.value.trim() : field.value
+                  field.type !== 'checkbox'
+                    ? field.value.trim()
+                    : field.value
               };
             }),
             user: user._id,
@@ -86,7 +88,7 @@ export default function ItemForm({ collectionData, itemData, editMode }) {
         });
 
         if (response.ok) {
-          const newItem = await response.json();
+          // const newItem = await response.json();
           // console.log(newItem);
           navigate(`/collections/${collectionData._id}`);
         } else {
@@ -321,17 +323,21 @@ function TagSelection({
             ? '#495057'
             : '#007bff'
           : theme === 'dark'
-          ? '#343a40'
-          : 'white',
-        'color': isSelected ? 'white' : theme === 'dark' ? 'white' : 'black',
+            ? '#343a40'
+            : 'white',
+        'color': isSelected
+          ? 'white'
+          : theme === 'dark'
+            ? 'white'
+            : 'black',
         ':hover': {
           backgroundColor: isSelected
             ? theme === 'dark'
               ? '#495057'
               : '#007bff'
             : theme === 'dark'
-            ? '#495057'
-            : '#e9ecef'
+              ? '#495057'
+              : '#e9ecef'
         }
       };
     },

@@ -204,8 +204,6 @@ router.get('/search', async (req, res) => {
 
     const totalCount = groupedResults.length;
 
-    console.log(groupedResults);
-
     res.status(200).send({
       results,
       currentPage: page,

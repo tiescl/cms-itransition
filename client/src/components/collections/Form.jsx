@@ -5,7 +5,7 @@ import UserContext from '../../context/UserContext.jsx';
 
 import { v4 as uuidv4 } from 'uuid';
 import categoriesData from '../../data/categories.json';
-import getFieldType from '../../utils/getFieldType.js';
+import getFieldType from '../../utils/getFieldType.ts';
 
 export default function CollectionForm({
   collectionData = null,
@@ -97,7 +97,7 @@ export default function CollectionForm({
         });
 
         if (response.ok) {
-          const newCollection = await response.json();
+          // const newCollection = await response.json();
           // console.log(newCollection);
           navigate('/collections');
         } else {
@@ -122,7 +122,10 @@ export default function CollectionForm({
             <div className='col-md-8 mx-auto'>
               <NameInput formData={formData} setFormData={setFormData} />
 
-              <DescriptionInput formData={formData} setFormData={setFormData} />
+              <DescriptionInput
+                formData={formData}
+                setFormData={setFormData}
+              />
 
               <ImageInput
                 formData={formData}

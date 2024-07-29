@@ -1,14 +1,20 @@
-export default function stringifyDate(today, t, forceUpdate = false) {
+import { TFunction } from 'i18next';
+
+export default function stringifyDate(
+  today: Date,
+  t: TFunction,
+  forceUpdate = false // eslint-disable-line
+) {
   const convertedDate = new Date(today);
 
   let primaryLocale = localStorage.getItem('lang') || 'en-US';
-  const dateOptions = {
+  const dateOptions: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
     month: 'long',
-    day: 'numeric',
-    year: 'numeric'
+    day: 'numeric'
   };
 
-  const timeOptions = {
+  const timeOptions: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: 'numeric'
   };

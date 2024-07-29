@@ -1,9 +1,9 @@
-import i18n from 'i18next';
+import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import enTranslation from '../../public/locales/en.json';
 import deTranslation from '../../public/locales/de.json';
 
-i18n.use(initReactI18next).init({
+i18next.use(initReactI18next).init({
   lng: localStorage.getItem('lang') || 'en',
   fallbackLng: 'en',
   debug: true,
@@ -20,4 +20,4 @@ i18n.use(initReactI18next).init({
   }
 });
 
-export default i18n;
+export default i18next;
