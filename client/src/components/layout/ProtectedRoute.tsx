@@ -6,11 +6,11 @@ import LoadingScreen from './LoadingScreen';
 import Layout from './Layout';
 
 export default function ProtectedRoute() {
-  const { user, isLoading } = useContext(UserContext);
-  const [timeoutExpired, setTimeoutExpired] = useState(false);
+  var { user, isLoading } = useContext(UserContext);
+  var [timeoutExpired, setTimeoutExpired] = useState(false);
 
   useEffect(() => {
-    let timer;
+    let timer: number;
     if (isLoading) {
       timer = setTimeout(() => setTimeoutExpired(true), 3500);
     }

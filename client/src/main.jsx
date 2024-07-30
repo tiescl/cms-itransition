@@ -26,7 +26,7 @@ import UserPage from './components/users/UserPage.jsx';
 
 import SearchPage from './components/layout/SearchPage.jsx';
 import ErrorPage from './components/layout/ErrorPage';
-import ProtectedRoute from './components/layout/ProtectedRoute.jsx';
+import ProtectedRoute from './components/layout/ProtectedRoute';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';

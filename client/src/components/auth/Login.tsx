@@ -1,14 +1,14 @@
 import { useState, useContext, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import UserContext from '../../context/UserContext.js';
+import UserContext from '../../context/UserContext';
 import Navbar from '../../views/Navbar.jsx';
-import HelpButton from '../jiraElems/HelpButton.js';
+import HelpButton from '../jiraElems/HelpButton';
 
 export default function Login() {
-  var { setUser, setTrigger } = useContext(UserContext);
-  let navigateTo = useNavigate();
   let { t } = useTranslation();
+  let navigateTo = useNavigate();
+  var { setUser, setTrigger } = useContext(UserContext);
 
   var [errorMessage, setErrorMessage] = useState('');
   var [showError, setShowError] = useState(false);
@@ -20,7 +20,7 @@ export default function Login() {
   let login = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let formData = new FormData(e.currentTarget.form);
+    let formData = new FormData(e.currentTarget);
     let loginCreds = {
       email: formData.get('email')?.toString().trim() ?? '',
       password: formData.get('password')?.toString().trim() ?? ''

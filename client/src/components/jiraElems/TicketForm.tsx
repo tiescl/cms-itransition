@@ -1,13 +1,7 @@
 import { ChangeEvent, MouseEvent, useState } from 'react';
-import {
-  Modal,
-  Button,
-  Form,
-  Alert,
-  FormControlProps
-} from 'react-bootstrap';
-
 import { Link } from 'react-router-dom';
+
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 interface IProps {

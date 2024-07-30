@@ -1,15 +1,9 @@
-import {
-  ChangeEvent,
-  MouseEvent,
-  MutableRefObject,
-  useRef,
-  useState
-} from 'react';
+import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import FormField from './RegisterInputField.js';
+import FormField from './RegisterInputField';
 import Navbar from '../../views/Navbar.jsx';
-import HelpButton from '../jiraElems/HelpButton.js';
+import HelpButton from '../jiraElems/HelpButton';
 
 export default function Register() {
   let navigate = useNavigate();

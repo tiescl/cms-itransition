@@ -233,7 +233,7 @@ router.get('/warmup', async (req, res) => {
 router.get('/current-user', checkCurrentUser, async (req, res) => {
   try {
     if (res.locals.user) {
-      res.json(res.locals.user);
+      res.status(200).json(res.locals.user);
     } else {
       res.status(200).json({});
     }

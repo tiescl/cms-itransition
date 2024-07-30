@@ -5,11 +5,14 @@ import ThemeContext from '../../context/ThemeContext';
 import Navbar from '../../views/Navbar';
 
 interface IProps {
-  message: string;
+  message?: string;
   long?: boolean;
 }
 
-export default function LoadingScreen({ message, long = false }: IProps) {
+export default function LoadingScreen({
+  message = undefined,
+  long = false
+}: IProps) {
   const { theme } = useContext(ThemeContext);
   const { t } = useTranslation();
 
