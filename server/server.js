@@ -25,7 +25,7 @@ app.use('/api', main);
 app.use('/api/users', users);
 app.use('/api/collections', collections);
 cron.schedule('*/5 * * * *', () => {
-  fetch('https://cms-itransition.onrender.com/api/warmup')
+  fetch(process.env.WARMUP_URL)
     .then((response) => {
       if (response.ok) {
         return response.json();

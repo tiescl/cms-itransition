@@ -10,7 +10,7 @@ import Register from './components/auth/Register';
 import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { I18nextProvider } from 'react-i18next';
-import i18n from '../src/utils/i18n.ts';
+import i18n from '../src/utils/i18next';
 
 import EditCollection from './components/collections/Edit.jsx';
 import CreateCollection from './components/collections/Create';
@@ -21,8 +21,8 @@ import CreateItem from './components/items/Create';
 import ItemPage from './components/items/ItemPage.jsx';
 import EditItem from './components/items/Edit.jsx';
 
-import AdminPanel from './components/users/UsersPanel.jsx';
-import UserPage from './components/users/UserPage.jsx';
+import AdminPanel from './components/users/UsersPanel';
+import UserPage from './components/users/UserPage';
 
 import SearchPage from './components/layout/SearchPage.jsx';
 import ErrorPage from './components/layout/ErrorPage';

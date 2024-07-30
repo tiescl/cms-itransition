@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import stringifyDate from '../../utils/stringifyDate.ts';
+import stringifyDate from '../../utils/stringifyDate';
+import User from '../../types/User';
 
-export function UserRow({ user, selectedUsers, onChange }) {
-  const { t, i18n } = useTranslation();
-  const [forceUpdate, setForceUpdate] = useState(false);
+interface IRowProps {
+  user: User;
+  selectedUsers: string[];
+  onChange: (e: ChangeEvent<HTMLInputElement>, email: string) => void;
+}
+
+export function UserRow({ user, selectedUsers, onChange }: IRowProps) {
+  let { t, i18n } = useTranslation();
+  var [forceUpdate, setForceUpdate] = useState(false);
 
   useEffect(() => {
     setForceUpdate(!forceUpdate);
@@ -29,13 +36,7 @@ export function UserRow({ user, selectedUsers, onChange }) {
         </Link>
       </td>
       <td>{user.email}</td>
-      <td>
-        {Array.isArray(user.collections)
-          ? user.collections?.length
-          : user.collections !== undefined
-            ? 1
-            : 0}
-      </td>
+      <td>{user.collections.length}</td>
       <td>{stringifyDate(user.lastLoginDate, t, forceUpdate)}</td>
       <td>{stringifyDate(user.registerDate, t, forceUpdate)}</td>
       <td>
@@ -52,7 +53,12 @@ export function UserRow({ user, selectedUsers, onChange }) {
   );
 }
 
-export function StatusWrapper({ status, accentColor }) {
+interface IWrapperProps {
+  status: string;
+  accentColor: string;
+}
+
+export function StatusWrapper({ status, accentColor }: IWrapperProps) {
   const styling = {
     border: '2px solid',
     borderColor: accentColor,
@@ -63,7 +69,17 @@ export function StatusWrapper({ status, accentColor }) {
   return <span style={styling}>{status}</span>;
 }
 
-export function CheckBox({ user, selectedUsers, onChange }) {
+interface ICheckBoxProps {
+  user: User;
+  selectedUsers: string[];
+  onChange: (e: ChangeEvent<HTMLInputElement>, email: string) => void;
+}
+
+export function CheckBox({
+  user,
+  selectedUsers,
+  onChange
+}: ICheckBoxProps) {
   return (
     <input
       type='checkbox'

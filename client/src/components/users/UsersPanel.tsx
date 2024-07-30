@@ -1,40 +1,42 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import UserContext from '../../context/UserContext';
 import ThemeContext from '../../context/ThemeContext';
 
-import { UserRow } from './UsersPanelTiny.jsx';
+import { UserRow } from './UsersPanelTiny';
+import User from '../../types/User';
 
 function AdminPanel() {
-  const { user } = useContext(UserContext);
-  const { theme } = useContext(ThemeContext);
-  const { t } = useTranslation();
+  let { t } = useTranslation();
+  var { user } = useContext(UserContext);
+  var { theme } = useContext(ThemeContext);
 
-  const [userList, setUserList] = useState([]),
-    [selectedUsers, setSelectedUsers] = useState([]),
+  var [userList, setUserList] = useState<User[]>([]),
+    [selectedUsers, setSelectedUsers] = useState<string[]>([]),
     [isCheckedAll, setIsCheckedAll] = useState(false),
     [refreshTrigger, setRefreshTrigger] = useState(false);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
 
+  // TODO: - Refactor to use react-query
   useEffect(() => {
-    const controller = new AbortController();
-    const fetchData = async () => {
+    let controller = new AbortController();
+    let fetchData = async () => {
       try {
-        const response = await fetch(`${prodUrl}/api/users`, {
+        let response = await fetch(`${prodUrl}/api/users`, {
           signal: controller.signal
         });
         if (response.ok) {
-          const users = await response.json();
+          let users = await response.json();
           setUserList(users);
         } else {
-          const errorData = await response.json();
+          let errorData = await response.json();
           throw new Error(errorData.error);
         }
       } catch (error) {
-        if (error.name !== 'AbortError') {
+        if ((error as Error).name != 'AbortError') {
           console.error('Error fetching users: ', error);
         }
       }
@@ -44,14 +46,12 @@ function AdminPanel() {
     return () => controller.abort();
   }, [refreshTrigger]);
 
-  console.log(userList);
-
-  const handleBlock = async () => {
+  let handleBlock = async () => {
     try {
-      const property = 'isBlocked';
-      const value = true;
+      let property = 'isBlocked';
+      let value = true;
 
-      const response = await fetch(`${prodUrl}/api/users`, {
+      let response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,16 +68,16 @@ function AdminPanel() {
         throw new Error('users_block_unsuccessful');
       }
     } catch (error) {
-      console.error('Error blocking users:', error.message);
+      console.error('Error blocking users:', (error as Error).message);
     }
   };
 
-  const handleUnblock = async () => {
+  let handleUnblock = async () => {
     try {
-      const property = 'isBlocked';
-      const value = false;
+      let property = 'isBlocked';
+      let value = false;
 
-      const response = await fetch(`${prodUrl}/api/users`, {
+      let response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,9 +98,9 @@ function AdminPanel() {
     }
   };
 
-  const handleDelete = async () => {
+  let handleDelete = async () => {
     try {
-      const response = await fetch(`${prodUrl}/api/users`, {
+      let response = await fetch(`${prodUrl}/api/users`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -117,16 +117,16 @@ function AdminPanel() {
         throw new Error('user_deletion_unsuccessful');
       }
     } catch (error) {
-      console.error('Error deleting users:', error.message);
+      console.error('Error deleting users:', (error as Error).message);
     }
   };
 
-  const handleMakeAdmin = async () => {
+  let handleMakeAdmin = async () => {
     try {
-      const property = 'isAdmin';
-      const value = true;
+      let property = 'isAdmin';
+      let value = true;
 
-      const response = await fetch(`${prodUrl}/api/users`, {
+      let response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,16 +143,16 @@ function AdminPanel() {
         throw new Error('promotion_unsuccessful');
       }
     } catch (error) {
-      console.error('Error promoting users:', error.message);
+      console.error('Error promoting users:', (error as Error).message);
     }
   };
 
-  const handleAdminDelete = async () => {
+  let handleAdminDelete = async () => {
     try {
-      const property = 'isAdmin';
-      const value = false;
+      let property = 'isAdmin';
+      let value = false;
 
-      const response = await fetch(`${prodUrl}/api/users`, {
+      let response = await fetch(`${prodUrl}/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -169,16 +169,19 @@ function AdminPanel() {
         throw new Error('demotion_unsuccessful');
       }
     } catch (error) {
-      console.error('Error demoting users:', error.message);
+      console.error('Error demoting users:', (error as Error).message);
     }
   };
 
-  function handleSelectionChange(e, userEmail) {
+  function handleSelectionChange(
+    e: ChangeEvent<HTMLInputElement>,
+    userEmail: string
+  ) {
     setSelectedUsers((prevSelected) => {
       if (e.target.checked) {
         return [...prevSelected, userEmail];
       } else {
-        return prevSelected.filter((id) => id !== userEmail);
+        return prevSelected.filter((id) => id != userEmail);
       }
     });
   }
@@ -208,7 +211,7 @@ function AdminPanel() {
         <div className='container-fluid px-4 px-md-5'>
           <button
             className={`btn text-${
-              theme === 'light' ? 'black' : 'light'
+              theme == 'light' ? 'black' : 'light'
             } border-2 fw-bold btn-outline-success mb-2 mx-1`}
             onClick={handleBlock}
           >
@@ -216,7 +219,7 @@ function AdminPanel() {
           </button>
           <button
             className={`btn btn-outline-success text-${
-              theme === 'light' ? 'black' : 'light'
+              theme == 'light' ? 'black' : 'light'
             } border-2 fw-bold mb-2 mx-1`}
             onClick={handleUnblock}
           >
@@ -224,7 +227,7 @@ function AdminPanel() {
           </button>
           <button
             className={`btn btn-outline-danger text-${
-              theme === 'light' ? 'black' : 'light'
+              theme == 'light' ? 'black' : 'light'
             } border-2 fw-bold mb-2 mx-1`}
             onClick={handleDelete}
           >
@@ -240,7 +243,7 @@ function AdminPanel() {
           ></div>
           <button
             className={`btn btn-${
-              theme === 'light' ? 'dark' : 'light'
+              theme == 'light' ? 'dark' : 'light'
             } border-2  fw-semibold mb-2 mx-1`}
             onClick={handleMakeAdmin}
           >
@@ -259,7 +262,7 @@ function AdminPanel() {
         <table className='table table-striped table-bordered table-hover table-md'>
           <caption className='text-center'>
             {userList.length}{' '}
-            {userList.length === 1
+            {userList.length == 1
               ? t('panel.caption.singular')
               : t('panel.caption.plural')}
           </caption>

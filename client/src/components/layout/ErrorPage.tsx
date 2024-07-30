@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import Navbar from '../../views/Navbar';
+import HelpButton from '../jiraElems/HelpButton';
 
-export default function ErrorPage({ err = ' ' }) {
+export default function ErrorPage({ err = '' }) {
   const { t } = useTranslation();
 
   return (
@@ -17,6 +18,8 @@ export default function ErrorPage({ err = ' ' }) {
       <div style={{ textAlign: 'center' }} className='fs-4 mx-1'>
         {t(err, { defaultValue: t('error.default') })}
       </div>
+
+      <HelpButton />
     </>
   );
 }
