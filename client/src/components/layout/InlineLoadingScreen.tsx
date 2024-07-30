@@ -1,8 +1,12 @@
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import ThemeContext from '../../context/ThemeContext.jsx';
+import ThemeContext from '../../context/ThemeContext';
 
-export default function InlineLoadingScreen({ message }) {
+interface IProps {
+  message: string;
+}
+
+export default function InlineLoadingScreen({ message }: IProps) {
   const { theme } = useContext(ThemeContext);
   const { t } = useTranslation();
 

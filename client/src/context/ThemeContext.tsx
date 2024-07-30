@@ -5,8 +5,14 @@ const ThemeContext = createContext({
   toggleTheme: () => {}
 });
 
-export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+interface IProps {
+  children: React.ReactNode;
+}
+
+export function ThemeProvider(props: IProps) {
+  const [theme, setTheme] = useState(
+    localStorage.getItem('theme') || 'light'
+  );
 
   useEffect(() => {
     document.documentElement.setAttribute('data-bs-theme', theme);
@@ -19,7 +25,7 @@ export function ThemeProvider({ children }) {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      {props.children}
     </ThemeContext.Provider>
   );
 }

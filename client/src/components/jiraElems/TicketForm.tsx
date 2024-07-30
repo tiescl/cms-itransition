@@ -1,33 +1,44 @@
-import { useState } from 'react';
-import { Modal, Button, Form, Alert } from 'react-bootstrap';
+import { ChangeEvent, MouseEvent, useState } from 'react';
+import {
+  Modal,
+  Button,
+  Form,
+  Alert,
+  FormControlProps
+} from 'react-bootstrap';
 
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-export default function TicketForm({ show, handleClose }) {
-  const { t } = useTranslation();
+interface IProps {
+  show: boolean;
+  handleClose: () => void;
+}
 
-  const [formData, setFormData] = useState({
+export default function TicketForm({ show, handleClose }: IProps) {
+  let { t } = useTranslation();
+
+  var [formData, setFormData] = useState({
     summary: '',
     priority: t('jForm.priority.medium'),
     collection: '',
     description: '',
     link: window.location.href
   });
-  const [error, setError] = useState('');
-  const [showAlert, setShowAlert] = useState(false);
-  const [issueLink, setIssueLink] = useState('');
-  const [userNew, setUserNew] = useState(false);
+  var [error, setError] = useState('');
+  var [showAlert, setShowAlert] = useState(false);
+  var [issueLink, setIssueLink] = useState('');
+  var [userNew, setUserNew] = useState(false);
 
-  const handleChange = (event) => {
+  let handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value,
+      [event.currentTarget.name]: event.currentTarget.value,
       link: window.location.href
     });
   };
 
-  const handleSubmit = async (event) => {
+  let handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
@@ -79,7 +90,7 @@ export default function TicketForm({ show, handleClose }) {
         throw new Error(data.error);
       }
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     }
   };
 
@@ -128,7 +139,9 @@ export default function TicketForm({ show, handleClose }) {
               onChange={handleChange}
               required
             >
-              <option value='Highest'>{t('jForm.priority.highest')}</option>
+              <option value='Highest'>
+                {t('jForm.priority.highest')}
+              </option>
               <option value='High'>{t('jForm.priority.high')}</option>
               <option value='Medium'>{t('jForm.priority.medium')}</option>
               <option value='Low'>{t('jForm.priority.low')}</option>
@@ -153,7 +166,10 @@ export default function TicketForm({ show, handleClose }) {
               dismissible
             >
               {t('jForm.successMsg')}
-              <Link to={`${issueLink || '/'}`} className='text-decoration-none'>
+              <Link
+                to={`${issueLink || '/'}`}
+                className='text-decoration-none'
+              >
                 {t('jForm.successLink')}
               </Link>
               .

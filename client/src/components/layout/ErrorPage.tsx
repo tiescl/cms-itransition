@@ -1,5 +1,5 @@
-import Navbar from './Navbar.jsx';
 import { useTranslation } from 'react-i18next';
+import Navbar from '../../views/Navbar';
 
 export default function ErrorPage({ err = ' ' }) {
   const { t } = useTranslation();

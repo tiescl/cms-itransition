@@ -164,6 +164,7 @@
   "Load failed": "Fehler beim Laden der Daten.",
   "incorrect_email": "Es existiert kein Benutzer mit dieser E-Mail-Adresse.",
   "incorrect_password": "Das eingegebene Passwort ist ungültig.",
+  "invalid_login_data": "Ungültige/leere Anmeldedaten. Bitte erneut versuchen.",
   "invalid_username": "Benutzername darf nicht leer sein.",
   "invalid_email_empty": "E-Mail darf nicht leer sein.",
   "invalid_email_match": "Ungültiges E-Mail Format.",

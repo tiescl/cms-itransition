@@ -10,7 +10,7 @@ import {
   Pagination
 } from 'react-bootstrap';
 
-import ThemeContext from '../../context/ThemeContext.jsx';
+import ThemeContext from '../../context/ThemeContext';
 
 import ErrorPage from './ErrorPage';
 import InlineLoadingScreen from './InlineLoadingScreen';

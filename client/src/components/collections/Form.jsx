@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import UserContext from '../../context/UserContext.jsx';
+import UserContext from '../../context/UserContext';
 
 import { v4 as uuidv4 } from 'uuid';
 import categoriesData from '../../data/categories.json';

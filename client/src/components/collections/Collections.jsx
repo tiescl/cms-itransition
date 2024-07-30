@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import CollectionCard from './Card.jsx';
-import LoadingScreen from '../layout/LoadingScreen.jsx';
-import ErrorPage from '../layout/ErrorPage.jsx';
+import LoadingScreen from '../layout/LoadingScreen';
+import ErrorPage from '../layout/ErrorPage';
 
 export default function Collections() {
   const [collectionsList, setCollectionsList] = useState([]);
@@ -50,7 +50,7 @@ export default function Collections() {
             {t('collections.heading')}
           </h1>
 
-          {!isLoading && collectionsList.length !== 0 ? (
+          {!isLoading && collectionsList.length != 0 ? (
             <div className='container'>
               <div className='row d-flex'>
                 {collectionsList.map((collection) => {

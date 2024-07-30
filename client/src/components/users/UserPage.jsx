@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import UserContext from '../../context/UserContext.jsx';
+import UserContext from '../../context/UserContext';
 
-import ErrorPage from '../layout/ErrorPage.jsx';
-import LoadingScreen from '../layout/LoadingScreen.jsx';
-import InlineLoadingScreen from '../layout/InlineLoadingScreen.jsx';
+import ErrorPage from '../layout/ErrorPage';
+import LoadingScreen from '../layout/LoadingScreen';
+import InlineLoadingScreen from '../layout/InlineLoadingScreen';
 import CollectionCard from '../collections/Card.jsx';
 import { Pagination } from 'react-bootstrap';
 import { StatusWrapper } from './UsersPanelTiny.jsx';

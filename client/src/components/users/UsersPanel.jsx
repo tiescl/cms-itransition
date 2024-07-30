@@ -1,8 +1,8 @@
 import { useEffect, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import UserContext from '../../context/UserContext.jsx';
-import ThemeContext from '../../context/ThemeContext.jsx';
+import UserContext from '../../context/UserContext';
+import ThemeContext from '../../context/ThemeContext';
 
 import { UserRow } from './UsersPanelTiny.jsx';
 
@@ -43,6 +43,8 @@ function AdminPanel() {
 
     return () => controller.abort();
   }, [refreshTrigger]);
+
+  console.log(userList);
 
   const handleBlock = async () => {
     try {
@@ -183,7 +185,9 @@ function AdminPanel() {
 
   function handleSelectAllChange() {
     setIsCheckedAll(!isCheckedAll);
-    setSelectedUsers(!isCheckedAll ? userList?.map((user) => user.email) : []);
+    setSelectedUsers(
+      !isCheckedAll ? userList?.map((user) => user.email) : []
+    );
   }
 
   return (
@@ -265,7 +269,11 @@ function AdminPanel() {
                 {t('panel.selection')}
                 <input
                   type='checkbox'
-                  style={{ width: '20px', height: '20px', display: 'block' }}
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    display: 'block'
+                  }}
                   className='form-check-input mx-auto'
                   checked={isCheckedAll}
                   onChange={handleSelectAllChange}

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 
-import LoadingScreen from '../layout/LoadingScreen.jsx';
-import ErrorPage from '../layout/ErrorPage.jsx';
+import LoadingScreen from '../layout/LoadingScreen';
+import ErrorPage from '../layout/ErrorPage';
 
 import ItemForm from './ItemForm.jsx';
 

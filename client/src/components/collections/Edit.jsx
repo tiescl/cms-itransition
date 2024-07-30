@@ -1,5 +1,5 @@
-import LoadingScreen from '../layout/LoadingScreen.jsx';
-import ErrorPage from '../layout/ErrorPage.jsx';
+import LoadingScreen from '../layout/LoadingScreen';
+import ErrorPage from '../layout/ErrorPage';
 import CollectionForm from './Form.jsx';
 
 import { useState, useEffect } from 'react';

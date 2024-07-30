@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import CreatableSelect from 'react-select/creatable';
 
-import UserContext from '../../context/UserContext.jsx';
-import ThemeContext from '../../context/ThemeContext.jsx';
+import UserContext from '../../context/UserContext';
+import ThemeContext from '../../context/ThemeContext';
 
 import '../../styles/bootstrp.css';
 

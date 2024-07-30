@@ -5,20 +5,18 @@ import TicketForm from './TicketForm';
 import '../../styles/bootstrp.css';
 
 export default function HelpButton() {
-  const [showModal, setShowModal] = useState(false);
+  var [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const tooltipTriggerList = document.querySelectorAll(
+    let tooltipTriggerList = document.querySelectorAll(
       '[data-bs-toggle="tooltip"]'
     );
     // eslint-disable-next-line
-    const tooltipList = [...tooltipTriggerList].map(
-      (tt) => new Tooltip(tt)
-    );
+    let tooltipList = [...tooltipTriggerList].map((tt) => new Tooltip(tt));
   }, []);
 
-  const handleClose = () => setShowModal(false);
-  const handleShow = () => setShowModal(true);
+  let handleClose = () => setShowModal(false);
+  let handleShow = () => setShowModal(true);
 
   return (
     <div className=''>

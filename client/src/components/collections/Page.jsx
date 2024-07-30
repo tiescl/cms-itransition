@@ -2,12 +2,12 @@ import React, { useEffect, useState, useContext, Fragment } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import UserContext from '../../context/UserContext.jsx';
+import UserContext from '../../context/UserContext';
 
 import stringifyDate from '../../utils/stringifyDate.ts';
 
-import LoadingScreen from '../layout/LoadingScreen.jsx';
-import ErrorPage from '../layout/ErrorPage.jsx';
+import LoadingScreen from '../layout/LoadingScreen';
+import ErrorPage from '../layout/ErrorPage';
 
 import '../../styles/bootstrp.css';
 

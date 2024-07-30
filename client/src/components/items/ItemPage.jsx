@@ -2,14 +2,14 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import UserContext from '../../context/UserContext.jsx';
-import ThemeContext from '../../context/ThemeContext.jsx';
+import UserContext from '../../context/UserContext';
+import ThemeContext from '../../context/ThemeContext';
 
 import stringifyDate from '../../utils/stringifyDate.ts';
 import { v4 as uuid } from 'uuid';
 
-import LoadingScreen from '../layout/LoadingScreen.jsx';
-import ErrorPage from '../layout/ErrorPage.jsx';
+import LoadingScreen from '../layout/LoadingScreen';
+import ErrorPage from '../layout/ErrorPage';
 
 import '../../styles/bootstrp.css';
 

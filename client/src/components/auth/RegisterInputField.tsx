@@ -1,4 +1,15 @@
+import { MutableRefObject } from 'react';
 import { useTranslation } from 'react-i18next';
+
+interface IProps {
+  type: string;
+  name: string;
+  label: string;
+  value: MutableRefObject<HTMLInputElement | null>;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  errorMsg: string;
+}
 
 export default function FormField({
   type,
@@ -7,7 +18,7 @@ export default function FormField({
   value,
   onChange,
   errorMsg
-}) {
+}: IProps) {
   const { t } = useTranslation();
 
   return (

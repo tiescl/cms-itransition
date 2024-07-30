@@ -1,14 +1,22 @@
 import { createContext, useState, useEffect } from 'react';
+import User from '../types/User';
+import { UserContextType } from '../types/UserContextType';
 
-const UserContext = createContext({
+var UserContext = createContext<UserContextType>({
   user: null,
-  isLoading: true
+  setUser: () => {},
+  isLoading: true,
+  setTrigger: () => {}
 });
 
-export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [trigger, setTrigger] = useState(false);
+interface IProps {
+  children: React.ReactNode;
+}
+
+export const UserProvider = ({ children }: IProps) => {
+  var [user, setUser] = useState<User | null>(null);
+  var [isLoading, setIsLoading] = useState(true);
+  var [trigger, setTrigger] = useState<boolean>(false);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
@@ -19,7 +27,11 @@ export const UserProvider = ({ children }) => {
       const token = localStorage.getItem('auth');
       const tokenExpiration = localStorage.getItem('tokenExpiration');
       try {
-        if (token && tokenExpiration && Date.now() < tokenExpiration) {
+        if (
+          token &&
+          tokenExpiration &&
+          Date.now() < Number(tokenExpiration)
+        ) {
           const response = await fetch(`${prodUrl}/api/current-user`, {
             signal: controller.signal,
             headers: {
@@ -44,8 +56,10 @@ export const UserProvider = ({ children }) => {
           setUser(null);
         }
       } catch (err) {
-        if (err.name !== 'AbortError') {
-          console.log(`Error fetching current user: ${err.message}`);
+        if ((err as Error).name !== 'AbortError') {
+          console.log(
+            `Error fetching current user: ${(err as Error).message}`
+          );
         }
       } finally {
         setIsLoading(false);

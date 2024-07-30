@@ -4,20 +4,20 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App.jsx';
 
-import Login from './components/auth/Login.jsx';
-import Register from './components/auth/Register.jsx';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 
-import { UserProvider } from './context/UserContext.jsx';
-import { ThemeProvider } from './context/ThemeContext.jsx';
+import { UserProvider } from './context/UserContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../src/utils/i18n.ts';
 
 import EditCollection from './components/collections/Edit.jsx';
-import CreateCollection from './components/collections/Create.jsx';
+import CreateCollection from './components/collections/Create';
 import Collections from './components/collections/Collections.jsx';
 import CollectionPage from './components/collections/Page.jsx';
 
-import CreateItem from './components/items/Create.jsx';
+import CreateItem from './components/items/Create';
 import ItemPage from './components/items/ItemPage.jsx';
 import EditItem from './components/items/Edit.jsx';
 
@@ -25,7 +25,7 @@ import AdminPanel from './components/users/UsersPanel.jsx';
 import UserPage from './components/users/UserPage.jsx';
 
 import SearchPage from './components/layout/SearchPage.jsx';
-import ErrorPage from './components/layout/ErrorPage.jsx';
+import ErrorPage from './components/layout/ErrorPage';
 import ProtectedRoute from './components/layout/ProtectedRoute.jsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';

@@ -1,4 +1,4 @@
-import CollectionForm from './Form.jsx';
+import CollectionForm from './Form';
 
 export default function CreateCollection() {
   return <CollectionForm />;

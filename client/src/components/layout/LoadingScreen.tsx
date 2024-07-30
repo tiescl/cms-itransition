@@ -2,9 +2,14 @@ import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ThemeContext from '../../context/ThemeContext';
-import Navbar from './Navbar';
+import Navbar from '../../views/Navbar';
 
-export default function LoadingScreen({ message, long = false }) {
+interface IProps {
+  message: string;
+  long?: boolean;
+}
+
+export default function LoadingScreen({ message, long = false }: IProps) {
   const { theme } = useContext(ThemeContext);
   const { t } = useTranslation();
 

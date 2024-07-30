@@ -1,9 +1,9 @@
 import { useContext, useState, useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import UserContext from '../../context/UserContext.jsx';
+import UserContext from '../../context/UserContext';
 
-import LoadingScreen from './LoadingScreen.jsx';
-import Layout from './Layout.jsx';
+import LoadingScreen from './LoadingScreen';
+import Layout from './Layout';
 
 export default function ProtectedRoute() {
   const { user, isLoading } = useContext(UserContext);
