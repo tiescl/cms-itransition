@@ -59,7 +59,7 @@ interface IWrapperProps {
 }
 
 export function StatusWrapper({ status, accentColor }: IWrapperProps) {
-  const styling = {
+  let styling = {
     border: '2px solid',
     borderColor: accentColor,
     borderRadius: '7px',

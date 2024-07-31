@@ -7,13 +7,13 @@ interface IProps {
 }
 
 export default function InlineLoadingScreen({ message }: IProps) {
-  const { theme } = useContext(ThemeContext);
-  const { t } = useTranslation();
+  let { t } = useTranslation();
+  let { theme } = useContext(ThemeContext);
 
   return (
     <div
       className={`position-relative w-100 h-100 d-flex flex-column text-black justify-content-center align-items-center text-${
-        theme === 'light' ? 'black' : 'white'
+        theme == 'light' ? 'black' : 'white'
       }`}
       style={{ opacity: 0.5 }}
     >

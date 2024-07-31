@@ -21,10 +21,10 @@ import CreateItem from './components/items/Create';
 import ItemPage from './components/items/ItemPage.jsx';
 import EditItem from './components/items/Edit.jsx';
 
-import AdminPanel from './components/users/UsersPanel';
-import UserPage from './components/users/UserPage';
+import AdminPanel from './views/UsersPanel';
+import UserPage from './views/UserPage';
 
-import SearchPage from './components/layout/SearchPage.jsx';
+import SearchPage from './views/SearchPage';
 import ErrorPage from './components/layout/ErrorPage';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 

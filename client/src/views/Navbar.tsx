@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import UserContext from '../context/UserContext';
 import ThemeContext from '../context/ThemeContext';
+
 import {
   Actions,
   ProfileDropdown,
@@ -11,8 +12,8 @@ import {
 import '../styles/bootstrp.css';
 
 export default function Navbar() {
-  const { user } = useContext(UserContext);
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  var { user } = useContext(UserContext);
+  var { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
     <>
@@ -38,7 +39,7 @@ export default function Navbar() {
 
           <div
             className='offcanvas offcanvas-end'
-            tabIndex='-1'
+            tabIndex={-1}
             id='navbarNav'
             data-bs-scroll='true'
             aria-labelledby='navbarNavLabel'

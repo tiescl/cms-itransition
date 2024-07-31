@@ -1,7 +1,12 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState, useEffect, useRef, useContext, FormEvent } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+
+import SearchResult from '../types/SearchResults';
+import Collection from '../types/Collection';
+import User from '../types/User';
+
 import {
   Form,
   InputGroup,
@@ -10,27 +15,27 @@ import {
   Pagination
 } from 'react-bootstrap';
 
-import ThemeContext from '../../context/ThemeContext';
+import ThemeContext from '../context/ThemeContext';
 
-import ErrorPage from './ErrorPage';
-import InlineLoadingScreen from './InlineLoadingScreen';
+import ErrorPage from '../components/layout/ErrorPage';
+import InlineLoadingScreen from '../components/layout/InlineLoadingScreen';
 
 export default function SearchPage() {
-  const searchInputRef = useRef(null);
-  const [reqError, setReqError] = useState('');
+  let { t } = useTranslation();
+  let navigate = useNavigate();
+  let [searchParams] = useSearchParams();
 
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { t } = useTranslation();
+  var searchInputRef = useRef<HTMLInputElement>(null);
+  var [reqError, setReqError] = useState('');
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  var [currentPage, setCurrentPage] = useState(1);
+  var [totalPages, setTotalPages] = useState(0);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
-  const handleSubmit = (e) => {
+  let handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const searchQuery = searchInputRef.current.value;
+    let searchQuery = searchInputRef.current?.value ?? '';
     if (searchQuery.length === 0) {
       setReqError('empty_search_query');
       return;
@@ -40,14 +45,14 @@ export default function SearchPage() {
     );
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
     navigate(
-      `/search?q=${encodeURIComponent(searchParams.get('q'))}&page=${page}`
+      `/search?q=${encodeURIComponent(searchParams.get('q') ?? '')}&page=${page}`
     );
   };
 
-  const {
+  var {
     isLoading,
     isError,
     error,
@@ -55,16 +60,16 @@ export default function SearchPage() {
   } = useQuery({
     queryKey: ['searchResults', searchParams.get('q'), currentPage],
     queryFn: async () => {
-      const response = await fetch(
+      let response = await fetch(
         `${prodUrl}/api/search?q=${encodeURIComponent(
-          searchParams.get('q')
+          searchParams.get('q') ?? ''
         )}&page=${currentPage}`
       );
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData = await response.json();
         throw new Error(errorData.error);
       }
-      const data = await response.json();
+      let data = await response.json();
       setTotalPages(data.totalPages);
       return data;
     },
@@ -72,12 +77,12 @@ export default function SearchPage() {
   });
 
   useEffect(() => {
-    const initialQuery = searchParams.get('q') || '';
+    let initialQuery = searchParams.get('q') ?? '';
 
     if (searchInputRef.current) {
       searchInputRef.current.value = initialQuery;
     }
-    searchInputRef.current.focus();
+    searchInputRef.current?.focus();
   }, [searchParams.get('q')]);
 
   return (
@@ -105,14 +110,14 @@ export default function SearchPage() {
         </Form>
       </div>
       {isError ? (
-        <ErrorPage err={error} />
+        <ErrorPage err={error?.message ?? ''} />
       ) : isLoading ? (
         <div className='container'>
           <InlineLoadingScreen message='search.loading' />
         </div>
       ) : (
         <>
-          {results && results.results.length === 0 ? (
+          {results && results.results.length == 0 ? (
             <p className='fs-2 px-4 px-md-5 text-info-emphasis'>
               {t('search.noResults')} &quot;{searchParams.get('q')}&quot;
             </p>
@@ -120,11 +125,11 @@ export default function SearchPage() {
             <>
               <p className='fs-2 px-4 px-md-5 mb-4'>
                 {t('search.results.thereWas')} {results.totalResults}{' '}
-                {results.totalResults === 1
+                {results.totalResults == 1
                   ? t('search.results.singular')
                   : t('search.results.plural')}{' '}
-                {t('search.results.found')}
-                &quot;{searchParams.get('q')}&quot;
+                {t('search.results.found')} &quot;{searchParams.get('q')}
+                &quot;
               </p>
               <div className='container-fluid text-center table-responsive px-4 px-md-5'>
                 <SearchResultItem results={results?.results || []} />
@@ -132,12 +137,12 @@ export default function SearchPage() {
                 <Pagination className='justify-content-center mt-4'>
                   <Pagination.Prev
                     onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
+                    disabled={currentPage == 1}
                   />
                   {Array.from({ length: totalPages }, (_, index) => (
                     <Pagination.Item
                       key={index + 1}
-                      active={index + 1 === currentPage}
+                      active={index + 1 == currentPage}
                       onClick={() => handlePageChange(index + 1)}
                     >
                       {index + 1}
@@ -145,7 +150,7 @@ export default function SearchPage() {
                   ))}
                   <Pagination.Next
                     onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                    disabled={currentPage == totalPages}
                   />
                 </Pagination>
               </div>
@@ -157,9 +162,13 @@ export default function SearchPage() {
   );
 }
 
-function SearchResultItem({ results }) {
-  const { t } = useTranslation();
-  const { theme } = useContext(ThemeContext);
+interface ISearchResultItemProps {
+  results: SearchResult[];
+}
+
+function SearchResultItem({ results }: ISearchResultItemProps) {
+  let { t } = useTranslation();
+  let { theme } = useContext(ThemeContext);
 
   return (
     <Table striped bordered hover>
@@ -176,7 +185,7 @@ function SearchResultItem({ results }) {
           <tr key={result._id} className='align-middle'>
             <td>
               <Link
-                to={`/collections/${result.collectionId._id}/items/${result._id}`}
+                to={`/collections/${(result.collectionId as Collection)?._id}/items/${result._id}`}
                 className='text-decoration-none'
               >
                 {result.name}
@@ -184,18 +193,21 @@ function SearchResultItem({ results }) {
             </td>
             <td>
               <Link
-                to={`/users/${result.collectionId.user._id}`}
+                to={`/users/${((result.collectionId as Collection)?.user as User)?._id}`}
                 className='text-decoration-none text-body-secondary fw-semibold'
               >
-                {result.collectionId.user.username}
+                {
+                  ((result.collectionId as Collection)?.user as User)
+                    ?.username
+                }
               </Link>
             </td>
             <td>
               <Link
-                to={`/collections/${result.collectionId._id}`}
+                to={`/collections/${(result.collectionId as Collection)?._id}`}
                 className='text-decoration-none'
               >
-                {result.collectionId.name}
+                {(result.collectionId as Collection)?.name}
               </Link>
             </td>
             <td>

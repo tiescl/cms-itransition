@@ -34,6 +34,7 @@
   "errorPage.heading": "404 Page Not Found",
   "loading.long": "Taking too long? Try reloading the page",
   "loading.user": "Fetching user data..",
+  "loading.users": "Fetching users..",
   "loading.collections": "Fetching collections..",
   "loading.collection": "Fetching collection data..",
   "loading.item": "Fetching item data..",

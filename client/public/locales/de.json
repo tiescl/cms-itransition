@@ -34,6 +34,7 @@
   "errorPage.heading": "404 Seite nicht gefunden",
   "loading.long": "Dauert es zu lange? Versuchen Sie, die Seite neu zu laden",
   "loading.user": "Lade Benutzerdaten..",
+  "loading.users": "Lade Benutzer..",
   "loading.collections": "Lade Sammlungen..",
   "loading.collection": "Lade Sammlungsdaten..",
   "loading.item": "Artikeldaten abrufen..",

@@ -3,7 +3,7 @@ import Navbar from '../../views/Navbar';
 import HelpButton from '../jiraElems/HelpButton';
 
 export default function ErrorPage({ err = '' }) {
-  const { t } = useTranslation();
+  let { t } = useTranslation();
 
   return (
     <>

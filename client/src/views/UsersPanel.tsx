@@ -1,50 +1,43 @@
-import { useEffect, useState, useContext, ChangeEvent } from 'react';
+import { useState, useContext, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import UserContext from '../../context/UserContext';
-import ThemeContext from '../../context/ThemeContext';
+import UserContext from '../context/UserContext';
+import ThemeContext from '../context/ThemeContext';
 
-import { UserRow } from './UsersPanelTiny';
-import User from '../../types/User';
+import { UserRow } from '../components/users/UsersPanelTiny';
+import User from '../types/User';
+import { useQuery } from '@tanstack/react-query';
+import LoadingScreen from '../components/layout/LoadingScreen';
 
 function AdminPanel() {
   let { t } = useTranslation();
   var { user } = useContext(UserContext);
   var { theme } = useContext(ThemeContext);
 
-  var [userList, setUserList] = useState<User[]>([]),
-    [selectedUsers, setSelectedUsers] = useState<string[]>([]),
-    [isCheckedAll, setIsCheckedAll] = useState(false),
-    [refreshTrigger, setRefreshTrigger] = useState(false);
+  var [selectedUsers, setSelectedUsers] = useState<string[]>([]),
+    [isCheckedAll, setIsCheckedAll] = useState(false);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
 
-  // TODO: - Refactor to use react-query
-  useEffect(() => {
-    let controller = new AbortController();
-    let fetchData = async () => {
-      try {
-        let response = await fetch(`${prodUrl}/api/users`, {
-          signal: controller.signal
-        });
-        if (response.ok) {
-          let users = await response.json();
-          setUserList(users);
-        } else {
-          let errorData = await response.json();
-          throw new Error(errorData.error);
-        }
-      } catch (error) {
-        if ((error as Error).name != 'AbortError') {
-          console.error('Error fetching users: ', error);
-        }
+  var {
+    data: userList,
+    isLoading,
+    refetch
+  } = useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
+      let response = await fetch(`${prodUrl}/api/users`);
+      if (response.ok) {
+        return await response.json();
+      } else {
+        let errorData = await response.json();
+        throw new Error(errorData.error);
       }
-    };
-    fetchData();
-
-    return () => controller.abort();
-  }, [refreshTrigger]);
+    },
+    staleTime: 1 * 60 * 1000,
+    gcTime: 20 * 60 * 1000
+  });
 
   let handleBlock = async () => {
     try {
@@ -63,12 +56,12 @@ function AdminPanel() {
       if (response.ok) {
         setSelectedUsers([]);
         setIsCheckedAll(false);
-        setRefreshTrigger((prev) => !prev);
+        refetch();
       } else {
         throw new Error('users_block_unsuccessful');
       }
     } catch (error) {
-      console.error('Error blocking users:', (error as Error).message);
+      console.error('Error blocking users:', (error as Error)?.message);
     }
   };
 
@@ -89,7 +82,7 @@ function AdminPanel() {
       if (response.ok) {
         setSelectedUsers([]);
         setIsCheckedAll(false);
-        setRefreshTrigger((prev) => !prev);
+        refetch();
       } else {
         throw new Error('users_unblock_unsuccessful');
       }
@@ -112,12 +105,12 @@ function AdminPanel() {
       if (response.ok) {
         setSelectedUsers([]);
         setIsCheckedAll(false);
-        setRefreshTrigger((prev) => !prev);
+        refetch();
       } else {
         throw new Error('user_deletion_unsuccessful');
       }
     } catch (error) {
-      console.error('Error deleting users:', (error as Error).message);
+      console.error('Error deleting users:', (error as Error)?.message);
     }
   };
 
@@ -138,12 +131,12 @@ function AdminPanel() {
       if (response.ok) {
         setSelectedUsers([]);
         setIsCheckedAll(false);
-        setRefreshTrigger((prev) => !prev);
+        refetch();
       } else {
         throw new Error('promotion_unsuccessful');
       }
     } catch (error) {
-      console.error('Error promoting users:', (error as Error).message);
+      console.error('Error promoting users:', (error as Error)?.message);
     }
   };
 
@@ -164,12 +157,12 @@ function AdminPanel() {
       if (response.ok) {
         setSelectedUsers([]);
         setIsCheckedAll(false);
-        setRefreshTrigger((prev) => !prev);
+        refetch();
       } else {
         throw new Error('demotion_unsuccessful');
       }
     } catch (error) {
-      console.error('Error demoting users:', (error as Error).message);
+      console.error('Error demoting users:', (error as Error)?.message);
     }
   };
 
@@ -189,7 +182,7 @@ function AdminPanel() {
   function handleSelectAllChange() {
     setIsCheckedAll(!isCheckedAll);
     setSelectedUsers(
-      !isCheckedAll ? userList?.map((user) => user.email) : []
+      !isCheckedAll ? userList?.map((user: User) => user.email) : []
     );
   }
 
@@ -258,51 +251,61 @@ function AdminPanel() {
         </div>
       ) : null}
 
-      <div className='container-fluid text-center table-responsive px-4 px-md-5'>
-        <table className='table table-striped table-bordered table-hover table-md'>
-          <caption className='text-center'>
-            {userList.length}{' '}
-            {userList.length == 1
-              ? t('panel.caption.singular')
-              : t('panel.caption.plural')}
-          </caption>
-          <thead className={`table-${theme}`}>
-            <tr className='align-middle'>
-              <th>
-                {t('panel.selection')}
-                <input
-                  type='checkbox'
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    display: 'block'
-                  }}
-                  className='form-check-input mx-auto'
-                  checked={isCheckedAll}
-                  onChange={handleSelectAllChange}
-                />
-              </th>
-              <th style={{ minWidth: '200px' }}>{t('panel.username')}</th>
-              <th>{t('emailLabel')}</th>
-              <th>{t('user.collections')}</th>
-              <th style={{ minWidth: '240px' }}>{t('user.lastLogin')}</th>
-              <th style={{ minWidth: '240px' }}>{t('user.registered')}</th>
-              <th style={{ minWidth: '70px' }}>{t('user.status')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {userList &&
-              userList.map((u) => (
-                <UserRow
-                  key={u._id}
-                  user={u}
-                  selectedUsers={selectedUsers}
-                  onChange={handleSelectionChange}
-                />
-              ))}
-          </tbody>
-        </table>
-      </div>
+      {isLoading ? (
+        <LoadingScreen message='loading.users' />
+      ) : (
+        <div className='container-fluid text-center table-responsive px-4 px-md-5'>
+          <table className='table table-striped table-bordered table-hover table-md'>
+            <caption className='text-center'>
+              {userList.length}{' '}
+              {userList.length == 1
+                ? t('panel.caption.singular')
+                : t('panel.caption.plural')}
+            </caption>
+            <thead className={`table-${theme}`}>
+              <tr className='align-middle'>
+                <th>
+                  {t('panel.selection')}
+                  <input
+                    type='checkbox'
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      display: 'block'
+                    }}
+                    className='form-check-input mx-auto'
+                    checked={isCheckedAll}
+                    onChange={handleSelectAllChange}
+                  />
+                </th>
+                <th style={{ minWidth: '200px' }}>
+                  {t('panel.username')}
+                </th>
+                <th>{t('emailLabel')}</th>
+                <th>{t('user.collections')}</th>
+                <th style={{ minWidth: '240px' }}>
+                  {t('user.lastLogin')}
+                </th>
+                <th style={{ minWidth: '240px' }}>
+                  {t('user.registered')}
+                </th>
+                <th style={{ minWidth: '70px' }}>{t('user.status')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userList &&
+                userList.map((u: User) => (
+                  <UserRow
+                    key={u._id}
+                    user={u}
+                    selectedUsers={selectedUsers}
+                    onChange={handleSelectionChange}
+                  />
+                ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </>
   );
 }

@@ -10,7 +10,7 @@ interface IProps {
 }
 
 export function ThemeProvider(props: IProps) {
-  const [theme, setTheme] = useState(
+  var [theme, setTheme] = useState(
     localStorage.getItem('theme') || 'light'
   );
 
@@ -19,8 +19,8 @@ export function ThemeProvider(props: IProps) {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+  let toggleTheme = () => {
+    setTheme(theme == 'light' ? 'dark' : 'light');
   };
 
   return (

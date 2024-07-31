@@ -21,9 +21,9 @@ export const UserProvider = ({ children }: IProps) => {
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
   useEffect(() => {
-    const controller = new AbortController();
+    let controller = new AbortController();
 
-    const fetchUser = async () => {
+    let fetchUser = async () => {
       const token = localStorage.getItem('auth');
       const tokenExpiration = localStorage.getItem('tokenExpiration');
       try {
@@ -32,7 +32,7 @@ export const UserProvider = ({ children }: IProps) => {
           tokenExpiration &&
           Date.now() < Number(tokenExpiration)
         ) {
-          const response = await fetch(`${prodUrl}/api/current-user`, {
+          let response = await fetch(`${prodUrl}/api/current-user`, {
             signal: controller.signal,
             headers: {
               Authorization: `Bearer ${token}`
@@ -40,14 +40,14 @@ export const UserProvider = ({ children }: IProps) => {
           });
 
           if (response.ok) {
-            const data = await response.json();
-            if (JSON.stringify(data) !== '{}') {
+            let data = await response.json();
+            if (JSON.stringify(data) != '{}') {
               setUser(data);
             } else {
               setUser(null);
             }
           } else {
-            const errorData = await response.json();
+            let errorData = await response.json();
             throw new Error(errorData.error);
           }
         } else {
@@ -56,9 +56,9 @@ export const UserProvider = ({ children }: IProps) => {
           setUser(null);
         }
       } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
+        if ((err as Error)?.name !== 'AbortError') {
           console.log(
-            `Error fetching current user: ${(err as Error).message}`
+            `Error fetching current user: ${(err as Error)?.message}`
           );
         }
       } finally {

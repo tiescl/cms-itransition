@@ -1,11 +1,17 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
 import UserContext from '../../context/UserContext';
+import User from '../../types/User';
 
-function Actions({ theme, user }) {
-  const { t } = useTranslation();
+interface IActionsProps {
+  theme: string;
+  user: User | null;
+}
+
+function Actions({ theme, user }: IActionsProps) {
+  let { t } = useTranslation();
 
   return (
     <>
@@ -14,7 +20,7 @@ function Actions({ theme, user }) {
           <Link
             to='/users'
             className={`btn btn-outline-${
-              theme === 'light' ? 'secondary' : 'info'
+              theme == 'light' ? 'secondary' : 'info'
             }`}
           >
             <i className='bi bi-award'></i>
@@ -23,7 +29,7 @@ function Actions({ theme, user }) {
         <Link
           to='/collections'
           className={`btn btn-outline-${
-            theme === 'light' ? 'primary' : 'info'
+            theme == 'light' ? 'primary' : 'info'
           }`}
         >
           <i className='bi bi-list-ul'></i> {t('nav.collections')}
@@ -31,7 +37,7 @@ function Actions({ theme, user }) {
         <Link
           to='/collections/create'
           className={`btn btn-outline-${
-            theme === 'light' ? 'primary' : 'info'
+            theme == 'light' ? 'primary' : 'info'
           }`}
         >
           <i className='bi bi-plus-circle'></i> {t('nav.create')}
@@ -41,7 +47,12 @@ function Actions({ theme, user }) {
   );
 }
 
-function ThemeSwitch({ theme, toggleTheme }) {
+interface IThemeSwitchProps {
+  theme: string;
+  toggleTheme: () => void;
+}
+
+function ThemeSwitch({ theme, toggleTheme }: IThemeSwitchProps) {
   return (
     <div className='form-check form-switch'>
       <input
@@ -49,7 +60,7 @@ function ThemeSwitch({ theme, toggleTheme }) {
         type='checkbox'
         role='switch'
         id='themeSwitch'
-        checked={theme === 'dark'}
+        checked={theme == 'dark'}
         onChange={toggleTheme}
       />
       <label className='form-check-label' htmlFor='themeSwitch'></label>
@@ -58,9 +69,9 @@ function ThemeSwitch({ theme, toggleTheme }) {
 }
 
 function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+  let { i18n } = useTranslation();
 
-  const [selectedLanguage, setSelectedLanguage] = useState(
+  var [selectedLanguage, setSelectedLanguage] = useState(
     localStorage.getItem('lang') || 'en'
   );
 
@@ -68,7 +79,7 @@ function LanguageSwitcher() {
     localStorage.setItem('lang', selectedLanguage);
   }, [selectedLanguage]);
 
-  const changeLanguage = (lng) => {
+  let changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
     setSelectedLanguage(lng);
   };
@@ -77,7 +88,7 @@ function LanguageSwitcher() {
     <div className='btn-group'>
       <button
         className={`btn btn-sm py-1 ${
-          selectedLanguage === 'en' ? 'btn-primary' : 'btn-outline-primary'
+          selectedLanguage == 'en' ? 'btn-primary' : 'btn-outline-primary'
         }`}
         style={{ fontSize: '0.8em' }}
         onClick={() => changeLanguage('en')}
@@ -86,7 +97,7 @@ function LanguageSwitcher() {
       </button>
       <button
         className={`btn btn-sm py-1 ${
-          selectedLanguage === 'de' ? 'btn-primary' : 'btn-outline-primary'
+          selectedLanguage == 'de' ? 'btn-primary' : 'btn-outline-primary'
         }`}
         style={{ fontSize: '0.8em' }}
         onClick={() => changeLanguage('de')}
@@ -97,17 +108,22 @@ function LanguageSwitcher() {
   );
 }
 
-function ProfileDropdown({ theme, toggleTheme }) {
-  const { t } = useTranslation();
+interface IProfileDropdownProps {
+  theme: string;
+  toggleTheme: () => void;
+}
 
-  const [isOpen, setIsOpen] = useState(false);
-  const { user, setUser, setTrigger } = useContext(UserContext);
+function ProfileDropdown({ theme, toggleTheme }: IProfileDropdownProps) {
+  let { t } = useTranslation();
 
-  const toggleDropdown = () => {
+  var { user, setUser, setTrigger } = useContext(UserContext);
+  var [isOpen, setIsOpen] = useState(false);
+
+  let toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleLogout = () => {
+  let handleLogout = () => {
     setUser(null);
     localStorage.removeItem('auth');
     localStorage.removeItem('tokenExpiration');
@@ -158,7 +174,7 @@ function ProfileDropdown({ theme, toggleTheme }) {
                 <Link
                   to={`/users/${user?._id || ''}`}
                   className={`text-decoration-none text-${
-                    theme === 'light' ? 'dark' : 'light'
+                    theme == 'light' ? 'dark' : 'light'
                   } `}
                 >
                   {t('nav.viewProfile')}
@@ -178,7 +194,7 @@ function ProfileDropdown({ theme, toggleTheme }) {
             <div className='d-flex align-items-center'>
               <i
                 className={`bi bi-sun${
-                  theme === 'light' ? '' : '-fill'
+                  theme == 'light' ? '' : '-fill'
                 } fs-5 me-3`}
               ></i>
               <div className='p-0'>{t('nav.darkMode')}</div>
@@ -192,6 +208,7 @@ function ProfileDropdown({ theme, toggleTheme }) {
               <i className='bi bi-translate fs-5 me-3'></i>
               <div className='p-0'>{t('nav.language')}</div>
             </div>
+
             <LanguageSwitcher />
           </div>
         </li>
@@ -226,11 +243,12 @@ function ProfileDropdown({ theme, toggleTheme }) {
 }
 
 function NavbarSearch() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
-  const { t } = useTranslation();
+  let { t } = useTranslation();
+  let navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  var [searchQuery, setSearchQuery] = useState('');
+
+  let handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
