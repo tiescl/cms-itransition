@@ -1,4 +1,4 @@
-import Collection, { CustomField } from './Collection';
+import Collection from './Collection';
 import Tag from './Tag';
 import User from './User';
 import Comment from './Comment';
@@ -13,7 +13,15 @@ export default interface Item {
   tags: string[] | Tag[];
   likes: string[] | User[];
   comments: string[] | Comment[];
-  customFields: CustomField[];
+  fields: ItemField[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+interface ItemField {
+  _id: string;
+  client_id: string;
+  name: string;
+  value: string;
+  type: string;
 }

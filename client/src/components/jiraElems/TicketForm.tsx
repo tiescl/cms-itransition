@@ -84,7 +84,7 @@ export default function TicketForm({ show, handleClose }: IProps) {
         throw new Error(data.error);
       }
     } catch (err) {
-      setError((err as Error).message);
+      setError((err as Error)?.message);
     }
   };
 

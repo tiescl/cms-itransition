@@ -3,13 +3,22 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import ThemeContext from '../../context/ThemeContext';
+import Collection from '../../types/Collection';
+import User from '../../types/User';
+import Item from '../../types/Item';
 
 import '../../styles/bootstrp.css';
 
-export default function CollectionCard({ collection }) {
-  const { theme } = useContext(ThemeContext);
-  const { t } = useTranslation();
+interface ICollectionCardProps {
+  collection: Collection;
+}
+
+export default function CollectionCard({
+  collection
+}: ICollectionCardProps) {
+  let { t } = useTranslation();
   const MAX_ITEMS = 3;
+  var { theme } = useContext(ThemeContext);
 
   return (
     <div className='col-11 col-md-6 mb-5 mx-auto flex-fill d-flex justify-content-center'>
@@ -20,7 +29,11 @@ export default function CollectionCard({ collection }) {
               src={collection.imageUrl}
               className='card-img-top'
               alt={collection.name}
-              style={{ objectFit: 'cover', maxHeight: '250px', width: '100%' }}
+              style={{
+                objectFit: 'cover',
+                maxHeight: '250px',
+                width: '100%'
+              }}
             />
           ) : (
             <div className='placeholder-image'></div>
@@ -32,17 +45,19 @@ export default function CollectionCard({ collection }) {
               to={`/collections/${collection._id}`}
               className='text-primary text-decoration-none'
             >
-              <h5 className='card-title fs-4 fw-bold'>{collection.name}</h5>
+              <h5 className='card-title fs-4 fw-bold'>
+                {collection.name}
+              </h5>
             </Link>
             <p className='card-subtitle'>
               <em>
                 {t('collection.by')}
                 <strong>
                   <Link
-                    to={`/users/${collection.user._id}`}
+                    to={`/users/${(collection.user as User)?._id}`}
                     className='text-decoration-none text-body-secondary'
                   >
-                    {collection.user.username}
+                    {(collection.user as User)?.username}
                   </Link>
                 </strong>
               </em>
@@ -67,7 +82,7 @@ export default function CollectionCard({ collection }) {
               </div>
               {collection.items?.slice(0, MAX_ITEMS).map((item) => (
                 <li
-                  key={item._id}
+                  key={(item as Item)?._id}
                   className='list-group-item'
                   style={{
                     overflow: 'hidden',
@@ -76,12 +91,12 @@ export default function CollectionCard({ collection }) {
                   }}
                 >
                   <Link
-                    to={`/collections/${collection._id}/items/${item._id}`}
+                    to={`/collections/${collection._id}/items/${(item as Item)?._id}`}
                     className={`text-decoration-none text-${
-                      theme === 'light' ? 'dark' : 'light'
+                      theme == 'light' ? 'dark' : 'light'
                     }`}
                   >
-                    <strong>{item.name}</strong>
+                    <strong>{(item as Item)?.name}</strong>
                   </Link>
                 </li>
               ))}

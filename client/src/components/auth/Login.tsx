@@ -51,7 +51,7 @@ export default function Login() {
           throw new Error(errorData.error);
         }
       } catch (err) {
-        setErrorMessage((err as Error).message);
+        setErrorMessage((err as Error)?.message);
         setShowError(true);
       }
     } else {

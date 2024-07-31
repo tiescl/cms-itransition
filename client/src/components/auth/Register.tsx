@@ -105,7 +105,7 @@ export default function Register() {
             throw new Error(errorData.error);
           }
         } catch (err) {
-          setErrorMessage((err as Error).message);
+          setErrorMessage((err as Error)?.message);
           setShowError(true);
           e.currentTarget.disabled = false;
         }

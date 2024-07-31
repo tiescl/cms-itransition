@@ -7,15 +7,15 @@ import UserContext from '../context/UserContext';
 import ErrorPage from '../components/layout/ErrorPage';
 import LoadingScreen from '../components/layout/LoadingScreen';
 import InlineLoadingScreen from '../components/layout/InlineLoadingScreen';
-import CollectionCard from '../components/collections/Card.jsx';
+import CollectionCard from '../components/collections/Card';
 import { Pagination } from 'react-bootstrap';
 
 import JiraTickets from '../components/users/UserTickets';
 import UserDetails from '../components/users/UserDetails';
 
-import User from '../types/User.js';
-import JiraIssue from '../types/JiraIssue.js';
-import Collection from '../types/Collection.js';
+import User from '../types/User';
+import JiraIssue from '../types/JiraIssue';
+import Collection from '../types/Collection';
 
 export default function UserPage() {
   let { t } = useTranslation();
@@ -43,8 +43,8 @@ export default function UserPage() {
           throw new Error(errorData.error);
         }
       } catch (err) {
-        console.log((err as Error).message);
-        setError((err as Error).message);
+        console.log((err as Error)?.message);
+        setError((err as Error)?.message);
       }
     },
     staleTime: 10 * 1000,
@@ -77,8 +77,8 @@ export default function UserPage() {
           throw new Error(errorData.error);
         }
       } catch (err) {
-        console.log((err as Error).message);
-        setError((err as Error).message);
+        console.log((err as Error)?.message);
+        setError((err as Error)?.message);
         throw err;
       }
     },
@@ -94,6 +94,14 @@ export default function UserPage() {
 
   let handlePageChange = (page: number) => {
     setCurrentPage(page);
+
+    let ticketsSection = document.getElementById('tickets-section');
+    if (ticketsSection) {
+      ticketsSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
 
   return error ? (

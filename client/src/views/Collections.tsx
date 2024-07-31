@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import CollectionCard from './Card.jsx';
-import LoadingScreen from '../layout/LoadingScreen';
-import ErrorPage from '../layout/ErrorPage';
+
+import CollectionCard from '../components/collections/Card';
+import LoadingScreen from '../components/layout/LoadingScreen';
+import ErrorPage from '../components/layout/ErrorPage';
+
+import Collection from '../types/Collection';
 
 export default function Collections() {
-  const [collectionsList, setCollectionsList] = useState([]);
-
-  const { t } = useTranslation();
+  let { t } = useTranslation();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
-  const { isLoading, isError, error, data } = useQuery({
+  var [collectionsList, setCollectionsList] = useState<Collection[]>([]);
+
+  var { isLoading, isError, error, data } = useQuery({
     queryKey: ['collectionsData'],
     queryFn: async () => {
       const response = await fetch(`${prodUrl}/api/collections`);
@@ -35,7 +38,7 @@ export default function Collections() {
   return (
     <>
       {isError ? (
-        <ErrorPage err={error} />
+        <ErrorPage err={error?.message ?? ''} />
       ) : (
         <>
           <h1

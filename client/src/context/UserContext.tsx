@@ -56,7 +56,7 @@ export const UserProvider = ({ children }: IProps) => {
           setUser(null);
         }
       } catch (err) {
-        if ((err as Error)?.name !== 'AbortError') {
+        if ((err as Error)?.name != 'AbortError') {
           console.log(
             `Error fetching current user: ${(err as Error)?.message}`
           );
@@ -67,7 +67,7 @@ export const UserProvider = ({ children }: IProps) => {
     };
     fetchUser();
 
-    const intervalId = setInterval(fetchUser, 5000);
+    const intervalId = setInterval(fetchUser, 20000);
 
     return () => {
       clearInterval(intervalId);

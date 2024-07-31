@@ -49,7 +49,7 @@ function UserDetails({
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setError((err as Error).message);
+      setError((err as Error)?.message);
     }
   };
 
@@ -120,6 +120,9 @@ function UserDetails({
           0
         ) || 0}
       </p>
+
+      {/* for a more user-friendly tickets navigation */}
+      <div id='tickets-section'></div>
 
       <p className='text-body-secondary mt-3 mb-1'>
         <small>

@@ -204,13 +204,6 @@ router.get('/search', async (req, res) => {
 
     const totalCount = groupedResults.length;
 
-    console.log({
-      results,
-      currentPage: page,
-      totalPages: Math.ceil(totalCount / limit),
-      totalResults: totalCount
-    });
-
     res.status(200).send({
       results,
       currentPage: page,

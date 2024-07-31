@@ -1,193 +1,36 @@
-import { useState, useContext } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import UserContext from '../../context/UserContext';
 
 import { v4 as uuidv4 } from 'uuid';
 import categoriesData from '../../data/categories.json';
-import getFieldType from '../../utils/getFieldType.ts';
+import getFieldType from '../../utils/getFieldType';
+import IFormData from '../../types/FormData';
+import { TFunction } from 'i18next';
 
-export default function CollectionForm({
-  collectionData = null,
-  editMode = false
-}) {
-  const { user } = useContext(UserContext);
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { collectionId } = useParams();
-  const [formData, setFormData] = useState({
-    name: collectionData?.name || '',
-    description: collectionData?.description || '',
-    category: collectionData?.category || '',
-    imageUrl: collectionData?.imageUrl || '',
-    customFieldDefinitions: collectionData?.customFieldDefinitions || []
-  });
-
-  const [error, setError] = useState('');
-  const [requestError, setRequestError] = useState('');
-  const [imageError, setImageError] = useState('');
-
-  const handleDisabled = (formSubmitData) => {
-    setError('');
-    if (error || imageError) {
-      return true;
-    }
-
-    if (
-      !formSubmitData.name ||
-      !formSubmitData.category ||
-      formSubmitData.customFieldDefinitions.length === 0
-    ) {
-      setError('collection.requiredFields');
-      return true;
-    } else {
-      setError('');
-    }
-
-    for (const field of formSubmitData.customFieldDefinitions) {
-      if (!field.client_id || !field.name || !field.type) {
-        setError('collection.emptyCustomFields');
-        return true;
-      } else {
-        setError('');
-      }
-    }
-
-    return false;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
-    const token = localStorage.getItem('auth');
-
-    if (!handleDisabled(formData)) {
-      e.target.disabled = true;
-      setRequestError('');
-
-      try {
-        if (!user) {
-          throw new Error('operation_forbidden');
-        }
-
-        const endpoint = collectionId
-          ? `${prodUrl}/api/collections/${collectionId}`
-          : `${prodUrl}/api/collections/create`;
-
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            ...formData,
-            name: formData.name.trim(),
-            customFieldDefinitions: formData.customFieldDefinitions.map(
-              (customField) => {
-                return {
-                  ...customField,
-                  name: customField.name.trim()
-                };
-              }
-            ),
-            user: user._id
-          })
-        });
-
-        if (response.ok) {
-          // const newCollection = await response.json();
-          // console.log(newCollection);
-          navigate('/collections');
-        } else {
-          const errorData = await response.json();
-          e.target.disabled = false;
-          throw new Error(errorData.error);
-        }
-      } catch (err) {
-        e.target.disabled = false;
-        setRequestError(err.message);
-      }
-    }
-  };
-
-  return (
-    <>
-      <div className='container'>
-        <FormTitle editMode={editMode} />
-
-        <form style={{ fontSize: '20px' }}>
-          <div className='row'>
-            <div className='col-md-8 mx-auto'>
-              <NameInput formData={formData} setFormData={setFormData} />
-
-              <DescriptionInput
-                formData={formData}
-                setFormData={setFormData}
-              />
-
-              <ImageInput
-                formData={formData}
-                setFormData={setFormData}
-                imageError={imageError}
-                setImageError={setImageError}
-              />
-
-              <CategorySelection
-                formData={formData}
-                setFormData={setFormData}
-              />
-
-              <Fields formData={formData} setFormData={setFormData} />
-
-              <CreateField setFormData={setFormData} />
-
-              {error && (
-                <h5 className='text-danger mt-2'>
-                  {t(error, { defaultValue: t('error.default') })}
-                </h5>
-              )}
-              {error === '' && requestError && (
-                <h5 className='text-danger mt-2'>
-                  {t(requestError, { defaultValue: t('error.default') })}
-                </h5>
-              )}
-
-              <div className='my-5'>
-                <button
-                  type='button'
-                  onClick={handleSubmit}
-                  className='btn btn-primary form-control'
-                >
-                  {editMode === true
-                    ? t('collection.saveChanges')
-                    : t('collection.create')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </>
-  );
+interface IFormTitleProps {
+  editMode: boolean;
 }
 
-function FormTitle({ editMode }) {
-  const { t } = useTranslation();
+function FormTitle({ editMode }: IFormTitleProps) {
+  let { t } = useTranslation();
 
   return (
     <h1
       style={{ fontSize: '35px', margin: '120px auto 20px auto' }}
       className='text-center fw-semibold'
     >
-      {editMode === true ? t('collection.edit') : t('collection.create')}
+      {editMode == true ? t('collection.edit') : t('collection.create')}
       {t('collection.heading')}
     </h1>
   );
 }
 
-function NameInput({ formData, setFormData }) {
+interface IFormDataStateProps {
+  formData: IFormData;
+  setFormData: React.Dispatch<React.SetStateAction<IFormData>>;
+}
+
+function NameInput({ formData, setFormData }: IFormDataStateProps) {
   const { t } = useTranslation();
 
   return (
@@ -211,7 +54,7 @@ function NameInput({ formData, setFormData }) {
   );
 }
 
-function DescriptionInput({ formData, setFormData }) {
+function DescriptionInput({ formData, setFormData }: IFormDataStateProps) {
   const { t } = useTranslation();
 
   return (
@@ -223,7 +66,7 @@ function DescriptionInput({ formData, setFormData }) {
         id='collDescription'
         className='form-control'
         placeholder={t('collection.descriptionPlaceholder')}
-        rows='5'
+        rows={5}
         value={formData.description}
         onChange={(event) =>
           setFormData((prevFormData) => {
@@ -235,25 +78,43 @@ function DescriptionInput({ formData, setFormData }) {
   );
 }
 
-function ImageInput({ formData, setFormData, imageError, setImageError }) {
-  const { t } = useTranslation();
+interface IImageInputProps extends IFormDataStateProps {
+  imageError: string;
+  setImageError: React.Dispatch<React.SetStateAction<string>>;
+}
+
+function ImageInput({
+  formData,
+  setFormData,
+  imageError,
+  setImageError
+}: IImageInputProps) {
+  let { t } = useTranslation();
   const api_key = import.meta.env.VITE_IMGBB_APIKEY;
 
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-
+  let handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    let files = event.currentTarget.files;
+    var file;
+    if (files && files.length > 0) {
+      file = files[0];
+    }
     const acceptedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    if (!acceptedTypes.includes(file.type) || file.size > 5000000) {
-      setImageError('invalid.image');
+
+    if (
+      !file ||
+      !acceptedTypes.includes(file.type) ||
+      file.size > 5000000
+    ) {
+      setImageError('image.invalid');
       event.target.value = '';
       return;
     }
 
     try {
-      const formImageData = new FormData();
+      let formImageData = new FormData();
       formImageData.append('image', file);
 
-      const response = await fetch(
+      let response = await fetch(
         `https://api.imgbb.com/1/upload?key=${api_key}`,
         {
           method: 'POST',
@@ -262,20 +123,20 @@ function ImageInput({ formData, setFormData, imageError, setImageError }) {
       );
 
       if (response.ok) {
-        const data = await response.json();
+        let data = await response.json();
         setImageError('');
         setFormData((prevFormData) => ({
           ...prevFormData,
           imageUrl: data.data.url
         }));
       } else {
-        const data = await response.json();
+        let data = await response.json();
         event.target.value = '';
         throw new Error(data.error.message);
       }
     } catch (error) {
-      console.error(error.message);
-      setImageError(error.message);
+      console.error((error as Error)?.message ?? '');
+      setImageError((error as Error)?.message ?? '');
     }
   };
 
@@ -322,11 +183,14 @@ function ImageInput({ formData, setFormData, imageError, setImageError }) {
   );
 }
 
-function CategorySelection({ formData, setFormData }) {
-  const { t } = useTranslation();
-  const categories = categoriesData.categories;
+function CategorySelection({
+  formData,
+  setFormData
+}: IFormDataStateProps) {
+  let { t } = useTranslation();
+  let categories = categoriesData.categories;
 
-  const handleCategoryChange = (event) => {
+  let handleCategoryChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       category: event.target.value
@@ -355,18 +219,23 @@ function CategorySelection({ formData, setFormData }) {
   );
 }
 
-function CreateField({ setFormData }) {
-  const [fieldName, setFieldName] = useState('');
-  const [fieldType, setFieldType] = useState('text');
+interface ICreateFieldProps {
+  setFormData: React.Dispatch<React.SetStateAction<IFormData>>;
+}
+function CreateField({ setFormData }: ICreateFieldProps) {
+  let { t } = useTranslation();
 
-  const { t } = useTranslation();
+  var [fieldName, setFieldName] = useState('');
+  var [fieldType, setFieldType] = useState('text');
 
-  const handleAddField = () => {
+  let handleAddField = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       customFieldDefinitions: [
         ...prevFormData.customFieldDefinitions,
         {
+          _id: uuidv4(),
+          // COLLECTION_DUMP_TODO: Def needs to be removed
           client_id: uuidv4(),
           name: fieldName,
           type: fieldType
@@ -419,10 +288,10 @@ function CreateField({ setFormData }) {
   );
 }
 
-function Fields({ formData, setFormData }) {
-  const { t } = useTranslation();
+function Fields({ formData, setFormData }: IFormDataStateProps) {
+  let { t } = useTranslation();
 
-  if (formData.customFieldDefinitions.length === 0) {
+  if (formData.customFieldDefinitions.length == 0) {
     return null;
   }
 
@@ -463,12 +332,18 @@ function Fields({ formData, setFormData }) {
   );
 }
 
-function RemoveButton({ fieldId, setFormData, t }) {
-  const handleRemoveField = (fieldUniqueId) => {
+interface IRemoveButtonProps {
+  fieldId: string;
+  setFormData: React.Dispatch<React.SetStateAction<IFormData>>;
+  t: TFunction;
+}
+
+function RemoveButton({ fieldId, setFormData, t }: IRemoveButtonProps) {
+  let handleRemoveField = (fieldUniqueId: string) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       customFieldDefinitions: prevFormData.customFieldDefinitions.filter(
-        (field) => field.client_id !== fieldUniqueId
+        (field) => field.client_id != fieldUniqueId
       )
     }));
   };
@@ -485,3 +360,13 @@ function RemoveButton({ fieldId, setFormData, t }) {
     </div>
   );
 }
+
+export {
+  FormTitle,
+  NameInput,
+  DescriptionInput,
+  ImageInput,
+  CategorySelection,
+  CreateField,
+  Fields
+};

@@ -1,78 +1,27 @@
-import React, { useEffect, useState, useContext, Fragment } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { Fragment, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import UserContext from '../../context/UserContext';
+import { useNavigate, Link } from 'react-router-dom';
 
-import stringifyDate from '../../utils/stringifyDate.ts';
+import stringifyDate from '../../utils/stringifyDate';
+import Collection from '../../types/Collection';
+import User from '../../types/User';
+import Item from '../../types/Item';
 
-import LoadingScreen from '../layout/LoadingScreen';
-import ErrorPage from '../layout/ErrorPage';
-
-import '../../styles/bootstrp.css';
-
-export default function CollectionPage() {
-  const { collectionId } = useParams();
-  const { user } = useContext(UserContext);
-  const [collection, setCollection] = useState(null);
-  const [reqError, setReqError] = useState('');
-
-  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
-
-  const { isLoading, isError, error, data } = useQuery({
-    queryKey: ['collectionData', collectionId],
-    queryFn: async () => {
-      const response = await fetch(
-        `${prodUrl}/api/collections/${collectionId}`
-      );
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error);
-      }
-      return response.json();
-    },
-    staleTime: 10 * 1000,
-    gcTime: 10 * 60 * 1000,
-    enabled: !!collectionId
-  });
-
-  useEffect(() => {
-    if (!isLoading) {
-      setCollection(data);
-    }
-  }, [data, collectionId]);
-
-  return (
-    <>
-      {isError || reqError ? (
-        <ErrorPage err={isError ? error : reqError} />
-      ) : collection && !isLoading ? (
-        <>
-          <CollectionDetails
-            collection={collection}
-            user={user}
-            setError={setReqError}
-          />
-
-          <ItemsDetails
-            items={collection.items}
-            collection={collection}
-            collectionId={collection._id}
-            contextUser={user}
-            setError={setReqError}
-          />
-        </>
-      ) : (
-        <LoadingScreen message='loading.collection' />
-      )}
-    </>
-  );
+interface ICollectionDetailsProps {
+  collection: Collection;
+  user: User | null;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function CollectionDetails({ collection, user, setError }) {
-  const [forceUpdate, setForceUpdate] = useState(false);
-  const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
+function CollectionDetails({
+  collection,
+  user,
+  setError
+}: ICollectionDetailsProps) {
+  let navigate = useNavigate();
+  let { t, i18n } = useTranslation();
+
+  var [forceUpdate, setForceUpdate] = useState(false);
 
   useEffect(() => {
     setForceUpdate(!forceUpdate);
@@ -81,9 +30,9 @@ function CollectionDetails({ collection, user, setError }) {
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
 
-  const handleDeleteCollection = async () => {
+  let handleDeleteCollection = async () => {
     try {
-      const response = await fetch(
+      let response = await fetch(
         `${prodUrl}/api/collections/${collection._id}`,
         {
           method: 'DELETE',
@@ -103,7 +52,7 @@ function CollectionDetails({ collection, user, setError }) {
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setError(err.message);
+      setError((err as Error)?.message);
     }
   };
 
@@ -122,7 +71,8 @@ function CollectionDetails({ collection, user, setError }) {
 
             <div className='col-3 d-flex align-items-start justify-content-end'>
               {user &&
-                (user._id === collection.user._id || user.isAdmin) && (
+                (user._id == (collection.user as User)?._id ||
+                  user.isAdmin) && (
                   <>
                     <Link to={`/collections/${collection._id}/edit`}>
                       <button className='btn btn-primary mt-1 me-2'>
@@ -146,11 +96,11 @@ function CollectionDetails({ collection, user, setError }) {
           <p className='fs-5 mb-1'>
             {t('collection.by')}
             <Link
-              to={`/users/${collection.user?._id}`}
+              to={`/users/${(collection.user as User)?._id}`}
               className='text-decoration-none text-body-secondary'
             >
               <span className='fw-bold'>
-                {collection.user?.username || 'Incognito'}
+                {(collection.user as User)?.username ?? 'Incognito'}
               </span>
             </Link>
           </p>
@@ -208,22 +158,30 @@ function CollectionDetails({ collection, user, setError }) {
   );
 }
 
+interface IItemsDetailsProps {
+  items: Item[];
+  collection: Collection;
+  collectionId: string;
+  contextUser: User | null;
+  setError: React.Dispatch<React.SetStateAction<string>>;
+}
+
 function ItemsDetails({
   items,
   collection,
   collectionId,
   contextUser,
   setError
-}) {
-  const navigate = useNavigate();
-  const { t } = useTranslation();
+}: IItemsDetailsProps) {
+  let { t } = useTranslation();
+  let navigate = useNavigate();
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
 
-  const handleDeleteItem = async (itemId) => {
+  let handleDeleteItem = async (itemId: string) => {
     try {
-      const response = await fetch(
+      let response = await fetch(
         `${prodUrl}/api/collections/${collectionId}/items/${itemId}`,
         {
           method: 'DELETE',
@@ -239,12 +197,12 @@ function ItemsDetails({
         // console.log(data);
         navigate(`/collections/${collectionId}`);
       } else {
-        const errorData = await response.json();
+        let errorData = await response.json();
         throw new Error(errorData.error);
       }
     } catch (err) {
-      console.log(err.message);
-      setError(err.message);
+      console.log((err as Error)?.message);
+      setError((err as Error)?.message);
     }
   };
 
@@ -263,7 +221,7 @@ function ItemsDetails({
           </div>
           <div className='col-6 text-end'>
             {contextUser &&
-              (collection.user._id.includes(contextUser._id) ||
+              ((collection.user as User)?._id == contextUser?._id ||
                 contextUser.isAdmin) && (
                 <Link
                   to={`/collections/${collectionId}/items/create`}
@@ -294,7 +252,8 @@ function ItemsDetails({
                   </td>
                   <td className='text-end' style={{ borderLeft: 'none' }}>
                     {contextUser &&
-                      (collection.user._id.includes(contextUser._id) ||
+                      ((collection.user as User)?._id ==
+                        contextUser?._id ||
                         contextUser.isAdmin) && (
                         <>
                           <Link
@@ -320,7 +279,7 @@ function ItemsDetails({
                     key={field.client_id}
                     style={{
                       borderBottom: `${
-                        index === item.fields.length - 1
+                        index == item.fields.length - 1
                           ? '2px dashed #989898'
                           : ''
                       }`
@@ -328,9 +287,9 @@ function ItemsDetails({
                   >
                     <td className='fw-bold'>{field.name}</td>
                     <td>
-                      {field.value === 'true'
+                      {field.value == 'true'
                         ? `${t('fields.true')} ✅`
-                        : field.value === 'false'
+                        : field.value == 'false'
                           ? `${t('fields.false')} ❌`
                           : field.value}
                     </td>
@@ -344,3 +303,5 @@ function ItemsDetails({
     </div>
   );
 }
+
+export { CollectionDetails, ItemsDetails };

@@ -12,10 +12,10 @@ import { ThemeProvider } from './context/ThemeContext';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../src/utils/i18next';
 
-import EditCollection from './components/collections/Edit.jsx';
+import EditCollection from './components/collections/Edit';
 import CreateCollection from './components/collections/Create';
-import Collections from './components/collections/Collections.jsx';
-import CollectionPage from './components/collections/Page.jsx';
+import Collections from './views/Collections';
+import CollectionPage from './views/CollectionPage';
 
 import CreateItem from './components/items/Create';
 import ItemPage from './components/items/ItemPage.jsx';
