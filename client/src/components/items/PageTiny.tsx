@@ -1,122 +1,41 @@
-import { useState, useEffect, useContext } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState, useContext, FormEvent } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import UserContext from '../../context/UserContext';
 import ThemeContext from '../../context/ThemeContext';
 
-import stringifyDate from '../../utils/stringifyDate.ts';
+import stringifyDate from '../../utils/stringifyDate';
 import { v4 as uuid } from 'uuid';
 
-import LoadingScreen from '../layout/LoadingScreen';
-import ErrorPage from '../layout/ErrorPage';
+import Item from '../../types/Item';
+import { ItemField } from '../../types/Item';
+import User from '../../types/User';
+import Comment from '../../types/Comment';
+import Collection from '../../types/Collection';
 
-import '../../styles/bootstrp.css';
-
-export default function ItemPage() {
-  const { collectionId, itemId } = useParams();
-  const { user } = useContext(UserContext);
-  const { t } = useTranslation();
-  const [item, setItem] = useState(null);
-  const [reqError, setReqError] = useState('');
-
-  const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
-
-  const { isLoading, isError, error, data } = useQuery({
-    queryKey: ['itemData', itemId, collectionId],
-    queryFn: async () => {
-      const response = await fetch(
-        `${prodUrl}/api/collections/${collectionId}/items/${itemId}`
-      );
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error);
-      }
-      return response.json();
-    },
-    staleTime: 10 * 1000,
-    gcTime: 10 * 60 * 1000,
-    enabled: !!itemId
-  });
-
-  useEffect(() => {
-    if (!isLoading) {
-      setItem(data);
-    }
-  }, [data, itemId, collectionId]);
-
-  return (
-    <>
-      {isError || reqError ? (
-        <ErrorPage err={isError ? error : reqError} />
-      ) : item && !isLoading ? (
-        <>
-          <ItemDetails
-            collectionId={collectionId}
-            item={item}
-            setItem={setItem}
-            user={user}
-            setError={setReqError}
-          />
-
-          <ItemFields fields={item.fields} />
-
-          <div className='container'>
-            {item.tags.map((tag) => (
-              <span
-                key={tag._id}
-                className='badge rounded-pill bg-primary me-2 mb-3'
-                style={{ fontSize: '15px' }}
-              >
-                {tag.label}
-              </span>
-            ))}
-          </div>
-
-          <div
-            id='enforce-width-95-item1'
-            className='container border border-2 rounded-4 p-3 mb-4 mt-2'
-          >
-            <h2 className='fw-semibold fs-2'>
-              <i className='bi bi-chat-text'></i> {t('item.comments')} (
-              {item.comments?.length || 0})
-            </h2>
-
-            {item.comments?.map((comment) => (
-              <CommentBox key={comment._id} comment={comment} />
-            ))}
-            {item.comments.length ? (
-              ''
-            ) : (
-              <h4 className='mt-3'>{t('comments.firstMsg')}</h4>
-            )}
-
-            {user && (
-              <CommentForm
-                collectionId={collectionId}
-                itemId={item._id}
-                user={user}
-                setItem={setItem}
-                prodUrl={prodUrl}
-              />
-            )}
-          </div>
-        </>
-      ) : (
-        <LoadingScreen message='loading.item' />
-      )}
-    </>
-  );
+interface IItemDetailsProps {
+  collectionId: string;
+  item: Item;
+  setItem: React.Dispatch<React.SetStateAction<Item | null>>;
+  user: User | null;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function ItemDetails({ collectionId, item, setItem, user, setError }) {
-  const [liked, setLiked] = useState(
-    item.likes?.includes(user?._id) || false
+function ItemDetails({
+  collectionId,
+  item,
+  setItem,
+  user,
+  setError
+}: IItemDetailsProps) {
+  let { t, i18n } = useTranslation();
+  let navigate = useNavigate();
+
+  var [liked, setLiked] = useState(
+    (item.likes as string[])?.includes((user as User)?._id) ?? false
   );
-  const [likesCount, setLikesCount] = useState(item.likes?.length || 0);
-  const [forceUpdate, setForceUpdate] = useState(false);
-  const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
+  var [likesCount, setLikesCount] = useState(item.likes?.length ?? 0);
+  var [forceUpdate, setForceUpdate] = useState(false);
+  var [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setForceUpdate(!forceUpdate);
@@ -125,13 +44,13 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
   const token = localStorage.getItem('auth');
 
-  const handleLike = async (event) => {
+  let handleLike = async () => {
     try {
-      event.target.disabled = true;
+      setIsLoading(true);
       setLikesCount((prevCount) => prevCount + (liked ? -1 : 1));
       setLiked(!liked);
 
-      const response = await fetch(
+      let response = await fetch(
         `${prodUrl}/api/collections/${collectionId}/items/${item._id}/like`,
         {
           method: 'POST',
@@ -143,24 +62,24 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
       );
 
       if (response.ok) {
-        const data = await response.json();
+        let data = await response.json();
         // console.log(data);
         setItem({
           ...item,
           likes: data.likes
         });
       } else {
-        const errorData = await response.json();
+        let errorData = await response.json();
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setError(err.message);
+      setError((err as Error)?.message);
     } finally {
-      event.target.disabled = false;
+      setIsLoading(false);
     }
   };
 
-  const handleDeleteItem = async () => {
+  let handleDeleteItem = async () => {
     try {
       const response = await fetch(
         `${prodUrl}/api/collections/${collectionId}/items/${item._id}`,
@@ -182,7 +101,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setError(err.message);
+      setError((err as Error)?.message);
     }
   };
 
@@ -199,11 +118,12 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
 
         <div className='col-3 d-flex align-items-start justify-content-end'>
           {user &&
-            (user.collections.includes(collectionId) || user.isAdmin) && (
+            ((user.collections as string[]).includes(collectionId) ||
+              user.isAdmin) && (
               <>
                 <Link
                   to={`/collections/${collectionId}/items/${item._id}/edit`}
-                  state={{ collectionData: item.collectionId }}
+                  state={{ collectionData: item.collection }}
                 >
                   <button className='btn btn-primary mt-1 me-2'>
                     <i className='bi bi-pencil-square'></i>
@@ -230,7 +150,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
           className='text-decoration-none text-body-secondary'
         >
           <span className='fw-bold'>
-            {item.collectionId.name || 'Unknown Collection'}
+            {(item.collection as Collection)?.name || 'Unknown Collection'}
           </span>
         </Link>
       </p>
@@ -238,6 +158,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
       <button
         className='btn btn-outline-primary btn-sm mt-2'
         onClick={handleLike}
+        disabled={isLoading}
       >
         <i
           className={`bi ${
@@ -245,7 +166,7 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
           }`}
         ></i>{' '}
         {item.likes?.length || likesCount}{' '}
-        {item.likes?.length === 1 || likesCount === 1
+        {item.likes?.length == 1 || likesCount == 1
           ? t('item.like')
           : t('item.likes')}
       </button>
@@ -264,21 +185,25 @@ function ItemDetails({ collectionId, item, setItem, user, setError }) {
   );
 }
 
-function CommentBox({ comment }) {
-  const { theme } = useContext(ThemeContext);
-  const { t } = useTranslation();
+interface ICommentBoxProps {
+  comment: Comment;
+}
+
+function CommentBox({ comment }: ICommentBoxProps) {
+  let { t } = useTranslation();
+  let { theme } = useContext(ThemeContext);
 
   return (
     <div className='border-top border-bottom p-2 w-100'>
       <div className='d-flex align-items-center'>
         <Link
-          to={`/users/${comment.author._id}`}
+          to={`/users/${(comment.author as User)?._id}`}
           className='text-decoration-none'
         >
           <span
             className={`fw-bold text-${theme === 'light' ? 'dark' : 'light'} `}
           >
-            {comment.author.username}
+            {(comment.author as User)?.username}
           </span>
         </Link>
         <small className='text-body-secondary'>
@@ -291,13 +216,27 @@ function CommentBox({ comment }) {
   );
 }
 
-function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
-  const [commentText, setCommentText] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+interface ICommentFormProps {
+  collectionId: string;
+  itemId: string;
+  user: User;
+  setItem: React.Dispatch<React.SetStateAction<Item>>;
+  prodUrl: string;
+}
 
-  const { t } = useTranslation();
+function CommentForm({
+  collectionId,
+  itemId,
+  user,
+  setItem,
+  prodUrl
+}: ICommentFormProps) {
+  let { t } = useTranslation();
 
-  const handleSubmit = async (event) => {
+  var [commentText, setCommentText] = useState('');
+  var [errorMessage, setErrorMessage] = useState('');
+
+  let handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const token = localStorage.getItem('auth');
@@ -309,14 +248,14 @@ function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
           ...prevItem.comments,
           {
             _id: `tmp-${uuid()}`,
-            author: user,
+            author: user._id,
             text: commentText,
             item: prevItem._id
           }
-        ]
+        ] as Comment[]
       }));
       setCommentText('');
-      const response = await fetch(
+      let response = await fetch(
         `${prodUrl}/api/collections/${collectionId}/items/${itemId}/comments`,
         {
           method: 'POST',
@@ -328,23 +267,23 @@ function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
         }
       );
       if (response.ok) {
-        const data = await response.json();
+        let data = await response.json();
         // console.log(data);
         setItem((prevItem) => ({
           ...prevItem,
           comments: [
             ...prevItem.comments.filter(
-              (comment) => !comment._id.startsWith('tmp-')
+              (comment) => !(comment as Comment)?._id.startsWith('tmp-')
             ),
             data
           ]
         }));
       } else {
-        const errorData = await response.json();
+        let errorData = await response.json();
         throw new Error(errorData.error);
       }
     } catch (err) {
-      setErrorMessage(err.message);
+      setErrorMessage((err as Error)?.message);
     }
   };
 
@@ -372,8 +311,12 @@ function CommentForm({ collectionId, itemId, user, setItem, prodUrl }) {
   );
 }
 
-function ItemFields({ fields }) {
-  const { t } = useTranslation();
+interface IItemFieldsProps {
+  fields: ItemField[];
+}
+
+function ItemFields({ fields }: IItemFieldsProps) {
+  let { t } = useTranslation();
 
   return (
     <>
@@ -394,13 +337,13 @@ function ItemFields({ fields }) {
               </tr>
             </thead>
             <tbody>
-              {fields.map((field) => (
-                <tr key={field.client_id}>
+              {fields?.map((field) => (
+                <tr key={field._id}>
                   <td style={{ whiteSpace: 'normal' }}>{field.name}</td>
                   <td style={{ whiteSpace: 'normal' }}>
-                    {field.value === 'true'
+                    {field.value == 'true'
                       ? `${t('fields.true')} ✅`
-                      : field.value === 'false'
+                      : field.value == 'false'
                         ? `${t('fields.false')} ❌`
                         : field.value}
                   </td>
@@ -413,3 +356,5 @@ function ItemFields({ fields }) {
     </>
   );
 }
+
+export { ItemDetails, ItemFields, CommentBox, CommentForm };

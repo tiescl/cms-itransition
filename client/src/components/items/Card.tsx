@@ -1,9 +1,17 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+import Item, { ItemField } from '../../types/Item';
+import Collection from '../../types/Collection';
+import Tag from '../../types/Tag';
+
 const MAX_FIELDS = 3;
 
-export default function ItemCard({ item }) {
+interface ICardProps {
+  item: Item;
+}
+
+export default function ItemCard({ item }: ICardProps) {
   return (
     <div className='m-4'>
       <div className='card shadow border-2 item-box'>
@@ -12,26 +20,26 @@ export default function ItemCard({ item }) {
 
           <Fields
             fields={item.fields}
-            collectionId={item.collectionId._id}
+            collectionId={(item.collection as Collection)?._id}
             itemId={item._id}
           />
 
-          <Tags tags={item.tags} />
+          <Tags tags={item.tags as Tag[]} />
         </div>
       </div>
     </div>
   );
 }
 
-function Header({ item }) {
-  const { t } = useTranslation();
+function Header({ item }: ICardProps) {
+  let { t } = useTranslation();
 
   return (
     <div className='card-header border mb-2 rounded'>
       <div className='row flex-nowrap'>
         <div className='col-10 d-flex flex-column'>
           <Link
-            to={`/collections/${item.collectionId._id}/items/${item._id}`}
+            to={`/collections/${(item.collection as Collection)?._id}/items/${item._id}`}
             className='text-primary text-decoration-none'
           >
             <h5
@@ -57,10 +65,10 @@ function Header({ item }) {
               {t('item.location.small')}{' '}
               <strong>
                 <Link
-                  to={`/collections/${item.collectionId._id}`}
+                  to={`/collections/${(item.collection as Collection)?._id}`}
                   className='text-decoration-none text-body-secondary'
                 >
-                  {item.collectionId.name}
+                  {(item.collection as Collection)?.name}
                 </Link>
               </strong>
             </em>
@@ -75,8 +83,14 @@ function Header({ item }) {
   );
 }
 
-function Fields({ fields, collectionId, itemId }) {
-  const { t } = useTranslation();
+interface IFieldsProps {
+  fields: ItemField[];
+  collectionId: string;
+  itemId: string;
+}
+
+function Fields({ fields, collectionId, itemId }: IFieldsProps) {
+  let { t } = useTranslation();
 
   return (
     <>
@@ -85,10 +99,10 @@ function Fields({ fields, collectionId, itemId }) {
           {t('item.fields')}
         </div>
         {fields.slice(0, MAX_FIELDS).map((field) => {
-          if (field.type !== 'multiline_string') {
+          if (field.type != 'multiline_string') {
             return (
               <li
-                key={field.client_id}
+                key={field._id}
                 className='list-group-item d-flex flex-nowrap align-items-center py-0 px-2'
               >
                 <div className='py-2' style={{ width: '40%' }}>
@@ -104,11 +118,11 @@ function Fields({ fields, collectionId, itemId }) {
                     width: '60%'
                   }}
                 >
-                  {field.value === 'true'
+                  {field.value == 'true'
                     ? `${t('fields.true')} ✅`
-                    : field.value === 'false'
-                    ? `${t('fields.false')} ❌`
-                    : field.value}
+                    : field.value == 'false'
+                      ? `${t('fields.false')} ❌`
+                      : field.value}
                 </div>
               </li>
             );
@@ -127,11 +141,15 @@ function Fields({ fields, collectionId, itemId }) {
   );
 }
 
-function Tags({ tags }) {
+interface ITagsProps {
+  tags: Tag[];
+}
+
+function Tags({ tags }: ITagsProps) {
   return (
     <div style={{ height: '3em' }} className='overflow-y-scroll'>
       <div
-        style={{ lineHeight: '1.5', maxheight: '3em' }}
+        style={{ lineHeight: '1.5', maxHeight: '3em' }}
         className='mt-1 d-flex flex-wrap'
       >
         {tags?.map((tag) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import App from './App.jsx';
+import App from './App';
 
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -18,8 +18,8 @@ import Collections from './views/Collections';
 import CollectionPage from './views/CollectionPage';
 
 import CreateItem from './components/items/Create';
-import ItemPage from './components/items/ItemPage.jsx';
-import EditItem from './components/items/Edit.jsx';
+import ItemPage from './views/ItemPage';
+import EditItem from './components/items/Edit';
 
 import AdminPanel from './views/UsersPanel';
 import UserPage from './views/UserPage';
@@ -34,7 +34,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 
 const queryClient = new QueryClient();
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={queryClient}>

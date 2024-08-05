@@ -314,7 +314,7 @@ router.post(
 
       const itemData = {
         name: name,
-        collectionId: passed_collection_id,
+        collection: passed_collection_id,
         fields: fields
       };
 
@@ -519,7 +519,7 @@ router.get('/:collectionId/items/:itemId', async (req, res) => {
 
     const passed_collection = Collection.findById(collectionId);
     const item = await Item.findById(itemId)
-      .populate('collectionId', 'name customFieldDefinitions')
+      .populate('collection', 'name customFieldDefinitions')
       .populate('tags', 'label value')
       .populate({
         path: 'comments',

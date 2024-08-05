@@ -4,38 +4,38 @@ import { useParams, useLocation } from 'react-router-dom';
 import LoadingScreen from '../layout/LoadingScreen';
 import ErrorPage from '../layout/ErrorPage';
 
-import ItemForm from './ItemForm.jsx';
+import ItemForm from '../../views/ItemForm';
 
 export default function EditItem() {
-  const { collectionId, itemId } = useParams();
-  const location = useLocation();
-  const collectionData = location.state?.collectionData;
-  const [itemData, setItemData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  let { collectionId, itemId } = useParams();
+  let location = useLocation();
+  var collectionData = location.state?.collectionData;
+  var [itemData, setItemData] = useState(null);
+  var [isLoading, setIsLoading] = useState(true);
+  var [error, setError] = useState('');
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
   useEffect(() => {
     setIsLoading(true);
-    const controller = new AbortController();
+    let controller = new AbortController();
 
     const fetchItemData = async () => {
       try {
-        const response = await fetch(
+        let response = await fetch(
           `${prodUrl}/api/collections/${collectionId}/items/${itemId}`,
           { signal: controller.signal }
         );
         if (response.ok) {
-          const data = await response.json();
+          let data = await response.json();
           setItemData(data);
         } else {
-          const errorData = await response.json();
+          let errorData = await response.json();
           throw new Error(errorData.error);
         }
       } catch (err) {
-        if (err.name !== 'AbortError') {
-          setError(err.message);
+        if ((err as Error)?.name != 'AbortError') {
+          setError((err as Error)?.message);
         }
       } finally {
         setIsLoading(false);

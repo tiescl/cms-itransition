@@ -276,7 +276,7 @@ function ItemsDetails({
                 </tr>
                 {item.fields.map((field, index) => (
                   <tr
-                    key={field.client_id}
+                    key={field._id}
                     style={{
                       borderBottom: `${
                         index == item.fields.length - 1

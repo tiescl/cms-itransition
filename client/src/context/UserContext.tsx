@@ -67,7 +67,7 @@ export const UserProvider = ({ children }: IProps) => {
     };
     fetchUser();
 
-    const intervalId = setInterval(fetchUser, 20000);
+    const intervalId = setInterval(fetchUser, 60 * 1000);
 
     return () => {
       clearInterval(intervalId);

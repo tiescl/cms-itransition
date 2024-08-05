@@ -2,24 +2,30 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+
 import ItemCard from './components/items/Card';
 import CollectionCard from './components/collections/Card';
 import ErrorPage from './components/layout/ErrorPage';
 import LoadingScreen from './components/layout/LoadingScreen';
 
+import Item from './types/Item';
+import Collection from './types/Collection';
+import { TFunction } from 'i18next';
+
 export default function App() {
-  const [items, setItems] = useState([]);
-  const [collections, setCollections] = useState([]);
-  const { t } = useTranslation();
+  let { t } = useTranslation();
+
+  var [items, setItems] = useState<Item[]>([]);
+  var [collections, setCollections] = useState<Collection[]>([]);
 
   const prodUrl = import.meta.env.VITE_PRODUCTION_URL;
 
-  const { isLoading, isError, error, data } = useQuery({
+  var { isLoading, isError, error, data } = useQuery({
     queryKey: ['latestData'],
     queryFn: async () => {
-      const response = await fetch(`${prodUrl}/api`);
+      let response = await fetch(`${prodUrl}/api`);
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData = await response.json();
         throw new Error(errorData.error);
       }
       return response.json();
@@ -40,7 +46,7 @@ export default function App() {
       {isLoading || !items.length || !collections.length ? (
         <LoadingScreen message='loading.recent' />
       ) : isError ? (
-        <ErrorPage err={error.message} />
+        <ErrorPage err={error?.message ?? ''} />
       ) : (
         <>
           <Greeting t={t} />
@@ -51,7 +57,7 @@ export default function App() {
             style={{ whiteSpace: 'nowrap' }}
             className='overflow-x-auto d-flex ps-2'
           >
-            {items.map((item) => (
+            {items?.map((item) => (
               <div style={{ minWidth: '360px' }} key={item._id}>
                 <ItemCard item={item} />
               </div>
@@ -63,8 +69,11 @@ export default function App() {
           </h1>
           <div className='container'>
             <div className='row d-flex'>
-              {collections.map((collection) => (
-                <CollectionCard collection={collection} key={collection._id} />
+              {collections?.map((collection) => (
+                <CollectionCard
+                  collection={collection}
+                  key={collection._id}
+                />
               ))}
             </div>
           </div>
@@ -74,7 +83,7 @@ export default function App() {
   );
 }
 
-function Greeting({ t }) {
+function Greeting({ t }: { t: TFunction }) {
   return (
     <div
       className='container-fluid row align-items-center'

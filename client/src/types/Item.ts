@@ -18,9 +18,8 @@ export default interface Item {
   updatedAt: Date;
 }
 
-interface ItemField {
+export interface ItemField {
   _id: string;
-  client_id: string;
   name: string;
   value: string;
   type: string;

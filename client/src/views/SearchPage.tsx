@@ -185,7 +185,7 @@ function SearchResultItem({ results }: ISearchResultItemProps) {
           <tr key={result._id} className='align-middle'>
             <td>
               <Link
-                to={`/collections/${(result.collectionId as Collection)?._id}/items/${result._id}`}
+                to={`/collections/${(result.collection as Collection)?._id}/items/${result._id}`}
                 className='text-decoration-none'
               >
                 {result.name}
@@ -193,21 +193,21 @@ function SearchResultItem({ results }: ISearchResultItemProps) {
             </td>
             <td>
               <Link
-                to={`/users/${((result.collectionId as Collection)?.user as User)?._id}`}
+                to={`/users/${((result.collection as Collection)?.user as User)?._id}`}
                 className='text-decoration-none text-body-secondary fw-semibold'
               >
                 {
-                  ((result.collectionId as Collection)?.user as User)
+                  ((result.collection as Collection)?.user as User)
                     ?.username
                 }
               </Link>
             </td>
             <td>
               <Link
-                to={`/collections/${(result.collectionId as Collection)?._id}`}
+                to={`/collections/${(result.collection as Collection)?._id}`}
                 className='text-decoration-none'
               >
-                {(result.collectionId as Collection)?.name}
+                {(result.collection as Collection)?.name}
               </Link>
             </td>
             <td>

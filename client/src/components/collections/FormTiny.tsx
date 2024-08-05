@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 import { v4 as uuidv4 } from 'uuid';
 import categoriesData from '../../data/categories.json';
 import getFieldType from '../../utils/getFieldType';
-import IFormData from '../../types/FormData';
-import { TFunction } from 'i18next';
+import IFormData from '../../types/CollectionFormData';
 
 interface IFormTitleProps {
   editMode: boolean;
@@ -235,8 +235,6 @@ function CreateField({ setFormData }: ICreateFieldProps) {
         ...prevFormData.customFieldDefinitions,
         {
           _id: uuidv4(),
-          // COLLECTION_DUMP_TODO: Def needs to be removed
-          client_id: uuidv4(),
           name: fieldName,
           type: fieldType
         }
@@ -311,14 +309,14 @@ function Fields({ formData, setFormData }: IFormDataStateProps) {
         </thead>
         <tbody>
           {formData.customFieldDefinitions?.map((field, index) => (
-            <tr key={field.client_id} className='align-middle'>
+            <tr key={field._id} className='align-middle'>
               <td>{index + 1}</td>
               <td>{field.name}</td>
               <td>{getFieldType(field.type, t)}</td>
               <td>
                 {
                   <RemoveButton
-                    fieldId={field.client_id}
+                    fieldId={field._id}
                     setFormData={setFormData}
                     t={t}
                   />
@@ -343,7 +341,7 @@ function RemoveButton({ fieldId, setFormData, t }: IRemoveButtonProps) {
     setFormData((prevFormData) => ({
       ...prevFormData,
       customFieldDefinitions: prevFormData.customFieldDefinitions.filter(
-        (field) => field.client_id != fieldUniqueId
+        (field) => field._id != fieldUniqueId
       )
     }));
   };

@@ -42,14 +42,6 @@ const userSchema = new Schema({
   lastLoginDate: {
     type: String,
     default: () => new Date()
-  },
-  preferredLanguage: {
-    type: String,
-    default: 'en-US'
-  },
-  preferredTheme: {
-    type: String,
-    default: 'light'
   }
 });
 

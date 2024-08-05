@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(5)
       .populate({
-        path: 'collectionId',
+        path: 'collection',
         select: 'name'
       })
       .populate('tags')
@@ -84,7 +84,7 @@ router.get('/search', async (req, res) => {
       {
         $project: {
           name: 1,
-          collectionId: 1,
+          collection: 1,
           source: 1
         }
       }
@@ -92,7 +92,7 @@ router.get('/search', async (req, res) => {
       .exec()
       .then((items) => {
         return Item.populate(items, {
-          path: 'collectionId',
+          path: 'collection',
           select: 'name user',
           populate: { path: 'user', select: 'username' }
         });
@@ -121,9 +121,9 @@ router.get('/search', async (req, res) => {
       .then((tags) =>
         Tag.populate(tags, {
           path: 'items',
-          select: 'name collectionId',
+          select: 'name collection',
           populate: {
-            path: 'collectionId',
+            path: 'collection',
             select: 'name user',
             populate: { path: 'user', select: 'username' }
           }
@@ -163,9 +163,9 @@ router.get('/search', async (req, res) => {
       .then((comments) => {
         return Comment.populate(comments, {
           path: 'item',
-          select: 'name collectionId',
+          select: 'name collection',
           populate: {
-            path: 'collectionId',
+            path: 'collection',
             select: 'name user',
             populate: { path: 'user', select: 'username' }
           }

@@ -16,7 +16,6 @@ export default interface Collection {
 
 export interface CustomField {
   _id: string;
-  client_id: string;
   name: string;
   type: string;
 }

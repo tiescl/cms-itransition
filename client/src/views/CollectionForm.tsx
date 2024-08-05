@@ -14,7 +14,7 @@ import {
 } from '../components/collections/FormTiny';
 
 import Collection from '../types/Collection';
-import FormData from '../types/FormData';
+import FormData from '../types/CollectionFormData';
 
 interface ICollectionFormProps {
   collectionData?: Collection | null;
@@ -60,7 +60,7 @@ export default function CollectionForm({
     }
 
     for (const field of formSubmitData.customFieldDefinitions) {
-      if (!field.client_id || !field.name || !field.type) {
+      if (!field.name || !field.type) {
         setError('collection.emptyCustomFields');
         return true;
       } else {

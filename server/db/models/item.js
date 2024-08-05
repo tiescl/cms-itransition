@@ -6,7 +6,7 @@ const itemSchema = new Schema(
       type: String,
       required: true
     },
-    collectionId: {
+    collection: {
       type: SchemaTypes.ObjectId,
       ref: 'Collection',
       required: true
@@ -42,15 +42,11 @@ const itemSchema = new Schema(
         type: {
           type: String,
           required: true
-        },
-        client_id: {
-          type: String,
-          required: true
         }
       }
     ]
   },
-  { timestamps: true }
+  { suppressReservedKeysWarning: true, timestamps: true }
 );
 
 const Item = model('Item', itemSchema);

@@ -35,9 +35,6 @@ const collectionSchema = new Schema(
     ],
     customFieldDefinitions: [
       {
-        client_id: {
-          type: String
-        },
         name: {
           type: String,
           required: true
